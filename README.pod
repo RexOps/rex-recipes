@@ -4,7 +4,7 @@
 
 This is a community repository for Rex Recipes.
 
-Everyone is invited to clone this repository and do pull requests.
+Everyone is invited to fork this repository and do pull requests.
 
 =head2 USAGE
 
