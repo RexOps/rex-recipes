@@ -74,7 +74,7 @@ This is a skeleton recipe.
  #
  # This is the description of what the recipe is doing.
  # This description can be multiline. This Description will be
- # searched and displayed be rexify command line client.
+ # searched and displayed by the rexify command line client.
  
  package Database::MySQL;
     
