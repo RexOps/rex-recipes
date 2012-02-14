@@ -1,0 +1,116 @@
+=pod
+
+=head2 WHAT'S THIS?
+
+This is a community repository for Rex Recipes.
+
+Everyone is invited to clone this repository and do pull requests.
+
+=head2 USAGE
+
+As of Rex Version 0.25 there will be a command for I<rexify> to search and download recipes for own Rex projects.
+
+ rexify --search mysql
+ rexify <projectname> [directory] --use Database::MySQL
+ rexify <projectname> [directory] --use Database::MySQL --use Webserver::Apache ...
+
+
+=head2 HOWTO CONTRIBUTE
+
+=over 4
+
+=item *
+
+Choose a category. 
+
+For example if you are developing a recipe for a Webserver like Apache, nginx, ... use the I<Webserver> category. If you are developing a recipe for Usermanagement use the Category I<User>. 
+
+You can create new categories if there is no category that suite your needs.
+
+If you don't know which category to use, just use the "Misc" category.
+
+=item *
+
+I don't want to dictate style guides. Just have fun.
+
+For reference, i use space indention with 3 spaces.
+
+
+=back
+
+=head2 EXAMPLE RECIPE
+
+What every Recipe needs:
+
+=over 4
+
+=item *
+
+AUTHOR
+
+This should be your name and (only if you want) your email address, where people can contact you if they have questions.
+
+=item *
+
+REQUIRES
+
+If your recipe depends on other recipes, list them here.
+
+=item *
+
+A description (see the example)
+
+=item *
+
+Documentation. Later there will be a website where every module will be listet with its documentation. So please provide some end user documentation :)
+
+=back
+
+This is a skeleton recipe.
+
+ #
+ # AUTHOR: jan gehring <jan.gehring@gmail.com>
+ # REQUIRES: recipe1, recipe2
+ #
+ # This is the description of what the recipe is doing.
+ # This description can be multiline. This Description will be
+ # searched and displayed be rexify command line client.
+ 
+ package Database::MySQL;
+    
+ use Rex -base;
+    
+ task "prepare", sub {
+     
+     my ($param) = @_;
+        
+     say "foo ist: " . $param->{foo};
+     install package => "mysql";
+    
+ };
+   
+ 1;
+     
+ =pod
+    
+ =head2 MySQL Module
+     
+ This module installs MySQL on your machine.
+    
+ =head2 USAGE
+    
+    rex -H hostname Database:MySQL:prepare --foo=bar
+    
+ Or, to use it as a library:
+     
+    use Database::MySQL;
+        
+    task "prepare", sub {
+
+       Database::MySQL::prepare({
+          foo => "bar",
+       });
+      
+    };
+
+
