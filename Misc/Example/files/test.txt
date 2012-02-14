@@ -1,0 +1,1 @@
+IP of the System is: <%= $::eth0_ip %>

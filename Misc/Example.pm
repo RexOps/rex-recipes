@@ -12,9 +12,13 @@ use Rex -base;
 task "prepare", sub {
 
    my ($param) = @_;
+   if(! exists $param->{bar}) {
+      die("Please use --bar=foo\n");
+   }
 
    say "You said: bar = " . $param->{bar};
-
+   print template("Example/files/test.txt");
+   
 
 };
 
