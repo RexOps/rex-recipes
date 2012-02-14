@@ -1,0 +1,7 @@
+Misc/Example.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: GPLv3
+   Description: |
+      This is an example Module.
+
