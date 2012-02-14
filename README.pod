@@ -58,6 +58,12 @@ If your recipe depends on other recipes, list them here.
 
 =item *
 
+LICENSE
+
+The license of your recipe.
+
+=item *
+
 A description (see the example)
 
 =item *
@@ -71,6 +77,7 @@ This is a skeleton recipe.
  #
  # AUTHOR: jan gehring <jan.gehring@gmail.com>
  # REQUIRES: recipe1, recipe2
+ # LICENSE: GPLv3
  #
  # This is the description of what the recipe is doing.
  # This description can be multiline. This Description will be
