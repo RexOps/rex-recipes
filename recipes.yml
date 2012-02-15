@@ -1,3 +1,10 @@
+Webserver/Apache.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: GPLv3
+   Description: |
+      Simple Module to install Apache on your Server.
+
 Misc/Example.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
