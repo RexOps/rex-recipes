@@ -1,3 +1,15 @@
+#
+# THIS FILE IS GENERATED AUTOMATICALLY
+# YOU DON'T NEED TO EDIT IT
+#
+
+Database/MySQL.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: GPLv3
+   Description: |
+      Simple Module to install MySQL on your Server.
+
 Webserver/Apache.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
