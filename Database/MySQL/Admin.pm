@@ -1,0 +1,73 @@
+#
+# (c) Jan Gehring <jan.gehring@gmail.com>
+# 
+# vim: set ts=3 sw=3 tw=0:
+# vim: set expandtab:
+   
+package Database::MySQL::Admin;
+   
+use strict;
+use warnings;
+
+use Rex -base;
+use Rex::Logger;
+use Rex::Config;
+use Database::MySQL::Admin::Schema;
+use Database::MySQL::Admin::User;
+
+my %MYSQL_CONF = ();
+
+Rex::Config->register_set_handler("mysql" => sub {
+   my ($name, $value) = @_;
+   $MYSQL_CONF{$name} = $value;
+});
+
+task execute => sub {
+
+   my $param = shift;
+   die("You have to specify the sql to execute.") unless $param->{sql};
+
+   my $sql = $param->{sql};
+
+   my $tmp_file = _tmp_file();
+
+   Rex::Logger::debug("Executing: $sql");
+
+   file $tmp_file,
+      content => $sql;
+
+   my $user     = $MYSQL_CONF{user};
+   my $password = $MYSQL_CONF{password} || "";
+
+   unless($password) {
+      say run "mysql -u$user < $tmp_file";
+   }
+   else {
+      say run "mysql -u$user -p$password < $tmp_file";
+   }
+
+   unlink($tmp_file);
+
+   if($? != 0) {
+      die("Error executing $sql");
+   }
+};
+
+sub _tmp_file {
+   return "/tmp/" . rand(100) . ".sql";
+}
+
+1;
+
+=pod
+
+=head2 Manage your MySQL Server
+
+This module allows you to manage your MySQL Server.
+
+=head2 USAGE
+
+ set mysql => user => 'root';
+ set mysql => password => 'foobar';
+   
+
