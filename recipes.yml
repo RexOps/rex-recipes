@@ -6,21 +6,36 @@
 Database/MySQL.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
-   License: GPLv3
+   License: Apache License 2.0
    Description: |
       Simple Module to install MySQL on your Server.
 
 Webserver/Apache.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
-   License: GPLv3
+   License: Apache License 2.0
    Description: |
       Simple Module to install Apache on your Server.
 
 Misc/Example.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
-   License: GPLv3
+   License: Apache License 2.0
    Description: |
       This is an example Module.
+
+Lang/PHP.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: Apache License 2.0
+   Description: |
+      Simple Module to install PHP on your Server.
+
+CMS/Joomla.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: Apache License 2.0
+   Description: |
+      Module to install Joomla on your Server. 
+      Tested with Joomla 2.5.1 and Ubuntu.
 
