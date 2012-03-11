@@ -26,12 +26,20 @@ our %service_name = (
    Mageia => "httpd",
 );
 
+our %document_root = (
+   Debian => "/var/www",
+   Ubuntu => "/var/www",
+   CentOS => "/var/www",
+   Mageia => "/var/www",
+);
+
 task "setup", sub {
 
    my $pkg     = $package{get_operating_system()};
    my $service = $service_name{get_operating_system()};
 
    # install apache package
+   update_package_db;
    install package => $pkg;
 
    # ensure that apache is started
