@@ -36,8 +36,6 @@ task drop => sub {
    my $param = shift;
    die("You have to specify the user name.") unless $param->{name};
    die("You have to specify the users host.") unless $param->{host};
-   die("You have to specify the users rights.") unless $param->{rights};
-   die("You have to specify the users schemas.") unless $param->{schema};
 
    my $name     = $param->{name};
    my $host     = $param->{host};
@@ -52,15 +50,24 @@ task drop => sub {
 
 =pod
 
-=head2 Managa a Schema
+=head2 Managa MySQL User
 
-This module allows you to manage your MySQL Schemas.
+This module allows you to manage your MySQL Users.
 
 =head2 USAGE
 
  task "taskname", sub {
-    Database::MySQL::Admin::Schema::create({
+    Database::MySQL::Admin::User::create({
+       name     => "foo",
+       host     => "host",
+       password => "password",
+       rights   => "SELECT,INSERT",
+       schema   => "foo.*",
+    });
+     
+    Database::MySQL::Admin::User::drop({
        name => "foo",
+       host => "host",
     });
  };
 

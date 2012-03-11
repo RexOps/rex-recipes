@@ -32,6 +32,7 @@ task "setup", sub {
    my $service = $service_name{get_operating_system()};
 
    # install mysql package
+   update_package_db;
    install package => $pkg;
 
    # ensure that mysql is started
