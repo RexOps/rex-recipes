@@ -1,7 +1,7 @@
 #
 # AUTHOR: jan gehring <jan.gehring@gmail.com>
 # REQUIRES: 
-# LICENSE: GPLv3
+# LICENSE: Apache License 2.0
 # 
 # Simple Module to install Apache on your Server.
 

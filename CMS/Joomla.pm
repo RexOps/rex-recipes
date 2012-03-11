@@ -1,7 +1,7 @@
 #
 # AUTHOR: jan gehring <jan.gehring@gmail.com>
 # REQUIRES: Webserver::Apache, Database::MySQL
-# LICENSE: Apache 2.0
+# LICENSE: Apache License 2.0
 # COMPAT: 0.26
 # 
 # Module to install Joomla on your Server. 
