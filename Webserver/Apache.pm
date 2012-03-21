@@ -29,8 +29,8 @@ our %service_name = (
 our %document_root = (
    Debian => "/var/www",
    Ubuntu => "/var/www",
-   CentOS => "/var/www",
-   Mageia => "/var/www",
+   CentOS => "/var/www/html",
+   Mageia => "/var/www/html",
 );
 
 task "setup", sub {
