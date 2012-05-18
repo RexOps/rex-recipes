@@ -19,7 +19,7 @@ task create => sub {
 
    my $db = $param->{name};
 
-   Database::MySQL::Admin::execute({sql => "CREATE SCHEMA `$db`;\n"});
+   Database::MySQL::Admin::execute({sql => "CREATE SCHEMA IF NOT EXISTS `$db`;\n"});
 
 };
 
