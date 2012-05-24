@@ -27,6 +27,8 @@ use Rex::Config;
 
 use vars qw($perlbrew_root);
 
+$perlbrew_root = "/opt/perlbrew";
+
 Rex::Config->register_set_handler("perlbrew" => sub {
    my ($key, $value) = @_;
    if($key eq "root" || $key eq "-root") {
