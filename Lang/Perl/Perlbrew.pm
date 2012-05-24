@@ -55,33 +55,52 @@ sub perlbrew {
 
 }
 
-sub _init {
-   run "PERLBREW_ROOT=$perlbrew_root perlbrew init";
-}
-
-sub _use {
+sub _set_path {
    my ($version) = @_;
-   
+
    my @new_path = ();
-   push(@new_path, $perlbrew_root . "/perls/$version/bin");
+
+   if(defined $version) {
+      push(@new_path, $perlbrew_root . "/perls/$version/bin");
+   }
    push(@new_path, $perlbrew_root . "/bin");
    push(@new_path, Rex::Config->get_path);
 
    Rex::Config->set_path(\@new_path);
+}
+sub _init {
+   _set_path();
+   Rex::Logger::info("Initializing Perlbrew to $perlbrew_root");
+   run "PERLBREW_ROOT=$perlbrew_root perlbrew init";
+}
 
+sub _use {
+   Rex::Logger::info("Switching to perl $_[0]");
+   _set_path(@_);
 }
 
 sub _install {
-   my ($version) = @_;
+   my (@things) = @_;
 
-   if($version eq "perlbrew") {
-      run "PERLBREW_ROOT=$perlbrew_root curl -kL http://install.perlbrew.pl | sh perlbrew-install";
-   }
-   elsif($version eq "cpanm") {
-      run "PERLBREW_ROOT=$perlbrew_root perlbrew install-cpanm";
-   }
-   else {
-      run "PERLBREW_ROOT=$perlbrew_root perlbrew install $version";
+   _set_path();
+
+   for my $version (@things) {
+      if($version eq "perlbrew") {
+         Rex::Logger::info("Downloading and installing Perlbrew...");
+         run "curl -kL http://install.perlbrew.pl | PERLBREW_ROOT=$perlbrew_root sh";
+         if($? != 0) {
+            say "You need curl to install Perlbrew.";
+            exit 1;
+         }
+      }
+      elsif($version eq "cpanm") {
+         Rex::Logger::info("Instaling cpanm...");
+         run "PERLBREW_ROOT=$perlbrew_root perlbrew install-cpanm";
+      }
+      else {
+         Rex::Logger::info("Installing perl $version...");
+         run "PERLBREW_ROOT=$perlbrew_root perlbrew install $version";
+      }
    }
 }
 
@@ -105,9 +124,13 @@ Put it in your I<Rexfile>
  set perlbrew => root => "/opt/myperl";
     
  task "prepare", sub {
-    perlbrew install => "perl-5.16.0";
-    perlbrew install => "cpanm";
-        
+    
+    perlbrew install => qw/ 
+                        perlbrew
+                        perl-5.16.0
+                        cpanm
+                        /;
+                          
     perlbrew use => "perl-5.16.0";
        
     run "perl -v";

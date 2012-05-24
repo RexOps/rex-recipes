@@ -36,7 +36,14 @@ sub cpanm {
 }
 
 sub _install {
-   my ($modules, %option) = @_;
+   my ($modules, %option);
+
+   if(ref($_[0]) eq "ARRAY") {
+      ($modules, %option) = @_;
+   }
+   else {
+      $modules = [ @_ ];
+   }
 
    for my $mod (@{ $modules }) {
       Rex::Logger::info("Installing $mod");
