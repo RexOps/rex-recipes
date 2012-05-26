@@ -5,7 +5,7 @@
 # 
 # Simple Module to install PHP on your Server.
 
-package Lang::PHP;
+package Rex::Lang::PHP;
 
 
 use Rex -base;
@@ -66,7 +66,7 @@ Put it in your I<Rexfile>
  task "one", sub {};
  task "two", sub {};
     
- require Lang::PHP;
+ require Rex::Lang::PHP;
 
 And call it:
 
@@ -75,10 +75,10 @@ And call it:
 Or, to use it as a library
 
  task "yourtask", sub {
-    Lang::PHP::setup();
+    Rex::Lang::PHP::setup();
  };
    
- require Lang::PHP;
+ require Rex::Lang::PHP;
 
 =head2 TASKS
 

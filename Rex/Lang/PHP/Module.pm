@@ -4,7 +4,7 @@
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
    
-package Lang::PHP::Module;
+package Rex::Lang::PHP::Module;
    
 use strict;
 use warnings;
@@ -16,7 +16,7 @@ task "setup", sub {
    my $param = shift;
    die("You have to set the module name.") unless $param->{name};
 
-   my $pkg = sprintf($Lang::PHP::schema{get_operating_system()}, $param->{"name"});
+   my $pkg = sprintf($Rex::Lang::PHP::schema{get_operating_system()}, $param->{"name"});
 
    update_package_db;
    install package => $pkg;
@@ -26,7 +26,7 @@ task "setup", sub {
 task "uninstall", sub {
 
    my $param = shift;
-   my $pkg = sprintf($Lang::PHP::schema{get_operating_system()}, $param->{"name"});
+   my $pkg = sprintf($Rex::Lang::PHP::schema{get_operating_system()}, $param->{"name"});
 
    remove package => $pkg;
 
@@ -44,11 +44,11 @@ This module installs PHP Modules on your system.
 =head2 USAGE
 
  task name => sub {
-    Lang::PHP::Module::setup({
+    Rex::Lang::PHP::Module::setup({
        name => "mysql",
     });
       
-    Lang::PHP::Module::remove({
+    Rex::Lang::PHP::Module::remove({
        name => "mysql",
     });
  };

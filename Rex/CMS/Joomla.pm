@@ -7,19 +7,19 @@
 # Module to install Joomla on your Server. 
 # Tested with Joomla 2.5.1 and Ubuntu.
 
-package CMS::Joomla;
+package Rex::CMS::Joomla;
 
 
 use Rex -base;
 
 include qw/
-   Webserver::Apache
-   Database::MySQL
-   Database::MySQL::Admin
-   Database::MySQL::Admin::Schema
-   Database::MySQL::Admin::User
-   Lang::PHP
-   Lang::PHP::Module/;
+   Rex::Webserver::Apache
+   Rex::Database::MySQL
+   Rex::Database::MySQL::Admin
+   Rex::Database::MySQL::Admin::Schema
+   Rex::Database::MySQL::Admin::User
+   Rex::Lang::PHP
+   Rex::Lang::PHP::Module/;
 
 my %JOOMLA_CONF = ();
 
@@ -33,19 +33,19 @@ task prepare => sub {
 
    my $param = shift;
 
-   my $document_root = $Webserver::Apache::document_root{get_operating_system()};
+   my $document_root = $Rex::Webserver::Apache::document_root{get_operating_system()};
 
    # we need unzip and wget
    install "unzip";
    install "wget";
 
    # install apache and php
-   Webserver::Apache::setup();
+   Rex::Webserver::Apache::setup();
 
-   Database::MySQL::setup();
+   Rex::Database::MySQL::setup();
 
-   Lang::PHP::setup();
-   Lang::PHP::Module::setup({
+   Rex::Lang::PHP::setup();
+   Rex::Lang::PHP::Module::setup({
       name => "mysql",
    });
    
@@ -82,7 +82,7 @@ task config => sub {
    my $joomla_password = $param->{joomlapassword} || get_random(8, 'a' .. 'z');
    my $joomla_email    = $param->{joomlaemail} || "foo\@bar.tld";
 
-   my $document_root = $Webserver::Apache::document_root{get_operating_system()};
+   my $document_root = $Rex::Webserver::Apache::document_root{get_operating_system()};
 
    # config file
    cp "$document_root/installation/configuration.php-dist", "$document_root/configuration.php";
@@ -104,24 +104,24 @@ task config => sub {
    if($param->{drop}) {
       # maybe not existend yet
       eval {
-         Database::MySQL::Admin::User::drop({
+         Rex::Database::MySQL::Admin::User::drop({
             name => $db_user,
             host => 'localhost',
          });
       };
 
       eval {
-         Database::MySQL::Admin::Schema::drop({
+         Rex::Database::MySQL::Admin::Schema::drop({
             name => $db_name,
          });
       };
    }
 
-   Database::MySQL::Admin::Schema::create({
+   Rex::Database::MySQL::Admin::Schema::create({
       name => $db_name,
    });
 
-   Database::MySQL::Admin::User::create({
+   Rex::Database::MySQL::Admin::User::create({
       name     => $db_user,
       host     => 'localhost',
       password => $db_password,
@@ -132,7 +132,7 @@ task config => sub {
    my $content = "use $db_name;\n\n" . cat "$document_root/installation/sql/mysql/joomla.sql";
    $content =~ s/`#__/`jos_/gms;
 
-   Database::MySQL::Admin::execute({
+   Rex::Database::MySQL::Admin::execute({
       sql => $content,
    });
 
@@ -161,11 +161,11 @@ print $cryptpass . "\n";
    my $now = "$year-$mon-$mday $hour:$min:$sec";
    my $root_uid = int(rand(int(100)));
 
-   Database::MySQL::Admin::execute({
+   Rex::Database::MySQL::Admin::execute({
       sql => "INSERT INTO `$db_name`.`jos_users` VALUES ($root_uid,'Super User','$joomla_admin','$joomla_email','$cryptpass','deprecated',0,1,'$now','$now','0','');",
    });
 
-   Database::MySQL::Admin::execute({
+   Rex::Database::MySQL::Admin::execute({
       sql => "INSERT INTO `$db_name`.`jos_user_usergroup_map` VALUES ($root_uid,8);",
    });
 
@@ -188,13 +188,13 @@ This module installs joomla cms on your server.
 
 Put it in your I<Rexfile>
 
- include qw/CMS::Joomla/;
+ include qw/Rex::CMS::Joomla/;
   
  set mysql => user => 'root';
   
  task joomla => sub {
-    CMS::Joomla::prepare();
-    CMS::Joomla::config({
+    Rex::CMS::Joomla::prepare();
+    Rex::CMS::Joomla::config({
        sitename => "rex",
     });
  };

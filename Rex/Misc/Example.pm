@@ -5,7 +5,7 @@
 # 
 # This is an example Module.
 
-package Misc::Example;
+package Rex::Misc::Example;
 
 use Rex -base;
 

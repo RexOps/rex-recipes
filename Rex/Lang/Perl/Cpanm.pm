@@ -9,7 +9,7 @@
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
    
-package Lang::Perl::Cpanm;
+package Rex::Lang::Perl::Cpanm;
    
 use strict;
 use warnings;
@@ -77,7 +77,7 @@ This module installs Cpanm.
 
 Put it in your I<Rexfile>
 
- use Lang::Perl::Cpanm;
+ use Rex::Lang::Perl::Cpanm;
    
  task "prepare", sub {
     cpanm install => [ 'Test::More', 'Foo::Bar' ];

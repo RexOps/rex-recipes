@@ -10,7 +10,7 @@
 # vim: set expandtab:
 #
  
-package Lang::Perl::Perlbrew;
+package Rex::Lang::Perl::Perlbrew;
    
 use strict;
 use warnings;
@@ -119,7 +119,7 @@ This module installs Perlbrew.
 
 Put it in your I<Rexfile>
 
- use Lang::Perl::Perlbrew;
+ use Rex::Lang::Perl::Perlbrew;
    
  # set the perlbrew root
  # defaults to: /opt/perlbrew

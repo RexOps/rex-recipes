@@ -6,7 +6,7 @@
 # This is a small Module to parse simple comma seperated
 # text files (csv).
 
-package File::CSV;
+package Rex::File::CSV;
    
 use strict;
 use warnings;
@@ -40,7 +40,7 @@ This is a simple module to read csv files.
 
 You can use this module as a library. It will export the function I<read_csv_file>.
 
- use File::CSV;
+ use Rex::File::CSV;
     
  task "yourtask", sub {
     read_csv_file "yourfile.csv", sub {

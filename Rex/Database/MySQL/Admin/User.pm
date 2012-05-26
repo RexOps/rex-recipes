@@ -4,13 +4,13 @@
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
    
-package Database::MySQL::Admin::User;
+package Rex::Database::MySQL::Admin::User;
    
 use strict;
 use warnings;
 
 use Rex -base;
-use Database::MySQL::Admin;
+use Rex::Database::MySQL::Admin;
 
 task create => sub {
 
@@ -27,7 +27,7 @@ task create => sub {
    my $rights   = $param->{rights};
    my $schema   = $param->{schema};
 
-   Database::MySQL::Admin::execute({sql => "GRANT $rights ON $schema TO '$name'\@'$host' IDENTIFIED BY '$password';\nFLUSH PRIVILEGES;\n"});
+   Rex::Database::MySQL::Admin::execute({sql => "GRANT $rights ON $schema TO '$name'\@'$host' IDENTIFIED BY '$password';\nFLUSH PRIVILEGES;\n"});
 
 };
 
@@ -40,7 +40,7 @@ task drop => sub {
    my $name     = $param->{name};
    my $host     = $param->{host};
 
-   Database::MySQL::Admin::execute({sql => "DROP USER '$name'\@'$host';\nFLUSH PRIVILEGES;\n"});
+   Rex::Database::MySQL::Admin::execute({sql => "DROP USER '$name'\@'$host';\nFLUSH PRIVILEGES;\n"});
 
 };
 
@@ -57,7 +57,7 @@ This module allows you to manage your MySQL Users.
 =head2 USAGE
 
  task "taskname", sub {
-    Database::MySQL::Admin::User::create({
+    Rex::Database::MySQL::Admin::User::create({
        name     => "foo",
        host     => "host",
        password => "password",
@@ -65,7 +65,7 @@ This module allows you to manage your MySQL Users.
        schema   => "foo.*",
     });
      
-    Database::MySQL::Admin::User::drop({
+    Rex::Database::MySQL::Admin::User::drop({
        name => "foo",
        host => "host",
     });

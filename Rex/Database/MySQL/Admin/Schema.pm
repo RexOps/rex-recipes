@@ -4,13 +4,13 @@
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
    
-package Database::MySQL::Admin::Schema;
+package Rex::Database::MySQL::Admin::Schema;
    
 use strict;
 use warnings;
 
 use Rex -base;
-use Database::MySQL::Admin;
+use Rex::Database::MySQL::Admin;
 
 task create => sub {
 
@@ -19,7 +19,7 @@ task create => sub {
 
    my $db = $param->{name};
 
-   Database::MySQL::Admin::execute({sql => "CREATE SCHEMA IF NOT EXISTS `$db`;\n"});
+   Rex::Database::MySQL::Admin::execute({sql => "CREATE SCHEMA IF NOT EXISTS `$db`;\n"});
 
 };
 
@@ -30,7 +30,7 @@ task drop => sub {
 
    my $db = $param->{name};
 
-   Database::MySQL::Admin::execute({sql => "DROP SCHEMA `$db`;\n"});
+   Rex::Database::MySQL::Admin::execute({sql => "DROP SCHEMA `$db`;\n"});
 
 };
 
@@ -47,7 +47,7 @@ This module allows you to manage your MySQL Schemas.
 =head2 USAGE
 
  task "taskname", sub {
-    Database::MySQL::Admin::Schema::create({
+    Rex::Database::MySQL::Admin::Schema::create({
        name => "foo",
     });
  };
@@ -60,7 +60,7 @@ This module allows you to manage your MySQL Schemas.
 
 Create a new Database Schema.
 
- Database::MySQL::Admin::Schema::create({
+ Rex::Database::MySQL::Admin::Schema::create({
     name => "foobar",
  });
 
@@ -68,7 +68,7 @@ Create a new Database Schema.
 
 Drop a Database Schema.
 
- Database::MySQL::Admin::Schema::drop({
+ Rex::Database::MySQL::Admin::Schema::drop({
     name => "foobar",
  });
 

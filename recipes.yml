@@ -3,55 +3,55 @@
 # YOU DON'T NEED TO EDIT IT
 #
 
-Database/MySQL.pm:
+Rex/Database/MySQL.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install MySQL on your Server.
 
-Webserver/Apache.pm:
+Rex/Webserver/Apache.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install Apache on your Server.
 
-Misc/Example.pm:
+Rex/Misc/Example.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       This is an example Module.
 
-Lang/PHP.pm:
+Rex/Lang/PHP.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install PHP on your Server.
 
-CMS/Joomla.pm:
+Rex/CMS/Joomla.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Module to install Joomla on your Server. 
       Tested with Joomla 2.5.1 and Ubuntu.
-File/CSV.pm:
+Rex/File/CSV.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       This is a small Module to parse simple comma seperated
       text files (csv).
-Lang/Perl/Perlbrew.pm:
+Rex/Lang/Perl/Perlbrew.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install Perlbrew on your Server.
-Lang/Perl/Cpanm.pm:
+Rex/Lang/Perl/Cpanm.pm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0

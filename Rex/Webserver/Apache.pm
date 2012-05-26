@@ -3,9 +3,9 @@
 # REQUIRES: 
 # LICENSE: Apache License 2.0
 # 
-# Simple Module to install MySQL on your Server.
+# Simple Module to install Apache on your Server.
 
-package Database::MySQL;
+package Rex::Webserver::Apache;
 
 
 use Rex -base;
@@ -13,17 +13,24 @@ use Rex -base;
 # some package-wide variables
 
 our %package = (
-   Debian => "mysql-server",
-   Ubuntu => "mysql-server",
-   CentOS => "mysql-server",
-   Mageia => "mysql",
+   Debian => "apache2",
+   Ubuntu => "apache2",
+   CentOS => "httpd",
+   Mageia => "apache-base",
 );
 
 our %service_name = (
-   Debian => "mysql",
-   Ubuntu => "mysql",
-   CentOS => "mysqld",
-   Mageia => "mysqld",
+   Debian => "apache2",
+   Ubuntu => "apache2",
+   CentOS => "httpd",
+   Mageia => "httpd",
+);
+
+our %document_root = (
+   Debian => "/var/www",
+   Ubuntu => "/var/www",
+   CentOS => "/var/www/html",
+   Mageia => "/var/www/html",
 );
 
 task "setup", sub {
@@ -31,11 +38,11 @@ task "setup", sub {
    my $pkg     = $package{get_operating_system()};
    my $service = $service_name{get_operating_system()};
 
-   # install mysql package
+   # install apache package
    update_package_db;
    install package => $pkg;
 
-   # ensure that mysql is started
+   # ensure that apache is started
    service $service => "ensure" => "started";
 
 };
@@ -72,9 +79,9 @@ task "reload", sub {
 
 =pod
 
-=head2 Module to install MySQL Server
+=head2 Module to install Apache
 
-This module installs mysql database server.
+This module installs apache webserver.
 
 =head2 USAGE
 
@@ -84,19 +91,19 @@ Put it in your I<Rexfile>
  task "one", sub {};
  task "two", sub {};
     
- require Database::MySQL;
+ require Rex::Webserver::Apache;
 
 And call it:
 
- rex -H $host Database:MySQL:setup
+ rex -H $host Webserver:Apache:setup
 
 Or, to use it as a library
 
  task "yourtask", sub {
-    Database::MySQL::setup();
+    Webserver::Apache::setup();
  };
    
- require Database::MySQL;
+ require Rex::Webserver::Apache;
 
 =head2 TASKS
 
@@ -104,23 +111,23 @@ Or, to use it as a library
 
 =item setup
 
-This task will install mysql server.
+This task will install apache httpd.
 
 =item start
 
-This task will start the mysql daemon.
+This task will start the apache daemon.
 
 =item stop
 
-This task will stop the mysql daemon.
+This task will stop the apache daemon.
 
 =item restart
 
-This task will restart the mysql daemon.
+This task will restart the apache daemon.
 
 =item reload
 
-This task will reload the mysql daemon.
+This task will reload the apache daemon.
 
 =back
 

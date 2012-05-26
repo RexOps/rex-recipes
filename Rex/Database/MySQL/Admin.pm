@@ -4,7 +4,7 @@
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
    
-package Database::MySQL::Admin;
+package Rex::Database::MySQL::Admin;
    
 use strict;
 use warnings;
@@ -12,8 +12,8 @@ use warnings;
 use Rex -base;
 use Rex::Logger;
 use Rex::Config;
-use Database::MySQL::Admin::Schema;
-use Database::MySQL::Admin::User;
+use Rex::Database::MySQL::Admin::Schema;
+use Rex::Database::MySQL::Admin::User;
 
 my %MYSQL_CONF = ();
 
