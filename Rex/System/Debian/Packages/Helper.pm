@@ -29,7 +29,7 @@ task sync_selections => sub {
          install package => $pkg;
       }
       else {
-         remove $pkg;
+         remove package => $pkg;
       }
    }
    close($fh);
