@@ -67,3 +67,12 @@ Rex/SSL/CA.pm:
    License: Apache License 2.0
    Description: |
       This is a basic task collection to create own SSL CAs.
+
+Rex/System/Debian/Packages/Helper.pm:
+   Author: jan gehring <jan.gehring@gmail.com>
+   Requires:
+   License: Apache License 2.0
+   Description: |
+      Helper Task to install or remove packages listed in a file
+      created with dpkg --get-selections.
+
