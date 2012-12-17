@@ -3,35 +3,35 @@
 # YOU DON'T NEED TO EDIT IT
 #
 
-Rex/Database/MySQL.pm:
+Rex/Database/MySQL:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install MySQL on your Server.
 
-Rex/Webserver/Apache.pm:
+Rex/Webserver/Apache:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install Apache on your Server.
 
-Rex/Misc/Example.pm:
+Rex/Misc/Example:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       This is an example Module.
 
-Rex/Lang/PHP.pm:
+Rex/Lang/PHP:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install PHP on your Server.
 
-Rex/CMS/Joomla.pm:
+Rex/CMS/Joomla:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
@@ -39,7 +39,7 @@ Rex/CMS/Joomla.pm:
       Module to install Joomla on your Server. 
       Tested with Joomla 2.5.1 and Ubuntu.
 
-Rex/File/CSV.pm:
+Rex/File/CSV:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
@@ -47,28 +47,28 @@ Rex/File/CSV.pm:
       This is a small Module to parse simple comma seperated
       text files (csv).
 
-Rex/Lang/Perl/Perlbrew.pm:
+Rex/Lang/Perl/Perlbrew:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install Perlbrew on your Server.
 
-Rex/Lang/Perl/Cpanm.pm:
+Rex/Lang/Perl/Cpanm:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       Simple Module to install Cpanm on your Server.
 
-Rex/SSL/CA.pm:
+Rex/SSL/CA:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
    Description: |
       This is a basic task collection to create own SSL CAs.
 
-Rex/System/Debian/Packages/Helper.pm:
+Rex/System/Debian/Packages/Helper:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
    License: Apache License 2.0
