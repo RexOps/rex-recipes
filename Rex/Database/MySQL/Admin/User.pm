@@ -50,11 +50,11 @@ task drop => sub {
 
 =pod
 
-=head2 Managa MySQL User
+=head1 NAME
 
-This module allows you to manage your MySQL Users.
+Rex::Database::MySQL::Admin::User - Managa MySQL User
 
-=head2 USAGE
+=head1 USAGE
 
  task "taskname", sub {
     Rex::Database::MySQL::Admin::User::create({

@@ -37,11 +37,11 @@ task "uninstall", sub {
 
 =pod
 
-=head2 Install a PHP Module
+=head1 NAME
 
-This module installs PHP Modules on your system.
+Rex::Lang::PHP::Module - This module installs PHP Modules on your system.
 
-=head2 USAGE
+=head1 USAGE
 
  task name => sub {
     Rex::Lang::PHP::Module::setup({

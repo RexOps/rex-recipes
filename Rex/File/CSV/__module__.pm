@@ -32,11 +32,11 @@ sub read_csv_file {
 
 =pod
 
-=head2 Simple CSV Module
+=head1 NAME
 
-This is a simple module to read csv files.
+Rex::File::CSV - Simple CSV Module
 
-=head2 USAGE
+=head1 USAGE
 
 You can use this module as a library. It will export the function I<read_csv_file>.
 

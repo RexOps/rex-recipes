@@ -54,11 +54,11 @@ task "setup", sub {
 
 =pod
 
-=head2 Module to install PHP
+=head1 NAME
 
-This module installs PHP.
+Rex::Lang::PHP - Module to install PHP.
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 
@@ -80,7 +80,7 @@ Or, to use it as a library
    
  require Rex::Lang::PHP;
 
-=head2 TASKS
+=head1 TASKS
 
 =over 4
 

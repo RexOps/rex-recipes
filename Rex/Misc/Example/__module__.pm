@@ -26,11 +26,11 @@ task "prepare", sub {
 
 =pod
 
-=head2 Example Module
+=head1 NAME
 
-This module is just an example.
+Rex::Misc::Example - Example Module
 
-=head2 USAGE
+=head1 USAGE
 
  rex -H $host Misc:Example:prepare --bar=baz
 

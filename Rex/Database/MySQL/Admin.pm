@@ -61,11 +61,11 @@ sub _tmp_file {
 
 =pod
 
-=head2 Manage your MySQL Server
+=head1 NAME
 
-This module allows you to manage your MySQL Server.
+Rex::Database::MySQL::Admin - Manage your MySQL Server
 
-=head2 USAGE
+=head1 USAGE
 
  set mysql => user => 'root';
  set mysql => password => 'foobar';

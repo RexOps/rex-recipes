@@ -72,11 +72,11 @@ task "reload", sub {
 
 =pod
 
-=head2 Module to install MySQL Server
+=head1 NAME
 
-This module installs mysql database server.
+Rex::Database::MySQL - Module to install MySQL Server
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 
@@ -98,7 +98,7 @@ Or, to use it as a library
    
  require Rex::Database::MySQL;
 
-=head2 TASKS
+=head1 TASKS
 
 =over 4
 

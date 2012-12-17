@@ -40,11 +40,11 @@ task drop => sub {
 
 =pod
 
-=head2 Managa a Schema
+=head1 NAME
 
-This module allows you to manage your MySQL Schemas.
+Rex::Database::MySQL::Admin::Schema - Managa a Schema
 
-=head2 USAGE
+=head1 USAGE
 
  task "taskname", sub {
     Rex::Database::MySQL::Admin::Schema::create({
@@ -52,7 +52,7 @@ This module allows you to manage your MySQL Schemas.
     });
  };
 
-=head2 MODULE FUNCTIONS
+=head1 MODULE FUNCTIONS
 
 =over 4
 

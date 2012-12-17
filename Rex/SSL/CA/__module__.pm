@@ -118,11 +118,15 @@ task create => sub {
 
 =pod
 
-=head2 Small CA module
+=head1 NAME
+
+Rex::SSL::CA - Small CA module
+
+=head1 DESCRIPTION
 
 This is a basic task collection to create own SSL CAs.
 
-=head2 USAGE
+=head1 USAGE
 
  # create a new ca
  rex SSL:CA:create --password=foobar

@@ -39,9 +39,11 @@ task sync_selections => sub {
 
 =pod
 
-=head2 Helper Functions for Debian Package Management
+=head1 NAME
 
-=head2 USAGE
+Rex::System::Debian::Packages::Helper - Helper Functions for Debian Package Management
+
+=head1 USAGE
 
 Put it in your I<Rexfile>
 

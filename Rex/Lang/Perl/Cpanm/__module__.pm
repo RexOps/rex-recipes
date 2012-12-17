@@ -69,11 +69,11 @@ sub _install_deps {
 
 =pod
 
-=head2 Module to install and use Cpanm.
+=head1 NAME
 
-This module installs Cpanm.
+Rex::Lang::Perl::Cpanm - Module to install and use Cpanm.
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 

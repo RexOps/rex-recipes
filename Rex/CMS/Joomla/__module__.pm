@@ -180,11 +180,11 @@ print $cryptpass . "\n";
 
 =pod
 
-=head2 Module to install Joomla
+=head1 NAME
 
-This module installs joomla cms on your server.
+Rex::CMS::Joomaa - Module to install Joomla
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 

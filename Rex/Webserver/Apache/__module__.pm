@@ -79,11 +79,11 @@ task "reload", sub {
 
 =pod
 
-=head2 Module to install Apache
+=head1 NAME
 
-This module installs apache webserver.
+Rex::Webserver::Apache - Module to install Apache
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 
@@ -105,7 +105,7 @@ Or, to use it as a library
    
  require Rex::Webserver::Apache;
 
-=head2 TASKS
+=head1 TASKS
 
 =over 4
 

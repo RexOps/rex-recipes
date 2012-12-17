@@ -111,11 +111,11 @@ sub _install {
 
 =pod
 
-=head2 Module to install and use Perlbrew.
+=head1 NAME
 
-This module installs Perlbrew.
+Rex::Lang::Perl::Perlbrew - Module to install and use Perlbrew.
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 
