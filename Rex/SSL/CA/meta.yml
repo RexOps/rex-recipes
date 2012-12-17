@@ -1,0 +1,7 @@
+Name: Rex::SSL::CA
+Description: This is a basic task collection to create own SSL CAs.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+   - Expect
+   - Sys::Hostname

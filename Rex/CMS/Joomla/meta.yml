@@ -1,0 +1,8 @@
+Name: Rex::CMS::Joomla
+Description: Module to install Joomla on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+Require:
+   - Rex::Webserver::Apache
+   - Rex::Database::MySQL
+   - Rex::Lang::PHP

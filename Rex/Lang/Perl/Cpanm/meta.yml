@@ -1,0 +1,4 @@
+Name: Rex::Lang::Perl::Cpanm
+Description: Simple Module to install Cpanm on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

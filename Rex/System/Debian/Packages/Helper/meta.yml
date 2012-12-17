@@ -1,0 +1,4 @@
+Name: Rex::System::Debian::Packages::Helper
+Description: Helper Task to install or remove packages listed in a file created with dpkg --get-selections.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

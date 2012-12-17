@@ -1,0 +1,4 @@
+Name: Rex::File::CSV
+Description: This is a small Module to parse simple comma seperated text files (csv).
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

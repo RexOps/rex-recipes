@@ -1,0 +1,4 @@
+Name: Rex::Webserver::Apache
+Description: Simple Module to install Apache on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

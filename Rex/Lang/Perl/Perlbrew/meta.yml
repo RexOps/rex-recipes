@@ -1,0 +1,4 @@
+Name: Rex::Lang::Perl::Perlbrew
+Description: Simple Module to install Perlbrew on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

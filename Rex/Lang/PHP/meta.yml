@@ -1,0 +1,4 @@
+Name: Rex::Lang::PHP
+Description: Simple Module to install PHP on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
