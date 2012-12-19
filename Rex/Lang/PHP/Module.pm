@@ -44,12 +44,12 @@ Rex::Lang::PHP::Module - This module installs PHP Modules on your system.
 =head1 USAGE
 
  task name => sub {
-    Rex::Lang::PHP::Module::setup({
+    Rex::Lang::PHP::Module::setup(
        name => "mysql",
-    });
+    );
       
-    Rex::Lang::PHP::Module::remove({
+    Rex::Lang::PHP::Module::remove(
        name => "mysql",
-    });
+    );
  };
 

@@ -57,17 +57,17 @@ Rex::Database::MySQL::Admin::User - Managa MySQL User
 =head1 USAGE
 
  task "taskname", sub {
-    Rex::Database::MySQL::Admin::User::create({
+    Rex::Database::MySQL::Admin::User::create(
        name     => "foo",
        host     => "host",
        password => "password",
        rights   => "SELECT,INSERT",
        schema   => "foo.*",
-    });
+    );
      
-    Rex::Database::MySQL::Admin::User::drop({
+    Rex::Database::MySQL::Admin::User::drop(
        name => "foo",
        host => "host",
-    });
+    );
  };
 

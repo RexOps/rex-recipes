@@ -1,0 +1,4 @@
+Name: Rex::Development::Joomla
+Description: Module to install Jenkins CI
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0

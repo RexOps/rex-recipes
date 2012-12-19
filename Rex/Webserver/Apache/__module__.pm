@@ -33,6 +33,13 @@ our %document_root = (
    Mageia => "/var/www/html",
 );
 
+our %vhost_path = (
+   Debian => "/etc/apache2/sites-enabled",
+   Ubuntu => "/etc/apache2/sites-enabled",
+   CentOS => "/etc/httpd/conf.d",
+   Mageia => "/etc/httpd/conf.d",
+);
+
 task "setup", sub {
 
    my $pkg     = $package{get_operating_system()};
@@ -44,6 +51,21 @@ task "setup", sub {
 
    # ensure that apache is started
    service $service => "ensure" => "started";
+
+};
+
+task "vhost", sub {
+   
+   my $param = shift;
+
+   file $vhost_path{get_operating_system()} . "/" . $param->{name} . ".conf",
+      content => $param->{conf},
+      owner   => "root",
+      group   => "root",
+      mode    => 644,
+      on_change => sub {
+         service $service_name{get_operating_system()} => "restart";
+      };
 
 };
 
@@ -112,6 +134,17 @@ Or, to use it as a library
 =item setup
 
 This task will install apache httpd.
+
+=item vhost
+
+This task will create a vhost.
+
+ task "yourtask", sub {
+    Rex::Webserver::Apache::vhost(
+      name => "foo",
+      conf => template("files/foo.conf"),
+    );
+ };
 
 =item start
 
