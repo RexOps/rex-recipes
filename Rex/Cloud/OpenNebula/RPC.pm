@@ -143,7 +143,7 @@ sub _rpc {
    }   
 
    my $req = RPC::XML::request->new($meth, @params_o);
-   my $cli = RPC::XML::Client->new("http://172.16.120.131:2633/RPC2");
+   my $cli = RPC::XML::Client->new($self->{url});
    my $resp = $cli->send_request($req);
    
    my $ret = $resp->value;
