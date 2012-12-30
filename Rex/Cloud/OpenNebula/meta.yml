@@ -1,0 +1,7 @@
+Name: Rex::Cloud::OpenNebula
+Description: Module to talk to OpenNebula
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+   - RPC::XML
+   - XML::Simple
