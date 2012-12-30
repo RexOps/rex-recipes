@@ -12,6 +12,8 @@ use warnings;
 use Rex -base;
 use Rex::Cloud::OpenNebula::RPC;
 
+use Rex::Cloud;
+
 my %ONE_CONF = ();
 
 sub _rpc;
@@ -32,6 +34,8 @@ Rex::Config->register_set_handler("one" => sub {
    }
 });
 
+# Register cloud service to Rex::Cloud
+Rex::Cloud->register_cloud_service(opennebula => "Rex::Cloud::OpenNebula::CloudLayer");
 
 # will return a list of all available opennebula clusters
 sub get_clusters {
@@ -74,6 +78,20 @@ sub shutdown_vm {
    }
    
    $vm->shutdown;
+}
+
+sub terminate_vm {
+   my ($vm_id) = @_;
+   
+   my $vm;
+   if($vm_id =~ m/^\d+$/) {
+      $vm = get_vm($vm_id);
+   }
+   else {
+      ($vm) = grep { $_->name eq $vm_id } get_vms();
+   }
+   
+   $vm->stop;
 }
 
 sub _rpc {

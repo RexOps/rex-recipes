@@ -97,12 +97,55 @@ sub stop {
                      );
 }
 
+sub start {
+   my ($self) = @_;
+   $self->{rpc}->_rpc("one.vm.action",
+                        [ string => "start" ],
+                        [ int => $self->id ],
+                     );
+}
 
+# don't know how to get the state properly. didn't found good docs.
+sub state {
+   my ($self) = @_;
+   $self->_get_info(clearcache => 1);
+
+   if($self->{extended_data}->{STATE}->[0] == 1) {
+      return "pending";
+   }
+
+   if($self->{extended_data}->{STATE}->[0] == 3 
+      && $self->{extended_data}->{LAST_POLL}->[0] == 0) {
+      return "prolog";
+   }
+
+   if($self->{extended_data}->{STATE}->[0] == 3
+      && $self->{extended_data}->{LAST_POLL}->[0]
+      && $self->{extended_data}->{LAST_POLL}->[0] > 0) {
+      return "running";
+   }
+
+   if($self->{extended_data}->{LCM_STATE}->[0] == 12) {
+      return "shutdown";
+   }
+
+   if($self->{extended_data}->{LCM_STATE}->[0] == 0
+      && $self->{extended_data}->{LCM_STATE}->[0] == 6) {
+      return "done";
+   }
+}
+
+sub arch {
+   my ($self) = @_;
+   $self->_get_info;
+
+   return $self->{extended_data}->{TEMPLATE}->[0]->{OS}->[0]->{ARCH}->[0];
+}
 
 sub _get_info {
-   my ($self) = @_;
+   my ($self, %option) = @_;
 
-   if(! exists $self->{extended_data}) {
+   if(! exists $self->{extended_data} || (exists $option{clearcache} && $option{clearcache} == 1)) {
       $self->{extended_data} = $self->{rpc}->_rpc("one.vm.info", [ int => $self->id ]);
    }
 }

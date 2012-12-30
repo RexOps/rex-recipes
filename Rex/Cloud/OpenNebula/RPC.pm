@@ -77,7 +77,7 @@ sub get_vms {
                            [ int => -2 ], # always get all resources
                            [ int => -1 ], # range from (begin)
                            [ int => -1 ], # range to (end)
-                           [ int => -2 ], # all states
+                           [ int => -1 ], # all states, except DONE
                          ); 
 
    my @ret = ();
@@ -96,8 +96,17 @@ sub get_vm {
       die("You have to define the ID => Usage: \$obj->get_vm(\$vm_id)");
    }
 
-   my $data = $self->_rpc("one.vm.info", [ int => $id ]);
-   return Rex::Cloud::OpenNebula::RPC::VM->new(rpc => $self, data => $data, extended_data => $data);
+
+   if($id =~ m/^\d+$/) {
+      my $data = $self->_rpc("one.vm.info", [ int => $id ]);
+      return Rex::Cloud::OpenNebula::RPC::VM->new(rpc => $self, data => $data, extended_data => $data);
+   }
+   else {
+      # try to find vm by name
+      my ($vm) = grep { $_->name eq $id } $self->get_vms;
+      return $vm;
+   }
+
 }
 
 sub get_templates {
@@ -121,7 +130,14 @@ sub get_templates {
 sub create_vm {
    my ($self, %option) = @_;
 
-   my ($template) = grep { $_->name eq $option{template} } $self->get_templates;   
+   my $template;
+
+   if($option{template} =~ m/^\d+$/) {
+      ($template) = grep { $_->id == $option{template} } $self->get_templates;   
+   }
+   else {
+      ($template) = grep { $_->name eq $option{template} } $self->get_templates;   
+   }
 
    my $hash_ref = $template->get_template_ref;
    $hash_ref->{TEMPLATE}->[0]->{NAME}->[0] = $option{name};
