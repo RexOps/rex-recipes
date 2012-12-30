@@ -180,7 +180,7 @@ sub run_instance {
       state => $vm->state,
       architecture => $vm->arch,
       id => $vm->id,
-      ip_list => (sub { my @ret; for my $nic (@nics) { push(@ret, $nic->ip); } return @ret; })->()
+      ip_list => (sub { my @ret; for my $nic (@nics) { push(@ret, $nic->ip); } return \@ret; })->()
    };
 }
 
@@ -213,7 +213,7 @@ sub list_instances {
 
       push(@ret, {
          ip => $ip,
-         ip_list => (sub { my @ret; for my $nic (@nics) { push(@ret, $nic->ip); } return @ret; })->(),
+         ip_list => (sub { my @ret; for my $nic (@nics) { push(@ret, $nic->ip); } return \@ret; })->(),
          name => $vm->name,
          state => $vm->state,
          architecture => $vm->arch,
