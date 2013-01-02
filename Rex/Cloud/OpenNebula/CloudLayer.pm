@@ -88,6 +88,10 @@ sub new {
 
    bless($self, $proto);
 
+   if(exists $self->{endpoint}) {
+      $self->set_endpoint($self->{endpoint});
+   }
+
    Rex::Logger::debug("Creating new OpenNebula CloudLayer Object, with endpoint: " . ($self->{endpoint} ? $self->{endpoint} : "not defined yet"));
 
    return $self;
@@ -103,17 +107,6 @@ sub set_auth {
    my ($self, $user, $password) = @_;
    $self->{user} = $user;
    $self->{password} = $password;
-}
-
-=item set_endpoint($url)
-
-Set the RPC url to connect to.
-
-=cut
-
-sub set_endpoint {
-   my ($self, $endpoint) = @_;
-   $self->{endpoint} = $endpoint;
 }
 
 =item list_operating_systems()
@@ -231,7 +224,7 @@ sub list_running_instances {
 
 sub _one {
    my ($self) = @_;
-   return Rex::Cloud::OpenNebula::RPC->new(url => $self->{endpoint}, user => $self->{user}, password => $self->{password});
+   return Rex::Cloud::OpenNebula::RPC->new(url => $self->{__endpoint}, user => $self->{user}, password => $self->{password});
 }
 
 1;
