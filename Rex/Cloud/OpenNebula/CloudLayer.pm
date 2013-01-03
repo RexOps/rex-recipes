@@ -21,7 +21,7 @@ This module is a layer between the Rex::Cloud::OpenNebula Module and the Rex::Cl
  use Data::Dumper;
  
  cloud_service "OpenNebula";
- cloud_auth "oneadmin", "opennebula";
+ cloud_auth "user", "password";
  cloud_region "http://172.16.120.131:2633/RPC2";
  
  task "list-os", sub {
@@ -77,7 +77,15 @@ use base qw(Rex::Cloud::Base);
 
 =item new([endpoint => $url, user => $user, password => $password])
 
-Constructor
+Constructor.
+
+If you want to use the OO Interface:
+
+ my $obj = Rex::Cloud::OpenNebula::CloudLayer->new(
+              endpoint => "http://your-opennebula-server/RPC2:2633",
+              user     => "username",
+              password => "password"
+           );
 
 =cut
 
@@ -101,6 +109,12 @@ sub new {
 
 Set the authentication.
 
+ cloud_auth "user", "password";
+ 
+Or, if you want to use the OO Interface:
+
+ $obj->set_auth($user, $password);
+
 =cut
 
 sub set_auth {
@@ -112,6 +126,12 @@ sub set_auth {
 =item list_operating_systems()
 
 List all available templates.
+
+ my @oses = get_cloud_operating_systems;
+
+Or, if you want to use the OO interface:
+
+ my @oses = $obj->list_operating_systems();
 
 =cut
 
@@ -129,9 +149,28 @@ sub list_operating_systems {
    return @ret;
 }
 
-=item run_instance()
+=item run_instance(%data)
 
 Create an instance and start it.
+
+You have to define an image_id (or template_id) to use and a name. You can also use the name of the template. Than you have to define the template property or image property.
+
+ my $vm = cloud_instance create => {
+    image_id  => 5,
+    name      => $params->{name},
+ };
+
+ my $vm = cloud_instance create => {
+    image  => "template-name",
+    name   => $params->{name},
+ };
+
+Or, if you want to call it via its OO Interface:
+
+ $obj->run_instance(
+   iamge => "template-name",
+   name  => "myinstance01",
+ );
 
 =cut
 
@@ -177,21 +216,68 @@ sub run_instance {
    };
 }
 
+=item terminate_instance(%data)
+
+Terminate and remove an instance.
+
+ cloud_instance terminate => "vmname";
+
+Or, if you want to use the OO Interface:
+
+ $obj->terminate_instance(instance_id => "vmname or vmid");
+
+=cut
 
 sub terminate_instance {
    my ($self, %data) = @_;
    $self->_one->get_vm($data{instance_id})->shutdown;
 }
 
+=item start_instance(%data)
+
+Start a stopped instance.
+
+ cloud_instance start => "vmname";
+
+Or, if you want to use the OO Interface:
+
+ $obj->start_instance(name => "vmname or vmid");
+
+=cut
+
 sub start_instance {
    my ($self, %data) = @_;
    $self->_one->get_vm($data{instance_id})->resume;
 }
 
+=item stop_instance(%data)
+
+Stop a running instance.
+
+ cloud_instance stop => "vmname";
+
+Or, if you want to use the OO Interface:
+
+ $obj->stop_instance(name => "vmname or vmid");
+
+=cut
+
 sub stop_instance {
    my ($self, %data) = @_;
    $self->_one->get_vm($data{instance_id})->stop;
 }
+
+=item list_instances()
+
+List your instances. Returns an array of hashes.
+
+ print Dumper cloud_instance_list;
+
+Or, if you want to use the OO Interface:
+
+ my @instances = $obj->list_instances();
+
+=cut
 
 sub list_instances {
    my ($self) = @_;
@@ -217,6 +303,18 @@ sub list_instances {
    return @ret;
 }
 
+=item list_running_instances()
+
+List your running instances. 
+
+ group opennebula_vms => get_cloud_instances_as_group();
+
+Or, if you want to use the OO Interface:
+
+ my @instances = $obj->list_running_instances();
+
+=cut
+
 sub list_running_instances { 
    my ($self) = @_;
    return grep { $_->{"state"} eq "running" } $self->list_instances();
@@ -228,3 +326,4 @@ sub _one {
 }
 
 1;
+

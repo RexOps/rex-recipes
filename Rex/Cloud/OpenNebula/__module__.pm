@@ -102,6 +102,16 @@ sub _rpc {
 
 =pod
 
+=head1 NAME
+
+Rex::Cloud::OpenNebula - Module to manage OpenNebula.
+
+=head1 DESCRIPTION
+
+This module offers functions to manage OpenNebula Cloud via its XMLRPC interface. There is also a Rex Cloud Layer to use this Module with the Rex Cloud functions.
+
+=head1 SYNOPSIS
+
  include qw/Rex::Cloud::OpenNebula/;                                                                               
  
  set one => url      => "http://172.16.120.131:2633/RPC2",
@@ -155,4 +165,5 @@ sub _rpc {
  
  };
  
- 
+=cut
+
