@@ -15,7 +15,7 @@ This module is a layer between the Rex::Cloud::OpenNebula Module and the Rex::Cl
 =head1 SYNOPSIS
 
  use Rex::Cloud::OpenNebula::CloudLayer;
-
+  
  use Rex::Commands::Cloud;
  use Rex::Cloud::OpenNebula;
  use Data::Dumper;
