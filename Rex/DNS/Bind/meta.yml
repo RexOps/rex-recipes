@@ -1,0 +1,6 @@
+Name: Rex::DNS::Bind
+Description: With this module it is possible to add and remove DNS entries.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+   - Net::DNS
