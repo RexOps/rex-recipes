@@ -1,3 +1,9 @@
+#
+# AUTHOR: mike tonks <miket@cpan.org>
+# REQUIRES: Database::MySQL::Admin
+# LICENSE: GPLv3
+#
+# Manage MySQL Replication for Master and Slave servers.
 
 package Rex::Database::MySQL::Admin::Replication;
 
@@ -482,7 +488,7 @@ task test_replication_master => sub {
 
 	die "Need a key - giving up" unless $key;
 
-	my $check1 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW DATABASES LIKE 'test';" });
+	my $check1 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW DATABASES LIKE 'test';", quiet => 1 });
 
 	if ($check1) {
 		Rex::Logger::info("Database 'test' exists on master");
@@ -490,7 +496,7 @@ task test_replication_master => sub {
 	else {
 		Rex::Database::MySQL::Admin::execute({ sql => "CREATE DATABASE test;" });
 
-		my $check2 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW DATABASES LIKE 'test';" });
+		my $check2 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW DATABASES LIKE 'test';", quiet => 1 });
 
 		if ($check2) {
 			Rex::Logger::info("Created database 'test' on master");
@@ -501,7 +507,7 @@ task test_replication_master => sub {
 		}
 	}
 
-	my $check3 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW TABLES FROM test LIKE 'replication_test';" });
+	my $check3 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW TABLES FROM test LIKE 'replication_test';", quiet => 1 });
 
 	if ($check3) {
 		Rex::Logger::info("Table 'replication_test' exists on master");
@@ -509,7 +515,7 @@ task test_replication_master => sub {
 	else {
 		Rex::Database::MySQL::Admin::execute({ sql => "CREATE TABLE test.replication_test (id INT AUTO_INCREMENT PRIMARY KEY, data varchar(20), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP());" });
 
-		my $check4 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW TABLES FROM test LIKE 'replication_test';" });
+		my $check4 = Rex::Database::MySQL::Admin::execute({ sql => "SHOW TABLES FROM test LIKE 'replication_test';", quiet => 1 });
 
 		if ($check4) {
 			Rex::Logger::info("Created table 'replication_test' on master");
@@ -522,7 +528,7 @@ task test_replication_master => sub {
 
 	Rex::Database::MySQL::Admin::execute({ sql => "INSERT INTO test.replication_test (data) values ('$key');" });
 
-	my $result = Rex::Database::MySQL::Admin::execute({ sql => "select id from test.replication_test where data = '$key' \\G" });
+	my $result = Rex::Database::MySQL::Admin::execute({ sql => "select id from test.replication_test where data = '$key' \\G", quiet => 1 });
 
 	if ($result =~ /id: (\d+)/m) {
 
@@ -543,7 +549,7 @@ task test_replication_slave => sub {
 
 	die "Need a key - giving up" unless $key;
 
-	my $result = Rex::Database::MySQL::Admin::execute({ sql => "select id from test.replication_test where data = '$key' \\G" });
+	my $result = Rex::Database::MySQL::Admin::execute({ sql => "select id from test.replication_test where data = '$key' \\G", quiet => 1 });
 
 	if ($result =~ /id: (\d+)/m) {
 
@@ -581,16 +587,11 @@ sub _randomPassword {
 
 =head1 NAME
 
-Rex::Database::MySQL::Admin::Replication - Manage your MySQL Replication Master and Slave servers
+Rex::Database::MySQL::Admin::Replication - Manage MySQL Replication Master and Slave servers
 
 =head1 USAGE
 
 set mysql => defaults_file => '/etc/mysql/debian.cnf';
-
-# put your server in this group
-
-set group mysql_master => "db-test-master";
-set group mysql_slaves => "db-test-slave", "db-test-slave2";
 
 # we need additional info about the master and slaves, so configure those here
 set mysql_replication => master => {
@@ -618,39 +619,57 @@ set mysql_replication => slaves => [
 
 sudo -on;
 
-task "mysql_read_only", group => "mysql_master", sub {
 
-	Rex::Database::MySQL::Admin::Replication::set_read_only();
-};
+=head1 TASKS
 
-task "mysql_read_write", group => "mysql_master", sub {
+=over 4
 
-	Rex::Database::MySQL::Admin::Replication::set_read_write();
-};
+=item set_read_only
 
-task "mysql_promote_master", group => "mysql_master", sub {
+This task will set the server to read_only mode.
 
-	Rex::Database::MySQL::Admin::Replication::promote_master();
-};
+=item set_read_write
 
-task "mysql_demote_master", group => "mysql_master", sub {
+This task will remove the read_only setting.
 
-	Rex::Database::MySQL::Admin::Replication::demote_master();
-};
+=item promote_master
 
-task "mysql_stop_slave", group => "mysql_slaves", sub {
+This task will promote a mysql server to be a replication master.
 
-	Rex::Database::MySQL::Admin::Replication::stop_slave();
-};
+=item demote_master
 
-task "mysql_init_slaves", sub {
+This task will demote a mysql server from being a replication master.
 
-	Rex::Database::MySQL::Admin::Replication::init_slaves();
-};
+=item get_master_status
 
-task "mysql_test_replication", sub {
+This task will return the master status.
 
-	Rex::Database::MySQL::Admin::Replication::test_replication();
-};
+=item get_slave_status
+
+This task will return the slave status.
+
+=item init_slaves
+
+This task will initialise all slaves from the current master binlog position.  It grants necessary permissions, points each slave at the master, and starts replciation.
+
+=item init_slave
+
+This task initialises a single slave instance.
+
+=item start_slave
+
+Start replication on a single slave instance.
+
+=item stop_slave
+
+Stop replication on a single slave instance.
+
+=item test_replication
+
+Check all slaves are replicating corretly by inserting a row on the master and checking it propogates to all slaves.
+
+=back
+
+=cut
 
 
