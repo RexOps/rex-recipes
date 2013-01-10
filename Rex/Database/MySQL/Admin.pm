@@ -54,7 +54,7 @@ task execute => sub {
 
    say $result unless $param->{quiet};
 
-#	unlink($tmp_file);
+   unlink($tmp_file);
 
    if($? != 0) {
       die("Error executing $sql");
