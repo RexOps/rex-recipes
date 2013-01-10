@@ -1,11 +1,11 @@
 #
 # (c) Jan Gehring <jan.gehring@gmail.com>
-# 
+#
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
-   
+
 package Rex::Database::MySQL::Admin;
-   
+
 use strict;
 use warnings;
 
@@ -36,20 +36,73 @@ task execute => sub {
    file $tmp_file,
       content => $sql;
 
-   my $user     = $MYSQL_CONF{user};
-   my $password = $MYSQL_CONF{password} || "";
+   my $user          = $MYSQL_CONF{user};
+   my $password      = $MYSQL_CONF{password} || "";
+   my $defaults_file = $MYSQL_CONF{defaults_file} || "";
 
-   unless($password) {
-      say run "mysql -u$user < $tmp_file";
+   my $result;
+
+   if ($defaults_file) {
+      $result = run "mysql --defaults-file=$defaults_file < $tmp_file";
+   }
+   elsif ($password) {
+      $result = run "mysql -u$user -p$password < $tmp_file";
    }
    else {
-      say run "mysql -u$user -p$password < $tmp_file";
+      $result = run "mysql -u$user < $tmp_file";
    }
+
+   say $result unless $param->{quiet};
 
    unlink($tmp_file);
 
    if($? != 0) {
       die("Error executing $sql");
+   }
+
+   return $result;
+};
+
+task mysqladmin => sub {
+
+   my $param = shift;
+   die("You have to specify the mysqladmin command to execute.") unless $param->{command};
+
+   my $user          = $MYSQL_CONF{user};
+   my $password      = $MYSQL_CONF{password} || "";
+   my $defaults_file = $MYSQL_CONF{defaults_file} || "";
+
+   my $result;
+
+   if ($defaults_file) {
+      $result = run "mysqladmin --defaults-file=$defaults_file $param->{command}";
+   }
+   elsif ($password) {
+      $result = run "mysqladmin -u$user -p$password $param->{command}";
+   }
+   else {
+      $result = run "mysqladmin -u$user $param->{command}";
+   }
+
+   return $result;
+};
+
+sub get_variable {
+
+   my $var = shift;
+
+   return undef unless $var;
+
+   my $variables = mysqladmin( { command => 'variables' });
+
+   return undef unless $variables; # error
+
+   if ($variables =~ /^\| $var\s+\| (\w+)\s+\|/m) {
+
+      return $1;
+   }
+   else {
+      return '';
    }
 };
 
@@ -67,7 +120,17 @@ Rex::Database::MySQL::Admin - Manage your MySQL Server
 
 =head1 USAGE
 
- set mysql => user => 'root';
- set mysql => password => 'foobar';
-   
+set mysql => user => 'root';
+set mysql => password => 'foobar';
+
+or
+
+set mysql => defaults_file => '/etc/mysql/debian.cnf';
+
+task mysql_status, sub {
+
+   my $status = Rex::Database::MySQL::Admin::mysqladmin({ command => 'status' });
+
+   say "STATUS: $status";
+};
 
