@@ -486,7 +486,7 @@ Rex::Webserver::nginx - Module to manage nginx webserver
 
 Put it in your I<Rexfile>
 
- require nginx;
+ require Rex::Webserver::nginx;
 
 And call it:
 
@@ -498,7 +498,7 @@ Or, to use it as a library
     nginx::task();
  };
 
- require nginx;
+ require Rex::Webserver::nginx;
 
 =head2 TASKS
 
