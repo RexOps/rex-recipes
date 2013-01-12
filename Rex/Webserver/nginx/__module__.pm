@@ -4,7 +4,7 @@ use Rex -base;
 
 
 ####################################################
-# private default variables
+# CONFIGURATION
 my $template = "templates/vhost.tpl";
 
 my $sites_available = "/etc/nginx/sites-available/";
@@ -13,6 +13,30 @@ my $sites_enabled = "/etc/nginx/sites-enabled/";
 my $root = "/var/www/";
 my $ip = "";
 my $port = 80;
+
+
+####################################################
+# INSTALL
+desc "installs the nginx webserver";
+task "install" => make {
+	update_package_db;
+	if ( install package => "nginx" ) {
+		say "nginx installed!";
+	} else {
+		say "nginx could not be installed!";
+	}
+};
+
+####################################################
+# UNINSTALL
+desc "uninstalls the nginx webserver";
+task "uninstall" => make {
+	if ( remove package => "nginx" ) {
+		say "nginx uninstalled!";
+	} else {
+		say "nginx could not be uninstalled!";
+	}
+};
 
 
 ####################################################
@@ -506,6 +530,10 @@ This task enables a virtual host.
 
 This task lists all enabled virtual hosts.
 
+=item install
+
+This task installs the nginx webserver.
+
 =item reload
 
 This task reloads the nginx configuration.
@@ -525,3 +553,7 @@ This task checks the nginx service status.
 =item stop
 
 This task stops the nginx service.
+
+=item uninstall
+
+This task uninstalls the nginx webserver.
