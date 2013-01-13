@@ -1,18 +1,18 @@
-package nginx;
+package Rex::Webserver::nginx;
 
 use Rex -base;
 
 
 ####################################################
 # CONFIGURATION
-my $template = "templates/vhost.tpl";
+our $template = "templates/vhost.tpl";
 
-my $sites_available = "/etc/nginx/sites-available/";
-my $sites_enabled = "/etc/nginx/sites-enabled/";
+our $sites_available = "/etc/nginx/sites-available/";
+our $sites_enabled = "/etc/nginx/sites-enabled/";
 
-my $root = "/var/www/";
-my $ip = "";
-my $port = 80;
+our $root = "/var/www/";
+our $ip = "";
+our $port = 80;
 
 
 ####################################################
