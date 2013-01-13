@@ -409,7 +409,7 @@ after "create" => make {
 	# check if main task ended successfully
 	if(! $failed) {
 		# check if sites shall be enabled afterwards
-		if ( is_defined("enable", $param) && $param->{enable} eq "true" ) {
+		if ( is_defined("enable", $param) ) {
 		 	run_task "nginx:enable", on => $server;
 		}
 	}
