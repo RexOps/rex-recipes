@@ -6,63 +6,65 @@ use strict;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
-	show_config
-	_load_config
-	_load_master_config
-	_load_slave_config
-	_save_config
+   show_config
+   _load_config
+   _load_master_config
+   _load_slave_config
+   _save_config
 );
 
 use Rex -base;
 
 use Data::Dumper;
 
-
 task show_config => sub {
 
-	my $config = _load_config();
+   my $config = _load_config();
 
-	say "CONFIG: " . Dumper($config);
+   say "CONFIG: " . Dumper($config);
 };
 
 sub _load_config {
 
-	my $params = { @_ };
+   my $params = { @_ };
 
-	my $config_file = $Rex::Database::MySQL::Admin::Replication::MYSQL_REPLICATION_CONF{config_file} || 'replication.cnf';;
+   my $config_file = $Rex::Database::MySQL::Replication::MYSQL_REPLICATION_CONF{config_file} || 'replication.cnf';;
 
-	my $data;
+   unless (-e $config_file) {
+       Rex::Logger::info("Config file not found: $config_file", 'warn');
 
-	if (-e $config_file) {
+      return { master => undef, slaves => {} };
+   }
 
-		Rex::Logger::info("Loading config file: $config_file");
+   my $data;
 
-		$data = YAML::Tiny->read($config_file);
+   Rex::Logger::info("Loading config file: $config_file");
 
-		$data = $data->[0] if $data;
-	}
+   $data = YAML::Tiny->read($config_file);
 
-	$data->{master} = {} unless $data->{master};
-	$data->{slaves} = {} unless $data->{master};
+   $data = $data->[0] if $data;
 
-	#say "DATA: " . Dumper($data);
+   $data->{master} = {} unless $data->{master};
+   $data->{slaves} = {} unless $data->{master};
 
-	return $data;
+   #say "DATA: " . Dumper($data);
+
+   return $data;
 }
 
 sub _save_config {
 
-	my $data = shift;
+   my $data = shift;
 
-	my $config_file = $Rex::Database::MySQL::Admin::Replication::MYSQL_REPLICATION_CONF{config_file} || 'replication.cnf';;
+   my $config_file = $Rex::Database::MySQL::Replication::MYSQL_REPLICATION_CONF{config_file} || 'replication.cnf';;
 
-	my $config = YAML::Tiny->new;
+   my $config = YAML::Tiny->new;
 
-	$config->[0] = $data;
+   $config->[0] = $data;
 
-	$config->write($config_file);
+   $config->write($config_file);
 
-	Rex::Logger::info("Wrote config file: $config_file");
+   Rex::Logger::info("Wrote config file: $config_file");
 }
 
 1;
