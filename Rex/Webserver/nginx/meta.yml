@@ -1,4 +1,4 @@
-Name: nginx
+Name: Rex::Webserver::nginx
 Description: A module to manage your nginx webserver
 Author: Michel Kaeser
 License: Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
