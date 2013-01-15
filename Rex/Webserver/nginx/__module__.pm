@@ -20,22 +20,24 @@ our $port = 80;
 desc "installs the nginx webserver";
 task "install" => make {
 	update_package_db;
-	if ( install package => "nginx" ) {
+	eval {
+		install package => "nginx";
 		say "nginx installed!";
-	} else {
+	} or do {
 		say "nginx could not be installed!";
-	}
+	};
 };
 
 ####################################################
 # UNINSTALL
 desc "uninstalls the nginx webserver";
 task "uninstall" => make {
-	if ( remove package => "nginx" ) {
+	eval {
+		remove package => "nginx";
 		say "nginx uninstalled!";
-	} else {
+	} or do {
 		say "nginx could not be uninstalled!";
-	}
+	};
 };
 
 
@@ -410,7 +412,7 @@ after "create" => make {
 	if(! $failed) {
 		# check if sites shall be enabled afterwards
 		if ( is_defined("enable", $param) ) {
-		 	run_task "nginx:enable", on => $server;
+		 	run_task "Webserver:nginx:enable", on => $server;
 		}
 	}
 };
@@ -421,7 +423,7 @@ before "delete" => make {
 	my ($server, $failed) = @_;
 	my $param = { Rex::Args->get };
 
-	run_task "nginx:disable", on => $server;
+	run_task "Webserver:nginx:disable", on => $server;
 };
 
 ####################################################
@@ -432,7 +434,7 @@ after "enable" => make {
 
 	# check if main task ended successfully
 	if(! $failed) {
-		 run_task "nginx:reload", on => $server;
+		 run_task "Webserver:nginx:reload", on => $server;
 	}
 };
 
@@ -444,7 +446,7 @@ after "disable" => make {
 
 	# check if main task ended successfully
 	if(! $failed) {
-		 run_task "nginx:reload", on => $server;
+		 run_task "Webserver:nginx:reload", on => $server;
 	}
 };
 
@@ -490,12 +492,12 @@ Put it in your I<Rexfile>
 
 And call it:
 
- rex -H $host nginx:task
+ rex -H $host Webserver:nginx:task
 
 Or, to use it as a library
 
  task "yourtask", sub {
-    nginx::task();
+    Rex::Webserver::nginx::task();
  };
 
  require Rex::Webserver::nginx;
