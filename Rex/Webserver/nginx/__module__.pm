@@ -484,7 +484,7 @@ sub abort {
 
 Rex::Webserver::nginx - Module to manage nginx webserver
 
-=head2 USAGE
+=head1 USAGE
 
 Put it in your I<Rexfile>
 
@@ -502,7 +502,9 @@ Or, to use it as a library
 
  require Rex::Webserver::nginx;
 
-=head2 TASKS
+=head1 TASKS
+
+=over 4
 
 =item available
 
@@ -559,3 +561,7 @@ This task stops the nginx service.
 =item uninstall
 
 This task uninstalls the nginx webserver.
+
+=back
+
+=cut
