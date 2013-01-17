@@ -47,9 +47,9 @@ Rex::Database::MySQL::Admin::Schema - Managa a Schema
 =head1 USAGE
 
  task "taskname", sub {
-    Rex::Database::MySQL::Admin::Schema::create(
+    Rex::Database::MySQL::Admin::Schema::create({
        name => "foo",
-    );
+    });
  };
 
 =head1 MODULE FUNCTIONS
@@ -60,17 +60,17 @@ Rex::Database::MySQL::Admin::Schema - Managa a Schema
 
 Create a new Database Schema.
 
- Rex::Database::MySQL::Admin::Schema::create(
+ Rex::Database::MySQL::Admin::Schema::create({
     name => "foobar",
- );
+ });
 
 =item drop({name => $schema_name})
 
 Drop a Database Schema.
 
- Rex::Database::MySQL::Admin::Schema::drop(
+ Rex::Database::MySQL::Admin::Schema::drop({
     name => "foobar",
- );
+ });
 
 =back
 

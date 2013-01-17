@@ -50,9 +50,9 @@ Put it in your I<Rexfile>
  include qw/Rex::System::Debian::Packages::Helper/;
    
  task prepare => sub {
-    Rex::System::Debian::Packages::Helper::sync_selections(
+    Rex::System::Debian::Packages::Helper::sync_selections({
       file => "pkg-export.list",
-    );
+    });
  };
 
 =cut

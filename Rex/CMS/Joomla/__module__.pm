@@ -194,8 +194,8 @@ Put it in your I<Rexfile>
   
  task joomla => sub {
     Rex::CMS::Joomla::prepare();
-    Rex::CMS::Joomla::config(
+    Rex::CMS::Joomla::config({
        sitename => "rex",
-    );
+    });
  };
 

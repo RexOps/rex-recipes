@@ -140,10 +140,10 @@ This task will install apache httpd.
 This task will create a vhost.
 
  task "yourtask", sub {
-    Rex::Webserver::Apache::vhost(
+    Rex::Webserver::Apache::vhost({
       name => "foo",
       conf => template("files/foo.conf"),
-    );
+    });
  };
 
 =item start

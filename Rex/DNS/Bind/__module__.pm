@@ -189,17 +189,17 @@ Rex::DNS::Bind - Manage BIND from Rex.
  };
   
  task sometask => sub {
-    Rex::DNS::Bind::add_record(
+    Rex::DNS::Bind::add_record({
       domain => "rexify.org",
       host   => "foobar01",
       data   => "127.0.0.4",
-    );
+    });
         
-    Rex::DNS::Bind::delete_record(
+    Rex::DNS::Bind::delete_record({
       domain => "rexify.org",
       host   => "foobar01",
       type   => "A",
-    );
+    });
         
     my @entries = Rex::DNS::Bind::list_entries(domain => "rexify.org");
     print Dumper(\@entries);
@@ -242,7 +242,7 @@ To use this module you have to setup your BIND server to accept update requests 
 
 =over 4
 
-=item add_record(%data)
+=item add_record($data)
 
 With this task you can add new entries to your DNS server. You have to define the following options:
 
@@ -266,15 +266,15 @@ The type of DNS record you want to add. Defaults to "A".
 
 =back
 
- Rex::DNS::Bind::add_record(
+ Rex::DNS::Bind::add_record({
     domain => "foo.bar",
     host   => "myhost",
     data   => "127.0.3.1",
     type   => "A",
- );
+ });
 
 
-=item delete_record(%data)
+=item delete_record($data)
 
 With this task you can remove entries from you DNS server. You have to define the following options:
 
@@ -294,17 +294,17 @@ The type which you want to remove. Defaults to "A".
 
 =back
 
- Rex::DNS::Bind::delete_record(
+ Rex::DNS::Bind::delete_record({
     domain => "foo.bar",
     host   => "myhost",
     type   => "A",
- );
+ });
 
-=item list_entries(%data)
+=item list_entries($data)
 
 Use this task to list all entries of a Domain. You have to define the domain.
 
- my @entries = Rex::DNS::Bind::list_entries(domain => "foo.bar");
+ my @entries = Rex::DNS::Bind::list_entries({domain => "foo.bar"});
 
 =back
 
