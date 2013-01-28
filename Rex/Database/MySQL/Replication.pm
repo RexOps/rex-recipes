@@ -20,7 +20,7 @@ use Data::Dumper;
 # YAML is required to read and write a config file, to maintain the status of master and slave servers
 use YAML::Tiny;
 
-our %MYSQL_REPLICATION_CONF = ();
+my %MYSQL_REPLICATION_CONF = ();
 
 #
 Rex::Config->register_set_handler("mysql_replication" => sub {
@@ -51,7 +51,7 @@ task change_master => sub {
 
    # The current master should be is online, make it read only
    # TODO: handle scenario where old master is dead
-   # For now, if master is dead / offline, use init_master and init_slave instead (delete your replication.cnf first)
+   # For now, if master is dead / offline, use init_master and init_slave instead (delete your replication.cfg first)
    run_task('Database:MySQL:Replication:set_read_only', on => $new_master_host);
 
    my $old_master_host = $master->{host};
@@ -62,7 +62,7 @@ task change_master => sub {
    # make sure all slaves are up to date
    foreach my $slave_host (sort keys %$slaves) {
 
-      my $slave_status = run_task('Database:MySQL:Replication:get_slave_status', on => $slave_host);
+      my $slave_status = 	run_task('Database:MySQL:Replication:get_slave_status', on => $slave_host);
 
       #say "STATUS: " . Dumper($slave_status);
 
@@ -118,6 +118,8 @@ task init_master => sub {
 
    my $params = shift;
 
+   needs Rex::Database::MySQL "setup";
+
    my $master_host = connection->server()->{name};
 
    die 'Please specify target host' if $master_host eq '<local>'; # for now, no real reason why localhost can't be a master
@@ -128,6 +130,7 @@ task init_master => sub {
    my $config = _load_config();
 
    my $master = $config->{master}; # previously configured master
+   $master->{host} //= ""; # if undef use empty string
 
    if ($master && $master->{host} ne $master_host) {
 
@@ -178,6 +181,18 @@ log_bin                 = $log_bin
 expire_logs_days        = 10
 max_binlog_size         = 100M
 __EOF__
+
+   my $networking_config = <<__EOF__;
+[mysqld]
+bind-address = $master->{ip_addr}
+__EOF__
+
+   my $networking_config_file = "/etc/mysql/conf.d/networking.cnf";
+
+   file $networking_config_file,
+      owner => "root",
+      mode => 644,
+      content => $networking_config;
 
    # restart mysql
    Rex::Logger::info("Restarting MySQL Server");
@@ -246,6 +261,8 @@ task demote_master => sub {
 
 task init_slaves => sub {
 
+   needs Rex::Database::MySQL "setup";
+
    my $config = _load_config();
 
    my $master = $config->{master};
@@ -282,6 +299,8 @@ task init_slaves => sub {
 task init_slave => sub {
 
    my $params = shift || {};
+
+   needs Rex::Database::MySQL "setup";
 
    # these are the accepted params
    foreach my $param(qw/server_id master_user master_pass test/) {
@@ -556,7 +575,7 @@ task test_replication => sub {
       my $slave = $slaves->{$slave_host};
 
       Rex::Logger::info("Testing Slave: $slave->{host}");
-      my $result = Rex::Commands::run_task('Database:MySQL:Replication:test_replication_slave', on => $slave->{host}, params => { key => $key });
+      my $result = run_task('Database:MySQL:Replication:test_replication_slave', on => $slave->{host}, params => { key => $key });
 
       $errors++ unless $result;
    }
@@ -815,8 +834,17 @@ task register_slave => sub {
 
    my $existing = 0;
 
-   if (exists $config->{slaves}->{$slave_host}) {
+   foreach my $existing_slave (@{$config->{slaves}}) {
 
+      if ($existing_slave->{host} eq $slave_host) {
+
+         $slave = $existing_slave;
+         $existing = 1;
+         last;
+      }
+   }
+
+   if ($existing) {
       Rex::Logger::info("Adding Slave $slave_host to config file");
    }
    else {
@@ -829,14 +857,7 @@ task register_slave => sub {
       $slave->{ip_addr}  = _ip_addr($slave_host);
    };
 
-   if ($slave->{server_id} = Rex::Database::MySQL::Admin::get_variable('server_id')) {
-
-      Rex::Logger::info("Got server_id: $slave->{server_id}");
-   }
-   else {
-
-      die "Failed to get server_id - not a slave";
-   }
+   $slave->{server_id} = Rex::Database::MySQL::Admin::get_variable('server_id');
 
    $config->{slaves}->{$slave_host} = $slave;
 
@@ -872,27 +893,17 @@ task unregister_slave => sub {
    _save_config($config);
 };
 
-task config_show => sub {
-
-   # Open the config
-   my $config = _load_config();
-
-   Rex::Logger::info("CONFIG: " . Dumper($config));
-};
-
 sub _ip_addr {
 
    my $host = shift;
 
-   my $result = run("resolveip $host");
+   my ($result) = map { $_=$1 if m/has address (\d+\.\d+\.\d+\.\d+)/ } grep { /has address/ } run("host $host");
 
-   if ($result =~ /^IP address of $host is (\d+\.\d+\.\d+\.\d+)/) {
+   if($result) {
+      return $result;
+   }
 
-      return $1;
-   }
-   else {
-      return undef;
-   }
+   return undef;
 }
 
 sub _randomPassword {
@@ -925,7 +936,7 @@ Rex::Database::MySQL::Admin::Replication - Manage MySQL Replication Master and S
 
 set mysql => defaults_file => '/etc/mysql/debian.cnf';
 
-set mysql_replication => config_file => 'mysql_replication.cnf'; # only required if you want to change the default, which is 'replication.cnf'
+set mysql_replication => config_file => 'mysql_replication.cfg'; # only required if you want to change the default, which is 'replication.cfg'
 
 sudo -on;
 
