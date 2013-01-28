@@ -181,11 +181,17 @@ expire_logs_days        = 10
 max_binlog_size         = 100M
 __EOF__
 
-   # restart mysql
-   Rex::Logger::info("Restarting MySQL Server");
-   service mysql => "restart";
+   my $networking_config = <<__EOF__;
+[mysqld]
+bind-address = $master->{ip_addr}
+__EOF__
 
+   my $networking_config_file = "/etc/mysql/conf.d/networking.cnf";
 
+   file $networking_config_file,
+      owner => "root",
+      mode => 644,
+      content => $networking_config;
 
    # restart mysql
    Rex::Logger::info("Restarting MySQL Server");
