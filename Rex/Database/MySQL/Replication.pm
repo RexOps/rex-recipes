@@ -118,6 +118,8 @@ task init_master => sub {
 
    my $params = shift;
 
+   needs Rex::Database::MySQL "setup";
+
    my $master_host = connection->server()->{name};
 
    die 'Please specify target host' if $master_host eq '<local>'; # for now, no real reason why localhost can't be a master
@@ -178,6 +180,12 @@ log_bin                 = $log_bin
 expire_logs_days        = 10
 max_binlog_size         = 100M
 __EOF__
+
+   # restart mysql
+   Rex::Logger::info("Restarting MySQL Server");
+   service mysql => "restart";
+
+
 
    # restart mysql
    Rex::Logger::info("Restarting MySQL Server");
@@ -246,6 +254,8 @@ task demote_master => sub {
 
 task init_slaves => sub {
 
+   needs Rex::Database::MySQL "setup";
+
    my $config = _load_config();
 
    my $master = $config->{master};
@@ -282,6 +292,8 @@ task init_slaves => sub {
 task init_slave => sub {
 
    my $params = shift || {};
+
+   needs Rex::Database::MySQL "setup";
 
    # these are the accepted params
    foreach my $param(qw/server_id master_user master_pass test/) {
@@ -878,15 +890,13 @@ sub _ip_addr {
 
    my $host = shift;
 
-   my $result = run("resolveip $host");
+   my ($result) = map { $_=$1 if m/has address (\d+\.\d+\.\d+\.\d+)/ } grep { /has address/ } run("host $host");
 
-   if ($result =~ /^IP address of $host is (\d+\.\d+\.\d+\.\d+)/) {
+   if($result) {
+      return $result;
+   }
 
-      return $1;
-   }
-   else {
-      return undef;
-   }
+   return undef;
 }
 
 sub _randomPassword {
