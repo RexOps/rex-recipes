@@ -26,8 +26,21 @@ use vars qw(@EXPORT);
 sub cpanm {
    my ($action, @values) = @_;
 
+   if($action eq "-install") {
+      $action = "install";
+   }
+
    if($action eq "install") {
-      _install(@values);
+      if(@values) {
+         _install(@values);
+      }
+      else {
+         run "curl -L http://cpanmin.us | perl - --self-upgrade";
+         if($? != 0) {
+            die("Installing cpanminus failed. Is curl installed?");
+         }
+         Rex::Logger::info("cpanminus installed.");
+      }
    }
 
    if($action eq "-installdeps") {
@@ -80,8 +93,9 @@ Put it in your I<Rexfile>
  use Rex::Lang::Perl::Cpanm;
    
  task "prepare", sub {
-    cpanm install => [ 'Test::More', 'Foo::Bar' ];
-    cpanm install => [ 'Test::More', 'Foo::Bar' ],
+    cpanm -install;   # install cpanminus
+    cpanm -install => [ 'Test::More', 'Foo::Bar' ];
+    cpanm -install => [ 'Test::More', 'Foo::Bar' ],
                to => "libs";
                   
     cpanm -installdeps => ".";

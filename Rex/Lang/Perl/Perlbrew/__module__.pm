@@ -39,19 +39,28 @@ Rex::Config->register_set_handler("perlbrew" => sub {
 sub perlbrew {
    my ($action, @values) = @_;
 
-   if($action eq "init" || $action eq "-init") {
+   if($action =~ m/^\-/) {
+      $action = substr($action, 1);
+   }
+
+   if($action eq "init") {
       _init();
    }
 
-   if($action eq "use" || $action eq "-use") {
+   if($action eq "use") {
       _use(@values);
    }
 
-   if($action eq "install" || $action eq "-install") {
-      _install(@values);
+   if($action eq "install") {
+      if(@values) {
+         _install(@values);
+      }
+      else {
+         _install("perlbrew");
+      }
    }
 
-   if($action eq "root" || $action eq "-root") {
+   if($action eq "root") {
       $perlbrew_root = $values[0];
    }
 
@@ -126,14 +135,15 @@ Put it in your I<Rexfile>
  set perlbrew => root => "/opt/myperl";
     
  task "prepare", sub {
-    
-    perlbrew install => qw/ 
-                        perlbrew
+
+    perlbrew -install;
+      
+    perlbrew -install => qw/ 
                         perl-5.16.0
                         cpanm
                         /;
                           
-    perlbrew use => "perl-5.16.0";
+    perlbrew -use => "perl-5.16.0";
        
     run "perl -v";
  };
