@@ -130,8 +130,9 @@ task init_master => sub {
    my $config = _load_config();
 
    my $master = $config->{master}; # previously configured master
+   $master->{host} //= ""; # if undef use empty string
 
-   if ($master && $master->{host} && $master->{host} ne $master_host) {
+   if ($master && $master->{host} ne $master_host) {
 
       Rex::Logger::info("Changing master host from: $master->{host} to $master_host");
       $master->{host} = $master_host;
