@@ -39,8 +39,8 @@ Or, to use it as a library
  use Misc::Example;
     
  task "prepare", sub {
-    Misc::Example::prepare(
+    Misc::Example::prepare({
        bar => "baz"
-    );
+    });
  };
 
