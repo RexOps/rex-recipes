@@ -2,7 +2,7 @@
 # AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com>
 # REQUIRES: Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3
-# DESC:     Installs Mahout.
+# DESC:     Installs Mahout
 #
 
 package Rex::Framework::Cloudera::Mahout;
