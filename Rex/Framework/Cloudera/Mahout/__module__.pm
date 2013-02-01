@@ -21,6 +21,9 @@ our %package_name = (
 # determine os-distribution
 my $os_distro = get_operating_system();
 
+#
+# TASK: setup
+#
 task "setup", sub {
 
    # defining package based on os-distribution
