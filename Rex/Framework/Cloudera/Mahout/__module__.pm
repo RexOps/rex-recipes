@@ -41,7 +41,7 @@ task "setup", sub {
 
 =head1 NAME
 
-Rex::Framework::Cloudera::Mahout - Installs Mahout
+Rex::Framework::Cloudera::Mahout
 
 =head1 DESCRIPTION
 
@@ -62,11 +62,12 @@ Put it in your I<Rexfile>
     Rex::Framework::Cloudera::Mahout::setup();
  };
 
-And call it directly:
+And call it:
 
  rex -H $host yourtask
 
-Or directly
+Or directly:
+
  rex -H $host Rex::Framework::Cloudera::Mahout::setup()
 
 =head1 TASKS
