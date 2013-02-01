@@ -41,7 +41,7 @@ task "setup", sub {
 
 =head1 NAME
 
-Rex::Framework::Cloudera::Mahout
+Rex::Framework::Cloudera::Mahout - Installs Mahout
 
 =head1 DESCRIPTION
 
