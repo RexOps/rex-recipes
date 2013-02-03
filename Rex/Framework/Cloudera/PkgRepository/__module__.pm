@@ -12,55 +12,55 @@ use warnings;
 
 use Rex -base;
  
-# determine os-distribution and os-version
-my $os_distro  = lc(get_operating_system());
-my $os_version = operating_system_version();
-
-# set distribution-codename and cloudera-distribution 
-# support flag for specific os-distribution
-my $codename;
-my %cdh_supported;
-
-if($os_distro eq "debian") {
-   if($os_version >= 500 && $os_version < 600) {
-      $codename      = "lenny";
-      %cdh_supported = ( cdh3 => "true", cdh4 => "false");
-   }
-   if($os_version >= 600 && $os_version < 700) {
-      $codename = "squeeze";
-      %cdh_supported = ( cdh3 => "true", cdh4 => "true");
-   }
-   else {
-      die("Your Debian-Release is not supported by Cloudera.");
-   }
-}
-elsif($os_distro eq "ubuntu") {
-   if($os_version >= 1004 && $os_version < 1010) {
-      $codename      = "lucid";
-      %cdh_supported = ( cdh3 => "true", cdh4 => "true");
-   }
-   elsif($os_version >= 1010 && $os_version < 1104) {
-      $codename = "maverick";
-      %cdh_supported = ( cdh3 => "true", cdh4 => "false");
-   }
-   elsif($os_version >= 1204 && $os_version < 1210) {
-      $codename = "precise";
-      %cdh_supported = ( cdh3 => "false", cdh4 => "true");
-   }
-   else {
-      die("Your Ubuntu-Release is not supported by Cloudera.");
-   }
-}
-else {
-   die("Your Linux-Distribution is not supported by Cloudera or by this Rex-Module.");
-}
-
 #
 # TASK: setup
 #
 task "setup", sub {
 
    my $param = shift;
+
+   # determine os-distribution and os-version
+   my $os_distro  = lc(get_operating_system());
+   my $os_version = operating_system_version();
+
+   # set distribution-codename and cloudera-distribution 
+   # support flag for specific os-distribution
+   my $codename;
+   my %cdh_supported;
+
+   if($os_distro eq "debian") {
+      if($os_version >= 500 && $os_version < 600) {
+         $codename      = "lenny";
+         %cdh_supported = ( cdh3 => "true", cdh4 => "false");
+      }
+      if($os_version >= 600 && $os_version < 700) {
+         $codename = "squeeze";
+         %cdh_supported = ( cdh3 => "true", cdh4 => "true");
+      }
+      else {
+         die("Your Debian-Release is not supported by Cloudera.");
+      }
+   }
+   elsif($os_distro eq "ubuntu") {
+      if($os_version >= 1004 && $os_version < 1010) {
+         $codename      = "lucid";
+         %cdh_supported = ( cdh3 => "true", cdh4 => "true");
+      }
+      elsif($os_version >= 1010 && $os_version < 1104) {
+         $codename = "maverick";
+         %cdh_supported = ( cdh3 => "true", cdh4 => "false");
+      }
+      elsif($os_version >= 1204 && $os_version < 1210) {
+         $codename = "precise";
+         %cdh_supported = ( cdh3 => "false", cdh4 => "true");
+      }
+      else {
+         die("Your Ubuntu-Release is not supported by Cloudera.");
+      }
+   }
+   else {
+      die("Your Linux-Distribution is not supported by Cloudera or by this Rex-Module.");
+   }
 
    # add CDH3 or CDH4 repository
    if($param->{"cdh_version"} == 3 && $cdh_supported{cdh3} eq "true") {

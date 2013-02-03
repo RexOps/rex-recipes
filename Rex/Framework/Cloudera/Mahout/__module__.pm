@@ -13,13 +13,10 @@ use warnings;
 use Rex -base;
 
 # define os-distribution specific package names
-our %package_name = (
+my %package_name = (
    Debian => "mahout",
    Ubuntu => "mahout",
 ); 
-
-# determine os-distribution
-my $os_distro = get_operating_system();
 
 #
 # TASK: setup
@@ -27,7 +24,7 @@ my $os_distro = get_operating_system();
 task "setup", sub {
 
    # defining package based on os-distribution
-   my $package = $package_name{$os_distro};
+   my $package = $package_name{get_operating_system()};
 
    # install package
    update_package_db;
@@ -65,10 +62,6 @@ Put it in your I<Rexfile>
 And call it:
 
  rex -H $host yourtask
-
-Or directly:
-
- rex -H $host Rex::Framework::Cloudera::Mahout::setup()
 
 =head1 TASKS
 
