@@ -1,0 +1,7 @@
+Name: Rex::Framework::Cloudera::Hadoop::JobTracker
+Description: Instantiated and configured a Job-Tracker node (MRv1)
+Author: Daniel Baeurer <daniel.baeurer@gmail.com>
+License: License: GPLv3
+Require:
+   - Rex::Lang::Java
+   - Rex::Framework::Cloudera::PkgRepository
