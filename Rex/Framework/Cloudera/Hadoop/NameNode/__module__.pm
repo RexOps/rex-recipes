@@ -155,7 +155,8 @@ This task will install the Hadoop NameNode-Service.
 
 =item namenode_role
 
-Define the primary or secondary role ofe the NameNode-Service.
+Define the primary or secondary role ofe the NameNode-Service. Valid parameters
+are "primary" (Primary NameNode) or "secondary" (Secondary NameNode).
 
 =back
 

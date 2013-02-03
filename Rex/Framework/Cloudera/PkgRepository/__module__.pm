@@ -63,7 +63,7 @@ task "setup", sub {
    }
 
    # add CDH3 repository
-   if($param->{"cdh_version"} == 3 && $cdh_supported{cdh3} eq "true") {
+   if($param->{"cdh_version"} eq "cdh3" && $cdh_supported{cdh3} eq "true") {
       repository
          add        => "cdh3",
          url        => "http://archive.cloudera.com/debian",
@@ -74,7 +74,7 @@ task "setup", sub {
    }
 
    # add CDH4 repository
-   if($param->{"cdh_version"} == 4 && $cdh_supported{cdh4} eq "true") {
+   if($param->{"cdh_version"} eq "cdh4" && $cdh_supported{cdh4} eq "true") {
       repository
          add        => "cdh4",
          url        => "http://archive.cloudera.com/cdh4/" . $os_distro . "/" . $codename . "/amd64/cdh",
@@ -132,7 +132,8 @@ This task will add Cloudera Repository.
 
 =item cdh_version
 
-Define Cloudera Distribution Version, aka CDH3 or CDH4.
+Define Cloudera Distribution Version. Valid parameters are
+"cdh3" (Cloudera Distribution 3) or "cdh4" (Cloudera Distribution 4).
 
 =back
 
