@@ -2,7 +2,7 @@
 # AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com>
 # REQUIRES: Rex::Lang::Java, Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3
-# DESC:     Instantiated and configured a Job-Tracker node (MRv1)
+# DESC:     Instantiated and configured a JobTracker node (MRv1)
 #
 
 package Rex::Framework::Cloudera::Hadoop::JobTracker;
@@ -75,7 +75,7 @@ task "setup", sub {
 
 =head1 NAME
 
-Rex::Framework::Cloudera::Hadoop::JobTracker - Instantiated and configured a Job-Tracker node (MRv1)
+Rex::Framework::Cloudera::Hadoop::JobTracker - Instantiated and configured a JobTracker node (MRv1)
 
 =head1 DESCRIPTION
 
@@ -83,7 +83,7 @@ The JobTracker is the service within Hadoop that farms out MapReduce tasks
 to specific nodes in the cluster, ideally the nodes that have the data, or
 at least are in the same rack.
 
-This Rex-Module instantiated and configured a Job-Tracker node (MRv1).
+This Rex-Module instantiated and configured a JobTracker node (MRv1).
 
 =head1 USAGE
 
