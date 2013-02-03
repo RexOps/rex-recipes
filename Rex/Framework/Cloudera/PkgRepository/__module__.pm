@@ -59,10 +59,10 @@ task "setup", sub {
       }
    }
    else {
-      die("Your Linux-Distribution is not supported by Cloudera or by this Rex-Module.");
+      die("Your Linux-Distribution is not supported by this Rex-Module.");
    }
 
-   # add CDH3 or CDH4 repository
+   # add CDH3 repository
    if($param->{"cdh_version"} == 3 && $cdh_supported{cdh3} eq "true") {
       repository
          add        => "cdh3",
@@ -72,7 +72,9 @@ task "setup", sub {
          key_url    => "http://archive.cloudera.com/debian/archive.key",
          source     => 1;
    }
-   elsif($param->{"cdh_version"} == 4 && $cdh_supported{cdh4} eq "true") {
+
+   # add CDH4 repository
+   if($param->{"cdh_version"} == 4 && $cdh_supported{cdh4} eq "true") {
       repository
          add        => "cdh4",
          url        => "http://archive.cloudera.com/cdh4/" . $os_distro . "/" . $codename . "/amd64/cdh",
@@ -81,9 +83,6 @@ task "setup", sub {
          arch       => "amd64",
          key_url    => "http://archive.cloudera.com/cdh4/" . $os_distro . "/" . $codename . "/amd64/cdh/archive.key",
          source     => 1;
-   }
-   else {
-      die("Your Linux-Distribution is not supported by Cloudera or by this Rex-Module.");
    }
 
    update_package_db;

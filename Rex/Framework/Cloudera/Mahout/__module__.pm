@@ -69,7 +69,7 @@ And call it:
 
 =item setup
 
-This task will install mahout server.
+This task will install mahout.
 
 =back
 
