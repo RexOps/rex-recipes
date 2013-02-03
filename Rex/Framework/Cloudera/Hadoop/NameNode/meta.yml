@@ -1,0 +1,7 @@
+Name: Rex::Framework::Cloudera::Hadoop::NameNode
+Description: Instantiated and configured a NameNode (primary and secondary)
+Author: Daniel Baeurer <daniel.baeurer@gmail.com>
+License: License: GPLv3
+Require:
+   - Rex::Lang::Java
+   - Rex::Framework::Cloudera::PkgRepository
