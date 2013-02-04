@@ -1,0 +1,5 @@
+Name: Rex::Lang::Java
+Description: Installs Java
+Author: Daniel Baeurer <daniel.baeurer@gmail.com>
+License: GPLv3
+Require:
