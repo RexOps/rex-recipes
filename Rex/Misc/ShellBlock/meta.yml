@@ -1,0 +1,4 @@
+Name: Rex::Misc::ShellBlock
+Description: A module to execute a given shell block
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
