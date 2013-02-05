@@ -16,8 +16,8 @@ use Rex -base;
 
 # define os-distribution specific package names
 my %package_name_pseudo_cluster_cdh3 = (
-   Debian => "",
-   Ubuntu => "",
+   Debian => "hadoop-0.20-conf-pseudo",
+   Ubuntu => "hadoop-0.20-conf-pseudo",
 );
 
 my %package_name_pseudo_cluster_mrv1_cdh4 = (

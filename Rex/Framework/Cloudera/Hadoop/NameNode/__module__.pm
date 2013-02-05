@@ -1,6 +1,7 @@
 #
 # AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com> 
-# REQUIRES: Rex::Lang::Java, Rex::Framework::Cloudera::PkgRepository
+# REQUIRES: Rex::Lang::Java
+#           Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3 
 # DESC:     Creates a Hadoop NameNode (primary and secondary)
 #  
@@ -64,6 +65,21 @@ task "setup", sub {
    # install package
    update_package_db;
    install package => &get_package($param);
+
+};
+
+#
+# TASK: format_hdfs
+#
+task "format_hdfs", sub {
+
+   # format the name-node if is not allready formatted
+   if(is_dir("/var/lib/hadoop-hdfs/cache/hdfs")) {
+      say "The Hadoop Filesystem is already formatted.";
+   }
+   else {
+      run "sudo -u hdfs hdfs namenode -format";
+   }
 
 };
 
@@ -231,6 +247,10 @@ are "primary" (Primary NameNode) or "secondary" (Secondary NameNode).
        namenode_role => "primary",
     });
  };
+
+=item format_hdfs
+
+This task will format the NameNode. Use it carefully!
 
 =item start
 

@@ -1,6 +1,7 @@
 #
 # AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com> 
-# REQUIRES: Rex::Lang::Java, Rex::Framework::Cloudera::PkgRepository
+# REQUIRES: Rex::Lang::Java
+#           Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3 
 # DESC:     Creates a Hadoop DataNode
 #  
