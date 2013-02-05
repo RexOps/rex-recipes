@@ -2,7 +2,7 @@
 # AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com> 
 # REQUIRES: Rex::Lang::Java, Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3 
-# DESC:     Instantiated and configured a NameNode (primary and secondary)
+# DESC:     Creates a Hadoop NameNode (primary and secondary)
 #  
 
 package Rex::Framework::Cloudera::Hadoop::NameNode;
@@ -61,48 +61,119 @@ task "setup", sub {
 
    my $param = shift;
 
+   # install package
+   update_package_db;
+   install package => &get_package($param);
+
+};
+
+#
+# TASK: start
+#
+task "start", sub {
+
+   # ensure that service start at boot and running
+   service &get_service => "ensure" => "started";
+
+};
+
+#
+# TASK: stop
+#
+task "stop", sub {
+
+   # stop service
+   service &get_service => "stop";
+
+};
+
+#
+# TASK: restart
+#
+task "restart", sub {
+
+   # restart service
+   service &get_service => "restart";
+
+};
+
+#
+# FUNCTION: get_package
+#
+sub get_package {
+
+   my $param = shift;
+
    # determine cloudera-distribution version and set
-   # os-specific package and service name
+   # specific package name addicted by name node role
    my %package_name;
-   my %service_name;
+   my $cdh_version = Rex::Framework::Cloudera::PkgRepository::get_cdh_version();
 
    if($param->{"namenode_role"} eq "primary") {
-      if(is_file("/etc/apt/sources.list.d/cdh3.list")) {
+      if($cdh_version eq "cdh3") {
          %package_name = %package_name_primary_namenode_cdh3;
-         %service_name = %service_name_primary_namenode_cdh3;
       }
-      elsif(is_file("/etc/apt/sources.list.d/cdh4.list")) {
+      elsif($cdh_version eq "cdh4") {
          %package_name = %package_name_primary_namenode_cdh4;
-         %service_name = %service_name_primary_namenode_cdh4;
-      }
-      else {
-         die("Ensure that you added the Cloudera-Repository.");
       }
    }
    elsif($param->{"namenode_role"} eq "secondary") {
-      if(is_file("/etc/apt/sources.list.d/cdh3.list")) {
+      if($cdh_version eq "cdh3") {
          %package_name = %package_name_secondary_namenode_cdh3;
-         %service_name = %service_name_secondary_namenode_cdh3;
       }
-      elsif(is_file("/etc/apt/sources.list.d/cdh4.list")) {
+      elsif($cdh_version eq "cdh4") {
          %package_name = %package_name_secondary_namenode_cdh4;
-         %service_name = %service_name_secondary_namenode_cdh4;
-      }
-      else {
-         die("Ensure that you added the Cloudera-Repository.");
       }
    }
+   else {
+      die("Valid parameters are primary (Primary NameNode) or secondary (Secondary NameNode).");
+   }
 
-   # defining package and service based on os-distribution
+   # defining package based on os-distribution and return it
    my $package = $package_name{get_operating_system()};
+
+   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+
+   return $package;
+
+};
+
+#
+# FUNCTION: get_service
+#
+sub get_service {
+
+   # determine cloudera-distribution version and set
+   # specific package name addicted by name-node role
+   my %service_name;
+   my $cdh_version = Rex::Framework::Cloudera::PkgRepository::get_cdh_version();
+
+   if(is_installed(&get_package({namenode_role => "primary"}))) {
+      if($cdh_version eq "cdh3") {
+         %service_name = %service_name_primary_namenode_cdh3;
+      }
+      elsif($cdh_version eq "cdh4") {
+         %service_name = %service_name_primary_namenode_cdh3;
+      }
+   }
+   elsif(is_installed(&get_package({namenode_role => "secondary"}))) {
+      if($cdh_version eq "cdh3") {
+         %service_name = %service_name_secondary_namenode_cdh3;
+      }
+      elsif($cdh_version eq "cdh4") {
+         %service_name = %service_name_secondary_namenode_cdh4;
+      }
+   }
+   else {
+      die("The Hadoop NameNode is not installed.");
+   }
+
+   # defining service based on os-distribution and return it
    my $service = $service_name{get_operating_system()};
 
-   # install package
-   update_package_db;
-   install package => $package;
+   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $service;
 
-   # ensure that service start at boot
-   service $service => "ensure" => "started";
+   return $service;
 
 };
 
@@ -112,20 +183,15 @@ task "setup", sub {
 
 =head1 NAME
 
-Rex::Framework::Cloudera::Hadoop::NameNode - Instantiated and configured a NameNode (primary and secondary)
+Rex::Framework::Cloudera::Hadoop::NameNode - Creates a Hadoop NameNode (primary and secondary)
 
 =head1 DESCRIPTION
 
 The NameNode is the centerpiece of an HDFS file system. It keeps the directory
 tree of all files in the file system, and tracks where across the cluster the
 file data is kept. It does not store the data of these files itself.
-The NameNode is a Single Point of Failure for the HDFS Cluster. HDFS is not
-currently a High Availability system. When the NameNode goes down, the file
-system goes offline. There is an optional SecondaryNameNode that can be hosted
-on a separate machine. It only creates checkpoints of the namespace by merging
-the edits file into the fsimage file and does not provide any real redundancy.
 
-This Rex-Module instantiated and configured a NameNode (primary and secondary).
+This Rex-Module creates a Hadoop NameNode (primary and secondary).
 
 =head1 USAGE
 
@@ -149,7 +215,7 @@ And call it:
 
 =item setup
 
-This task will install the Hadoop NameNode-Service.
+This task will install the Hadoop NameNode.
 
 =over 4
 
@@ -165,6 +231,18 @@ are "primary" (Primary NameNode) or "secondary" (Secondary NameNode).
        namenode_role => "primary",
     });
  };
+
+=item start
+
+This task will start the Hadoop NameNode service and ensure that the service start at boot.
+
+=item stop
+
+This task will stop the Hadoop NameNode service.
+
+=item restart
+
+This task will restart the Hadoop NameNode service.
 
 =back
 

@@ -1,5 +1,5 @@
 Name: Rex::Framework::Cloudera::Hadoop::TaskTracker
-Description: Instantiated and configured a TaskTracker node (MRv1 and MRv2)
+Description: Creates a Hadoop TaskTracker node (MRv1 and MRv2)
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:

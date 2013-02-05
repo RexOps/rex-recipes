@@ -1,8 +1,7 @@
 Name: Rex::Framework::Cloudera::Hadoop::HistoryServer
-Description: Instantiated and configured a MRv2 HistoryServer
+Description: Creates a Hadoop HistoryServer (MRv2)
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:
    - Rex::Lang::Java
    - Rex::Framework::Cloudera::PkgRepository
-

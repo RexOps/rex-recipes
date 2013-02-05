@@ -1,5 +1,5 @@
 Name: Rex::Framework::Cloudera::Hadoop::JobTracker
-Description: Instantiated and configured a JobTracker node (MRv1 and MRv2)
+Description: Creates a Hadoop JobTracker node (MRv1 and MRv2)
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:

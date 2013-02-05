@@ -89,6 +89,28 @@ task "setup", sub {
 
 };
 
+#
+# TASK: get_cdh_version
+#
+task "get_cdh_version", sub {
+
+   # determine cloudera-distribution version and return it
+   my $cdh_version;
+
+   if(is_file("/etc/apt/sources.list.d/cdh3.list")) {
+      $cdh_version = "cdh3";
+   }
+   elsif(is_file("/etc/apt/sources.list.d/cdh4.list")) {
+      $cdh_version = "cdh4";
+   }
+   else {
+      die("Ensure that you added the Cloudera-Repository.");
+   }
+
+   return $cdh_version;
+
+};
+
 1;
 
 =pod
@@ -141,6 +163,16 @@ Define Cloudera Distribution Version. Valid parameters are
     Rex::Framework::Cloudera::PkgRepository::setup({
        cdh_version => "4",
     });
+ };
+
+=item get_cdh_version
+
+Returns the installed Cloudera Distribution Version. Return values are
+"cdh3" (Cloudera Distribution 3) or "cdh4" (Cloudera Distribution 4).
+
+ task yourtask => sub {
+    my $cdh_version = Rex::Framework::Cloudera::PkgRepository::get_cdh_version();
+    say $cdh_version;
  };
 
 =back

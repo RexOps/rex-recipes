@@ -1,5 +1,5 @@
 Name: Rex::Framework::Cloudera::Hadoop::DataNode
-Description: Instantiated and configured a DataNode
+Description: Creates a Hadoop DataNode
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:

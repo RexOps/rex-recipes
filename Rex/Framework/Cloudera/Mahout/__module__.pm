@@ -26,6 +26,8 @@ task "setup", sub {
    # defining package based on os-distribution
    my $package = $package_name{get_operating_system()};
 
+   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+
    # install package
    update_package_db;
    install package => $package;
