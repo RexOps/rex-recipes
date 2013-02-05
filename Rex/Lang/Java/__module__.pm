@@ -32,6 +32,8 @@ task "setup", sub {
    # defining package based on os-distribution
    my $package = sprintf($package_name{get_operating_system()}, $param->{"jse_version"}, $param->{"jse_type"});
 
+   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+
    # install package
    update_package_db;
    install package => $package;
