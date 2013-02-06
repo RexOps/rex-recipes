@@ -917,25 +917,21 @@ Rex::Database::MySQL::Admin::Replication - Manage MySQL Replication Master and S
 
 =head1 USAGE
 
-set mysql => defaults_file => '/etc/mysql/debian.cnf';
-
-set mysql_replication => config_file => 'mysql_replication.cfg'; # only required if you want to change the default, which is 'replication.cfg'
-
-sudo -on;
-
-rex -H db-test-master init_master
-
-rex -H db-test-slave1 init_slave
-
-rex -H db-test-slave2 init_slave
-
-rex test_replication
+ set mysql => defaults_file => '/etc/mysql/debian.cnf';
+ set mysql_replication => config_file => 'mysql_replication.cfg'; # only required if you want to change the default, which is 'replication.cfg'
+ 
+ rex -H db-test-master Database:MySQL:Replication:init_master
+ 
+ rex -H db-test-slave1 Database:MySQL:Replication:init_slave
+ 
+ rex -H db-test-slave2 Database:MySQL:Replication:init_slave
+ 
+ rex Database:MySQL:Replication:test_replication
 
 (or to combine those last 3 lines in one command)
 
-rex -H 'db-test-slave db-test-slave2' init_slave test
+ rex -H 'db-test-slave db-test-slave2' Database:MySQL:Replication:init_slave test
 
-then
 
 =head1 TASKS
 
