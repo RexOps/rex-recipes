@@ -84,6 +84,74 @@ task "format_hdfs", sub {
 };
 
 #
+# TASK: initialize_hdfs
+#
+task "initialize_hdfs", sub {
+
+   my $param = shift;
+
+   # initialize temp and system directories in the hdfs
+   my $temp_dir;
+   my $system_dir;
+
+   # create the /tmp directory if it not exists
+   $temp_dir = run "sudo -u hdfs hadoop fs -test -d /tmp && echo \$?";
+
+   if (!($temp_dir =~ /^[+-]?\d+$/)) {
+      $temp_dir = 1;
+   }
+
+   if($temp_dir == 1) {
+      run "sudo -u hdfs hadoop fs -mkdir /tmp";
+      run "sudo -u hdfs hadoop fs -chmod -R 1777 /tmp";
+   }
+   elsif($temp_dir == 0) {
+      say "Temp-Directory allready created.";
+   }
+
+   # create the system directories if they not exists
+   if($param->{"mr_version"} eq "mrv1") {
+      $system_dir = run "sudo -u hdfs hadoop fs -test -d /var/lib/hadoop-hdfs/cache/mapred/mapred/staging && echo \$?";
+
+      if (!($system_dir =~ /^[+-]?\d+$/)) {
+         $system_dir = 1;
+      }
+
+      if($system_dir == 1) {
+         run "sudo -u hdfs hadoop fs -mkdir /var";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred/mapred";
+         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred/mapred/staging";
+         run "sudo -u hdfs hadoop fs -chmod 1777 /var/lib/hadoop-hdfs/cache/mapred/mapred/staging";
+         run "sudo -u hdfs hadoop fs -chown -R mapred /var/lib/hadoop-hdfs/cache/mapred";
+      }
+      elsif($system_dir == 0) {
+         say "System-Directories allready created.";
+      }
+   }
+   elsif($param->{"mr_version"} eq "mrv2") {
+      $system_dir = run "sudo -u hdfs hadoop fs -test -d /tmp/hadoop-yarn/staging";
+
+      if($system_dir == 1) {
+         run "sudo -u hdfs hadoop fs -mkdir /tmp/hadoop-yarn/staging";
+         run "sudo -u hdfs hadoop fs -chmod -R 1777 /tmp/hadoop-yarn/staging";
+         run "sudo -u hdfs hadoop fs -mkdir /tmp/hadoop-yarn/staging/history/done_intermediate";
+         run "sudo -u hdfs hadoop fs -chmod -R 1777 /tmp/hadoop-yarn/staging/history/done_intermediate";
+         run "sudo -u hdfs hadoop fs -chown -R mapred:mapred /tmp/hadoop-yarn/staging";
+         run "sudo -u hdfs hadoop fs -mkdir /var/log/hadoop-yarn";
+         run "sudo -u hdfs hadoop fs -chown yarn:mapred /var/log/hadoop-yarn";
+      }
+      elsif($system_dir == 0) {
+         say "System-Directories allready created.";
+      }
+   }
+
+};
+
+#
 # TASK: start
 #
 task "start", sub {
@@ -169,7 +237,7 @@ sub get_service {
          %service_name = %service_name_primary_namenode_cdh3;
       }
       elsif($cdh_version eq "cdh4") {
-         %service_name = %service_name_primary_namenode_cdh3;
+         %service_name = %service_name_primary_namenode_cdh4;
       }
    }
    elsif(is_installed(&get_package({namenode_role => "secondary"}))) {
@@ -251,6 +319,25 @@ are "primary" (Primary NameNode) or "secondary" (Secondary NameNode).
 =item format_hdfs
 
 This task will format the NameNode. Use it carefully!
+
+=item initialize_hdfs
+
+This task will initialize the HDFS directory structer.
+
+=over 4
+
+=item mr_version
+
+Define the MapReduce Version of the JobTracker-Service. Valid parameters
+are "mrv1" (MapReduce Version 1) or "mrv2" (MapReduce Version 2).
+
+=back
+
+ task yourtask => sub {
+    Rex::Framework::Cloudera::Hadoop::NameNode::initialize_hdfs({
+       mr_version => "mrv1",
+    });
+ };
 
 =item start
 
