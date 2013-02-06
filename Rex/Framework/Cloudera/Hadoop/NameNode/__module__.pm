@@ -152,6 +152,19 @@ task "initialize_hdfs", sub {
 };
 
 #
+# TASK: create_user
+#
+task "create_user", sub {
+
+   my $param = shift;
+
+   # add user in hdfs filesystem
+   run "sudo -u hdfs hadoop fs -mkdir /user/$param->{user}";
+   run "sudo -u hdfs hadoop fs -chown $param->{user} /user/$param->{user}";
+
+};
+
+#
 # TASK: start
 #
 task "start", sub {
@@ -336,6 +349,24 @@ are "mrv1" (MapReduce Version 1) or "mrv2" (MapReduce Version 2).
  task yourtask => sub {
     Rex::Framework::Cloudera::Hadoop::NameNode::initialize_hdfs({
        mr_version => "mrv1",
+    });
+ };
+
+=item create_user
+
+This task will create a user on the HDFS.
+
+=over 4
+
+=item user
+
+Set username to create on the HDFS.
+
+=back
+
+ task yourtask => sub {
+    Rex::Framework::Cloudera::Hadoop::NameNode::create_user({
+       user => "youruser",
     });
  };
 
