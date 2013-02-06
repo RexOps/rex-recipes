@@ -64,7 +64,10 @@ task "setup", sub {
 task "start", sub {
 
    # ensure that service start at boot and running
-   service &get_service => "ensure" => "started";
+   #service &get_service => "ensure" => "started";
+   # Workaround!
+   my $service = &get_service;
+   run "/etc/init.d/$service start";
 
 };
 
@@ -74,7 +77,10 @@ task "start", sub {
 task "stop", sub {
 
    # stop service
-   service &get_service => "stop";
+   #service &get_service => "stop";
+   # Workaround!
+   my $service = &get_service;
+   run "/etc/init.d/$service stop";
 
 };
 
@@ -84,7 +90,10 @@ task "stop", sub {
 task "restart", sub {
 
    # restart service
-   service &get_service => "restart";
+   #service &get_service => "restart";
+   # Workaround!
+   my $service = &get_service;
+   run "/etc/init.d/$service restart";
 
 };
 
