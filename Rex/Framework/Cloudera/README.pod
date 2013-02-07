@@ -18,6 +18,6 @@ The next steps are:
 * Configuring a multi-host cluster
 * Include more Cloudera components (Hive, Pig, and so on)
 
-head2 Future ideas
+=head2 Future ideas
 
 * Rex HDFS Module (manipulate directly HDFS through Rex) 
