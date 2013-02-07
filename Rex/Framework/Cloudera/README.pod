@@ -15,9 +15,9 @@ this pseudo cluster with default values.
 
 The next steps are:
 
-* Configuring a multi-host cluster
-* Include more Cloudera components (Hive, Pig, and so on)
+=item Configuring a multi-host cluster
+=item Include more Cloudera components (Hive, Pig, and so on)
 
 =head2 Future ideas
 
-* Rex HDFS Module (manipulate directly HDFS through Rex) 
+=item Rex HDFS Module (manipulate directly HDFS through Rex) 
