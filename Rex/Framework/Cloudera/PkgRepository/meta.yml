@@ -1,0 +1,4 @@
+Name: Rex::Framework::Cloudera::PkgRepository
+Description: Adds Package-Repository for Cloudera CDH3 or CDH4
+Author: Daniel Baeurer <daniel.baeurer@gmail.com>
+License: GPLv3
