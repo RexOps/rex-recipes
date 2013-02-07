@@ -6,6 +6,7 @@
 # LICENSE:  GPLv3 
 # DESC:     Configure a Hadoop Cluster (Pseudo and Real)
 #  
+# TODO:     - Configuration of a real cluster
 
 package Rex::Framework::Cloudera::Hadoop::Configure;
 
@@ -31,7 +32,7 @@ my %package_name_pseudo_cluster_mrv2_cdh4 = (
 );
 
 #
-# TASK: setup
+# REX-TASK: pseudo_cluster
 #
 task "pseudo_cluster", sub {
 

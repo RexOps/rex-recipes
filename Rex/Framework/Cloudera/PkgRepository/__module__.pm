@@ -13,7 +13,7 @@ use warnings;
 use Rex -base;
  
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 
@@ -90,7 +90,7 @@ task "setup", sub {
 };
 
 #
-# TASK: get_cdh_version
+# REX-TASK: get_cdh_version
 #
 task "get_cdh_version", sub {
 
