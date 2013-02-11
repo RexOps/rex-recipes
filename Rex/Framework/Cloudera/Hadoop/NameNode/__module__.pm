@@ -4,7 +4,8 @@
 #           Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3 
 # DESC:     Creates a Hadoop NameNode (primary and secondary)
-#  
+#
+# TODO:     - At the moment i don't know if this module is a good place to initialize the hdfs?  
 
 package Rex::Framework::Cloudera::Hadoop::NameNode;
 
@@ -56,7 +57,7 @@ my %service_name_secondary_namenode_cdh4 = (
 );
 
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 
@@ -69,7 +70,7 @@ task "setup", sub {
 };
 
 #
-# TASK: format_hdfs
+# REX-TASK: format_hdfs
 #
 task "format_hdfs", sub {
 
@@ -84,7 +85,7 @@ task "format_hdfs", sub {
 };
 
 #
-# TASK: initialize_hdfs
+# REX-TASK: initialize_hdfs
 #
 task "initialize_hdfs", sub {
 
@@ -152,7 +153,7 @@ task "initialize_hdfs", sub {
 };
 
 #
-# TASK: create_user
+# REX-TASK: create_user
 #
 task "create_user", sub {
 
@@ -165,7 +166,7 @@ task "create_user", sub {
 };
 
 #
-# TASK: start
+# REX-TASK: start
 #
 task "start", sub {
 
@@ -175,7 +176,7 @@ task "start", sub {
 };
 
 #
-# TASK: stop
+# REX-TASK: stop
 #
 task "stop", sub {
 
@@ -185,7 +186,7 @@ task "stop", sub {
 };
 
 #
-# TASK: restart
+# REX-TASK: restart
 #
 task "restart", sub {
 

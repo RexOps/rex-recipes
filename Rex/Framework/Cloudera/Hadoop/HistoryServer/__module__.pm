@@ -26,7 +26,7 @@ my %service_name = (
 );
 
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 
@@ -37,7 +37,7 @@ task "setup", sub {
 };
 
 #
-# TASK: start
+# REX-TASK: start
 #
 task "start", sub {
 
@@ -47,7 +47,7 @@ task "start", sub {
 };
 
 #
-# TASK: stop
+# REX-TASK: stop
 #
 task "stop", sub {
 
@@ -57,7 +57,7 @@ task "stop", sub {
 };
 
 #
-# TASK: restart
+# REX-TASK: restart
 #
 task "restart", sub {
 

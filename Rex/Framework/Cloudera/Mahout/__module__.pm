@@ -19,7 +19,7 @@ my %package_name = (
 ); 
 
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 

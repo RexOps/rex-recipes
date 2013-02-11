@@ -5,6 +5,7 @@
 # LICENSE:  GPLv3
 # DESC:     Creates a Hadoop TaskTracker node (MRv1 and MRv2)
 #
+# TODO:     - Replace upstart/environment workaround
 
 package Rex::Framework::Cloudera::Hadoop::TaskTracker;
 
@@ -46,7 +47,7 @@ my %service_name_mrv2_cdh4 = (
 );
 
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 
@@ -59,39 +60,39 @@ task "setup", sub {
 };
 
 #
-# TASK: start
+# REX-TASK: start
 #
 task "start", sub {
 
    # ensure that service start at boot and running
    #service &get_service => "ensure" => "started";
-   # Workaround!
+   # TASK! The Ubuntu upstart and the cdh job-tracker package doesn't respect environments in /etc/environments. Strange!
    my $service = &get_service;
    run "/etc/init.d/$service start";
 
 };
 
 #
-# TASK: stop
+# REX-TASK: stop
 #
 task "stop", sub {
 
    # stop service
    #service &get_service => "stop";
-   # Workaround!
+   # TASK! The Ubuntu upstart and the cdh job-tracker package doesn't respect environments in /etc/environments. Strange!
    my $service = &get_service;
    run "/etc/init.d/$service stop";
 
 };
 
 #
-# TASK: restart
+# REX-TASK: restart
 #
 task "restart", sub {
 
    # restart service
    #service &get_service => "restart";
-   # Workaround!
+   # TASK! The Ubuntu upstart and the cdh job-tracker package doesn't respect environments in /etc/environments. Strange!
    my $service = &get_service;
    run "/etc/init.d/$service restart";
 

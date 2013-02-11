@@ -13,3 +13,4 @@ debian/*.log
 *.old
 *.bak
 README
+.project

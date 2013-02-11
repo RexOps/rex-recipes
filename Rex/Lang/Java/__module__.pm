@@ -4,6 +4,7 @@
 # LICENSE:  GPLv3
 # DESC:     Installs Java
 #
+# TODO:     Support for oracle java.
 
 package Rex::Lang::Java;
 
@@ -19,7 +20,7 @@ my %package_name = (
 );
 
 #
-# TASK: setup
+# REX-TASK: setup
 #
 task "setup", sub {
 
