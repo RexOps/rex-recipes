@@ -1,0 +1,5 @@
+Name: Rex::Framework::Cloudera::Mahout
+Description: Installs Mahout
+Author: Daniel Baeurer <daniel.baeurer@gmail.com>
+License: GPLv3
+Require: Rex::Framework::Cloudera::PkgRepository
