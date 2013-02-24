@@ -169,7 +169,7 @@ task delete_record => sub {
 sub _dns {
 
    my $res = Net::DNS::Resolver->new;
-   $res->nameservers(Rex::Config->get("dns") || "127.0.0.1");
+   $res->nameservers($OPTION->{server} || "127.0.0.1");
 
    return $res;
 }
