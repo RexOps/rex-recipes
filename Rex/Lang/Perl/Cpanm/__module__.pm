@@ -58,13 +58,15 @@ sub _install {
       $modules = [ @_ ];
    }
 
+   my $cpanm_exec = Rex::Config->get("cpanm") || "cpanm";
+
    for my $mod (@{ $modules }) {
       Rex::Logger::info("Installing $mod");
       if(exists $option{to}) {
-         run "cpanm -L " . $option{to} . " $mod";
+         run "$cpanm_exec -L " . $option{to} . " $mod";
       }
       else {
-         run "cpanm $mod";
+         run "$cpanm_exec $mod";
       }
    }
 }
@@ -74,8 +76,10 @@ sub _install_deps {
 
    $path ||= ".";
 
+   my $cpanm_exec = Rex::Config->get("cpanm") || "cpanm";
+
    Rex::Logger::info("Running installdeps for $path");
-   run "cpanm --installdeps $path";
+   run "$cpanm_exec --installdeps $path";
 }
 
 1;
