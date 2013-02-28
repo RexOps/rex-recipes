@@ -96,6 +96,8 @@ Put it in your I<Rexfile>
 
  use Rex::Lang::Perl::Cpanm;
    
+ set cpanm => "/opt/local/bin/cpanm";   # if you have installed cpanm in no default path
+   
  task "prepare", sub {
     cpanm -install;   # install cpanminus
     cpanm -install => [ 'Test::More', 'Foo::Bar' ];
