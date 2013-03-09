@@ -95,22 +95,35 @@ sub _install {
 
    _set_path();
 
+   if(! can_run("perlbrew") && $things[0] ne "perlbrew") {
+      Rex::Logger::info("Need to install perlbrew first.");
+      unshift(@things, "perlbrew");
+   }
+
    for my $version (@things) {
       if($version eq "perlbrew") {
          Rex::Logger::info("Downloading and installing Perlbrew...");
          run "curl -kL http://install.perlbrew.pl | PERLBREW_ROOT=$perlbrew_root sh";
          if($? != 0) {
-            say "You need curl to install Perlbrew.";
-            exit 1;
+            Rex::Logger::info("You need curl to install Perlbrew.", "warn");
+            die "You need curl to install Perlbrew.";
          }
       }
       elsif($version eq "cpanm") {
          Rex::Logger::info("Instaling cpanm...");
          run "PERLBREW_ROOT=$perlbrew_root perlbrew install-cpanm";
+         if($? != 0) {
+            Rex::Logger::info("Error installing cpanm", "warn");
+            die("Error installing cpanm");
+         }
       }
       else {
          Rex::Logger::info("Installing perl $version...");
          run "PERLBREW_ROOT=$perlbrew_root perlbrew install $version";
+         if($? != 0) {
+            Rex::Logger::info("Error installing perlbrew version $version", "warn");
+            die("Error installing perlbrew version $version");
+         }
       }
    }
 }
