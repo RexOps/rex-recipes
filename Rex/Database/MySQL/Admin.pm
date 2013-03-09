@@ -120,17 +120,17 @@ Rex::Database::MySQL::Admin - Manage your MySQL Server
 
 =head1 USAGE
 
-set mysql => user => 'root';
-set mysql => password => 'foobar';
+ set mysql => user => 'root';
+ set mysql => password => 'foobar';
 
 or
 
-set mysql => defaults_file => '/etc/mysql/debian.cnf';
-
-task mysql_status, sub {
-
-   my $status = Rex::Database::MySQL::Admin::mysqladmin({ command => 'status' });
-
-   say "STATUS: $status";
-};
+ set mysql => defaults_file => '/etc/mysql/debian.cnf';
+  
+ task mysql_status, sub {
+ 
+    my $status = Rex::Database::MySQL::Admin::mysqladmin({ command => 'status' });
+ 
+    say "STATUS: $status";
+ };
 
