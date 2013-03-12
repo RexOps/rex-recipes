@@ -1,7 +1,3 @@
-#
-# THIS FILE IS GENERATED AUTOMATICALLY
-# YOU DON'T NEED TO EDIT IT
-#
 
 Rex/Database/MySQL:
    Author: jan gehring <jan.gehring@gmail.com>
