@@ -4,7 +4,6 @@
 # LICENSE:  GPLv3
 # DESC:     Installs Java
 #
-# TODO:     Support for oracle java.
 
 package Rex::Lang::Java;
 
@@ -15,8 +14,8 @@ use Rex -base;
 
 # define os-distribution specific package names
 my %package_name = (
-   Debian => "openjdk-%s-%s",
-   Ubuntu => "openjdk-%s-%s",
+   Debian => "%s-%s-%s",
+   Ubuntu => "%s-%s-%s",
 );
 
 #
@@ -26,12 +25,13 @@ task "setup", sub {
 
    my $param = shift;
 
-   # check if java version and environment is set
+   # check if java provider, version and environment is set
+   die("You must specify the Provider of the Java SE to install.") unless $param->{"jse_provider"};
    die("You must specify the Java SE Version to install.") unless $param->{"jse_version"};
    die("You must specify the Java SE Type to install.") unless $param->{"jse_type"};
    
    # defining package based on os-distribution
-   my $package = sprintf($package_name{get_operating_system()}, $param->{"jse_version"}, $param->{"jse_type"});
+   my $package = sprintf($package_name{get_operating_system()}, $param->{"jse_provider"}, $param->{"jse_version"}, $param->{"jse_type"});
 
    die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
 
@@ -68,8 +68,9 @@ Put it in your I<Rexfile>
 
  task yourtask => sub {
     Rex::Lang::Java::setup({
-       jse_version => "6",
-       jse_type    => "jdk",
+       jse_provider => "openjdk",
+       jse_version  => "6",
+       jse_type     => "jdk",
     });
  };
 
@@ -86,6 +87,11 @@ And call it:
 This task will install Java.
 
 =over 4
+
+=item jse_provider
+
+Define Provider of the Java Platform Standard Edition. Valid parameters
+are "openjdk" (Java SE 6/7), "sun" (Java SE 6) or "oracle" (Java SE 7).
 
 =item jse_version
 
