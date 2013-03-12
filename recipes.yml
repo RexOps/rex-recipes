@@ -1,4 +1,3 @@
-
 Rex/Database/MySQL:
    Author: jan gehring <jan.gehring@gmail.com>
    Requires:
@@ -71,4 +70,3 @@ Rex/System/Debian/Packages/Helper:
    Description: |
       Helper Task to install or remove packages listed in a file
       created with dpkg --get-selections.
-
