@@ -153,6 +153,39 @@ task "initialize_hdfs", sub {
 };
 
 #
+# REX-TASK: create_user
+#
+task "create_user", sub {
+
+   my $param = shift;
+      
+   # remove spaces and fit all users in a list
+   $param->{"user"} =~ s/\s+//;
+   @user = split(/,/, $param->{"user"});
+   
+   # initialize home directories in the hdfs
+   my $home_dir;
+   
+   # create a home directory for each mapreduce user
+   foreach(@user) {
+      $home_dir = run "sudo -u hdfs hadoop fs -test -d /user/$_ && echo \$?";
+      
+      if (!($home_dir =~ /^[+-]?\d+$/)) {
+         $home_dir = 1;
+      }
+      
+      if($home_dir == 1) {
+         run "sudo -u hdfs hadoop fs -mkdir  /user/$_";
+         run "sudo -u hdfs hadoop fs -chown $_ /user/$_";
+      }
+      elsif($home_dir == 0) {
+         say "Home-Directory for user $_ allready created.";
+      }
+   }
+   
+};
+
+#
 # REX-TASK: start
 #
 task "start", sub {
@@ -339,6 +372,25 @@ are "mrv1" (MapReduce Version 1) or "mrv2" (MapReduce Version 2).
        mr_version => "mrv1",
     });
  };
+
+=item create_user
+
+This task creates the home directory for one or more users on the HDFS filesystem.
+
+=over 4
+
+=item user
+
+Define a list of users for which a home directory should be created on the HDFS filesystem.
+The users should already exists on the underlying operating system.
+
+=back
+
+task yourtask => sub {
+   Rex::Framework::Cloudera::Hadoop::NameNode::create_user({
+      user => "user1, user2, userN"
+   });
+};
 
 =item start
 
