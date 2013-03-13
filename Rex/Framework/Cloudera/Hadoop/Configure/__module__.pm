@@ -5,8 +5,7 @@
 #           Rex::Framework::Cloudera::PkgRepository
 # LICENSE:  GPLv3 
 # DESC:     Configure a Hadoop Cluster (Pseudo and Real)
-#  
-# TODO:     - Configuration of a real cluster
+#
 
 package Rex::Framework::Cloudera::Hadoop::Configure;
 
@@ -41,6 +40,75 @@ task "pseudo_cluster", sub {
    # install package
    update_package_db;
    install package => &get_package($param);
+
+};
+
+#
+# REX-TASK: real_cluster
+#
+task "real_cluster", sub {
+  
+  my $param = shift;
+  
+  # some needed extra modules
+  use Cwd qw(getcwd);
+  use Date::Format;
+  use Rex::Commands::Rsync;
+  
+  # set uniq timestamp for config folder through Rexfile.lock
+  my %uniq_timestamp = stat(getcwd . "/Rexfile.lock");
+  my $conf_folder_timestamp = time2str("%Y-%m-%d-%H%M%S", $uniq_timestamp{"mtime"});
+  
+  # determine the hadoop config files
+  my $conf_folder;
+  
+  # check given config folder if it exists (relativ or absolut)
+  # otherwise check the standard rex files folder relativ to Rexfile
+  if(defined($param->{"hadoop_conf_folder"})) {
+     if(is_dir(getcwd . $param->{"hadoop_conf_folder"})) {
+        my $conf_folder = getcwd . $param->{"hadoop_conf_folder"};
+     }
+     elsif(is_dir($param->{"hadoop_conf_folder"})) {
+        my $conf_folder = $param->{"hadoop_conf_folder"};
+     }
+     else {
+        die("Your given Hadoop-Config-Folder to synchronize with the Cluster does not exists.");
+     }
+  }
+  else {
+     if(is_dir(getcwd . "/files/etc/hadoop")) {
+        my $conf_folder = getcwd . "/files/etc/hadoop";
+     }
+     else {
+        die("Please specify your Hadoop-Config-Folder to synchronize with the Cluster.");
+     }
+  }
+  
+  # sudo/rsync error preventing - because if this module running
+  # through sudo (like rex -s) then rsync will not correctly
+  # sync the config folder (e.g. set attributes)
+  chmod(777, "/etc/hadoop");
+  
+  # create the uniq config folder for the new hadoop config and
+  # do the same sudo/rsync error preventing
+  mkdir("/etc/hadoop/conf.$conf_folder_timestamp");
+  chmod(777, "/etc/hadoop/conf.$conf_folder_timestamp");
+  
+  # sync the configuration to the new hadoop config folder
+  sync "$conf_folder/", "/etc/hadoop/conf.$conf_folder_timestamp/", {
+     parameters => "--archive --omit-dir-times --no-o --no-g --no-p",
+  };
+  
+  # redo the sudo/rsync error preventing
+  chmod(755, "/etc/hadoop");
+  chmod(755, "/etc/hadoop/conf.$conf_folder_timestamp");
+  chown("root", "/etc/hadoop/conf.$conf_folder_timestamp", recursive => 1);
+  chgrp("root", "/etc/hadoop/conf.$conf_folder_timestamp", recursive => 1);
+  
+  # finaly advertise the new config folder to alternatives and
+  # activate the new configuration for hadoop
+  run "update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.$conf_folder_timestamp 50";
+  run "update-alternatives --set hadoop-conf /etc/hadoop/conf.$conf_folder_timestamp"; 
 
 };
 
