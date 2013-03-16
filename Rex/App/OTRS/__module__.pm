@@ -15,7 +15,7 @@ include qw/Rex::Database::MySQL;
            Rex::Database::MySQL::Admin::Schema/;
 
 
-task test_os => sub {
+sub test_os {
    if(! is_debian()) {
       die("Currently only debian/ubuntu is supported.");
    }
@@ -55,7 +55,7 @@ sub install_deps_db {
 
 };
 
-task setup => sub {
+sub setup {
    my $param = shift;
 
    #### setting defaults
@@ -92,7 +92,7 @@ task setup => sub {
 
 };
 
-task setup_db => sub {
+sub setup_db {
    my $param = shift;
 
    #### setting defaults
@@ -137,7 +137,7 @@ task setup_db => sub {
    }
 };
 
-task deploy => sub {
+sub deploy {
    my $param = shift;
 
    #### setting defaults
@@ -182,7 +182,7 @@ task deploy => sub {
 
 };
 
-task enable_version => sub {
+sub enable_version {
    my $param = shift;
    my $otrs_version = $param->{"version"} || "3.2.3";
 
@@ -286,8 +286,7 @@ to download the module and its dependencies.
       
  use Rex -feature => 0.40;
  use Rex::Commands::Box;
-     
- include qw/Rex::App::OTRS/;
+ use Rex::App::OTRS;
      
  user "root";
  password "box";
