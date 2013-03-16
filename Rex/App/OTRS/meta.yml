@@ -1,0 +1,6 @@
+Name: Rex::App::OTRS
+Description: Module to install OTRS on your Server.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+Require:
+   - Rex::Database::MySQL
