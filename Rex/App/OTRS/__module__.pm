@@ -260,6 +260,65 @@ This Rex module will install OTRS and MySQL on your Server. Currently it only su
     Rex::App::OTRS::setup_db();
  };
 
+=head1 METHODS
+
+You can use the following methods to customize the installation of OTRS.
+
+=over 4
+
+=item install_deps_otrs
+
+This function will install all needed dependencies for OTRS.
+
+ task "prepare_server", sub {
+    Rex::App::OTRS::install_deps_otrs();
+ };
+
+
+=item install_deps_db
+
+This function will install MySQL and its dependencies.
+
+ task "prepare_server", sub {
+    Rex::App::OTRS::install_deps_db();
+ };
+
+=item setup
+
+With this method you can setup OTRS and its Database in one step.
+
+See the example for more information of this method.
+
+=item setup_db
+
+With this method you can setup the database for OTRS in one step.
+
+See the example for more information of this method.
+
+=item deploy
+
+This method will download and deploy an OTRS version to /opt/otrs-$version.
+
+The options for this method are the same as for setup(). Please see the examples for a description.
+
+ task "deploy_otrs", "yourserver", sub {
+    Rex::App::OTRS::deploy({
+      version => "3.2.3",
+    });
+ };
+
+=item enable_version
+
+This method enables a specific version of OTRS. It will configure Apache and restart it.
+
+ task "switch_version", "yourserver", sub {
+    Rex::App::OTRS::enable_version({
+      version => "3.2.3"
+    });
+ };
+
+=back
+
 =head1 Rex/Box
 
 If you want to test OTRS you can use the following Rexfile to setup OTRS in a VirtualBox VM.
