@@ -328,12 +328,6 @@ After you've created your Rexfile don't forget to run
 
 to download the module and its dependencies.
 
- #
- # (c) Jan Gehring <jan.gehring@gmail.com>
- # 
- # vim: set ts=3 sw=3 tw=0:
- # vim: set expandtab:
- 
  # 
  # This Rexfile will install OTRS on a VM
  # After installing OTRS can be used via
