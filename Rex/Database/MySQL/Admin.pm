@@ -29,32 +29,41 @@ task execute => sub {
 
    my $sql = $param->{sql};
 
-   my $tmp_file = _tmp_file();
+   my ($tmp_file, $delete);
+
+   if(is_file($param->{sql})) {
+      $tmp_file = $param->{sql};
+   }
+   else {
+      $tmp_file = _tmp_file();
+      $delete = 1;
+
+      file $tmp_file,
+         content => $sql;
+   }
 
    Rex::Logger::debug("Executing: $sql");
-
-   file $tmp_file,
-      content => $sql;
 
    my $user          = $MYSQL_CONF{user};
    my $password      = $MYSQL_CONF{password} || "";
    my $defaults_file = $MYSQL_CONF{defaults_file} || "";
+   my $schema        = $param->{schema} || "";
 
    my $result;
 
    if ($defaults_file) {
-      $result = run "mysql --defaults-file=$defaults_file < $tmp_file";
+      $result = run "mysql --defaults-file=$defaults_file $schema < $tmp_file";
    }
    elsif ($password) {
-      $result = run "mysql -u$user -p$password < $tmp_file";
+      $result = run "mysql -u$user -p$password $schema < $tmp_file";
    }
    else {
-      $result = run "mysql -u$user < $tmp_file";
+      $result = run "mysql -u$user $schema < $tmp_file";
    }
 
    say $result unless $param->{quiet};
 
-   unlink($tmp_file);
+   unlink($tmp_file) if $delete;
 
    if($? != 0) {
       die("Error executing $sql");
