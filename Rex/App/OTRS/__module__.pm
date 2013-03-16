@@ -207,7 +207,7 @@ This Rex module will install OTRS and MySQL on your Server. Currently it only su
 
 =head1 USAGE
 
- require qw/Rex::App::OTRS/;
+ use Rex::App::OTRS;
  set mysql => user => 'root';  # your mysql server credentials
                                # with enough rights to create an otrs schema
                                # and an otrs user
