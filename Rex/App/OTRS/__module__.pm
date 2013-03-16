@@ -285,8 +285,6 @@ to download the module and its dependencies.
  # The first time you must login twice
       
  use Rex -feature => 0.40;
-     
- use Rex::Commands::User;
  use Rex::Commands::Box;
      
  include qw/Rex::App::OTRS/;
