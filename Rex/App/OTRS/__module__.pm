@@ -21,6 +21,13 @@ sub test_os {
    }
 };
 
+sub test_version {
+   my $param = shift;
+   if($param->{version} ne "3.2.3") {
+      die("Version not supported.\nSupported versions:\n - 3.2.3\n");
+   }
+}
+
 sub install_deps_otrs {
 
    test_os();
@@ -73,6 +80,7 @@ sub setup {
    $param->{db}->{schema}->{name}      ||= "otrs";
    #### /defaults
 
+   test_version($param);
    my $otrs_version = $param->{"version"};
 
    install_deps_otrs();
@@ -108,6 +116,7 @@ sub setup_db {
    $param->{schema}->{name}      ||= "otrs";
    #### /defaults
 
+   test_version($param);
    my $otrs_version = $param->{"version"};
 
    install_deps_db();   
@@ -154,6 +163,7 @@ sub deploy {
    $param->{db}->{schema}->{name}      ||= "otrs";
    #### /defaults
 
+   test_version($param);
    my $otrs_version = $param->{"version"};
 
    if(!is_file("/tmp/otrs-$otrs_version.tar.gz")) {
