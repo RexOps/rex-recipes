@@ -107,8 +107,9 @@ Define Java Platform Standard Edition Type. Valid parameters are
 
  task yourtask => sub {
     Rex::Lang::Java::setup({
-       jse_version => "6",
-       jse_type    => "jdk",
+       jse_provider => "sun",
+       jse_version  => "6",
+       jse_type     => "jdk",
     });
  };
 
