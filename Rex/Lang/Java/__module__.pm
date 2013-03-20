@@ -13,9 +13,14 @@ use warnings;
 use Rex -base;
 
 # define os-distribution specific package names
-my %package_name = (
+my %package_name_openjdk = (
    Debian => "%s-%s-%s",
    Ubuntu => "%s-%s-%s",
+);
+
+my %package_name_sun_oracle = (
+   Debian => "%s-java%s-%s",
+   Ubuntu => "%s-java%s-%s",
 );
 
 #
@@ -31,7 +36,13 @@ task "setup", sub {
    die("You must specify the Java SE Type to install.") unless $param->{"jse_type"};
    
    # defining package based on os-distribution
-   my $package = sprintf($package_name{get_operating_system()}, $param->{"jse_provider"}, $param->{"jse_version"}, $param->{"jse_type"});
+   my $package;
+   if($param->{"jse_provider"} eq "sun" || $param->{"jse_provider"} eq "oracle") {
+      $package = sprintf($package_name_sun_oracle{get_operating_system()}, $param->{"jse_provider"}, $param->{"jse_version"}, $param->{"jse_type"});
+   }
+   else {
+      $package = sprintf($package_name_openjdk{get_operating_system()}, $param->{"jse_provider"}, $param->{"jse_version"}, $param->{"jse_type"});
+   }
 
    die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
 
