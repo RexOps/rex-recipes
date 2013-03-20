@@ -37,6 +37,7 @@ task "setup", sub {
    
    # defining package based on os-distribution
    my $package;
+   
    if($param->{"jse_provider"} eq "sun" || $param->{"jse_provider"} eq "oracle") {
       $package = sprintf($package_name_sun_oracle{get_operating_system()}, $param->{"jse_provider"}, $param->{"jse_version"}, $param->{"jse_type"});
    }
