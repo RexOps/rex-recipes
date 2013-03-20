@@ -119,13 +119,7 @@ task "initialize_hdfs", sub {
       }
 
       if($system_dir == 1) {
-         run "sudo -u hdfs hadoop fs -mkdir /var";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred/mapred";
-         run "sudo -u hdfs hadoop fs -mkdir /var/lib/hadoop-hdfs/cache/mapred/mapred/staging";
+         run "sudo -u hdfs hadoop fs -mkdir -p /var/lib/hadoop-hdfs/cache/mapred/mapred/staging";
          run "sudo -u hdfs hadoop fs -chmod 1777 /var/lib/hadoop-hdfs/cache/mapred/mapred/staging";
          run "sudo -u hdfs hadoop fs -chown -R mapred /var/lib/hadoop-hdfs/cache/mapred";
       }
