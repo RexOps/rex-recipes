@@ -76,8 +76,8 @@ task "real_cluster", sub {
      }
   }
   else {
-     if(is_dir(getcwd . "/files/etc/hadoop")) {
-        my $conf_folder = getcwd . "/files/etc/hadoop";
+     if(is_dir(getcwd . "/files/etc/hadoop/conf")) {
+        my $conf_folder = getcwd . "/files/etc/hadoop/conf";
      }
      else {
         die("Please specify your Hadoop-Config-Folder to synchronize with the Cluster.");
@@ -203,6 +203,16 @@ are "mrv1" (MapReduce Version 1) or "mrv2" (MapReduce Version 2).
        mr_version => "mrv1",
     });
  };
+ 
+=item real_cluster
+
+This task will configure a Hadoop Real-Cluster.
+
+=over 4
+
+=item hadoop_conf_folder
+
+
 
 =back
 
