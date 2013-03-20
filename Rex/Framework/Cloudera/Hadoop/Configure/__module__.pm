@@ -56,9 +56,12 @@ task "real_cluster", sub {
   use Rex::Commands::Rsync;
   
   # set uniq timestamp for config folder through Rexfile.lock
-  my %uniq_timestamp = stat(getcwd . "/Rexfile.lock");
-  my $conf_folder_timestamp = time2str("%Y-%m-%d-%H%M%S", $uniq_timestamp{"mtime"});
-  
+  LOCAL {
+     our %uniq_timestamp = stat(getcwd . "/Rexfile.lock");
+     our $conf_folder_timestamp = time2str("%Y-%m-%d-%H%M%S", $uniq_timestamp{"mtime"});
+  };
+  my $conf_folder_timestamp = $Rex::Commands::LOCAL::conf_folder_timestamp;
+    
   # determine the hadoop config files
   my $conf_folder;
   
