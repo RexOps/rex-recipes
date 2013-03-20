@@ -91,8 +91,9 @@ task "initialize_hdfs", sub {
 
    my $param = shift;
 
-   # initialize temp and system directories in the hdfs
+   # initialize temp, mapreduce and system directories in the hdfs
    my $temp_dir;
+   my $mapred_dir;
    my $system_dir;
 
    # create the /tmp directory if it not exists
@@ -111,11 +112,25 @@ task "initialize_hdfs", sub {
    }
 
    # create the system directories if they not exists
+   # and the mapreduce system directory if not exists
    if($param->{"mr_version"} eq "mrv1") {
+      $mapred_dir = run "sudo -u hdfs hadoop fs -test -d /tmp/mapred/system && echo \$?";
       $system_dir = run "sudo -u hdfs hadoop fs -test -d /var/lib/hadoop-hdfs/cache/mapred/mapred/staging && echo \$?";
 
       if (!($system_dir =~ /^[+-]?\d+$/)) {
+         $mapred_dir = 1;
+      }
+      
+      if (!($system_dir =~ /^[+-]?\d+$/)) {
          $system_dir = 1;
+      }
+      
+      if($mapred_dir == 1) {
+         run "sudo -u hdfs hadoop fs -mkdir -p /tmp/mapred/system";
+         run "sudo -u hdfs hadoop fs -chown -R mapred:hadoop /tmp/mapred/system";
+      }
+      elsif($mapred_dir == 0) {
+         say "Mapreduce-Directory allready created.";
       }
 
       if($system_dir == 1) {
@@ -125,7 +140,7 @@ task "initialize_hdfs", sub {
       }
       elsif($system_dir == 0) {
          say "System-Directories allready created.";
-      }
+      }  
    }
    elsif($param->{"mr_version"} eq "mrv2") {
       $system_dir = run "sudo -u hdfs hadoop fs -test -d /tmp/hadoop-yarn/staging";
