@@ -117,7 +117,7 @@ task "initialize_hdfs", sub {
       $mapred_dir = run "sudo -u hdfs hadoop fs -test -d /tmp/mapred/system && echo \$?";
       $system_dir = run "sudo -u hdfs hadoop fs -test -d /var/lib/hadoop-hdfs/cache/mapred/mapred/staging && echo \$?";
 
-      if (!($system_dir =~ /^[+-]?\d+$/)) {
+      if (!($mapred_dir =~ /^[+-]?\d+$/)) {
          $mapred_dir = 1;
       }
       
