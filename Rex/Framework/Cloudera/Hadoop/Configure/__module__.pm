@@ -219,7 +219,18 @@ This task will configure a Hadoop Real-Cluster.
 
 =item hadoop_conf_folder
 
+Define the folder where your local Hadoop-Configuration placed. This folder will
+synced to your Hadoop-Cluster. If you don't specify an folder where your Hadoop-
+Configuration is stored Rex will choose the default files-folder. Then you have
+to place your configuration relativ to your Rexfile under files/etc/hadoop/conf.  
 
+=back
+
+task yourtask => sub {
+   Rex::Framework::Cloudera::Hadoop::Configure::real_cluster({
+      hadoop_conf_folder => "/foo/bar"
+   });
+};
 
 =back
 
