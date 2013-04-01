@@ -10,9 +10,9 @@ Everyone is invited to fork this repository and do pull requests.
 
 As of Rex Version 0.25 there will be a command for I<rexify> to search and download recipes for own Rex projects.
 
- rexify --search mysql
- rexify <projectname> [directory] --use Rex::Database::MySQL
- rexify <projectname> [directory] --use Rex::Database::MySQL --use Rex::Webserver::Apache ...
+ rexify --search=mysql
+ rexify <projectname> [directory] --use=Rex::Database::MySQL
+ rexify <projectname> [directory] --use=Rex::Database::MySQL --use=Rex::Webserver::Apache ...
 
 
 =head2 HOWTO CONTRIBUTE
