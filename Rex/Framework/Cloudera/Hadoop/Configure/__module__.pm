@@ -67,8 +67,8 @@ task "real_cluster", sub {
       # check given config folder if it exists (relativ or absolut)
       # otherwise check the standard rex files folder relativ to Rexfile
       if(defined($param->{"hadoop_conf_folder"})) {
-         if(is_dir(getcwd . $param->{"hadoop_conf_folder"})) {
-            $conf_folder = getcwd . $param->{"hadoop_conf_folder"};
+         if(is_dir(getcwd . "/" . $param->{"hadoop_conf_folder"})) {
+            $conf_folder = getcwd . "/" . $param->{"hadoop_conf_folder"};
          }
          elsif(is_dir($param->{"hadoop_conf_folder"})) {
             $conf_folder = $param->{"hadoop_conf_folder"};
