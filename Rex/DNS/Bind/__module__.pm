@@ -76,6 +76,14 @@ task list_entries => sub {
             class => $rr->class,
          });
       }
+      elsif($rr->type eq "PTR") {
+         push @ret, {
+            data => $rr->ptrdname,
+            ttl => $rr->ttl,
+            type => $rr->type,
+            name => $rr->name,
+         };
+      }
       else {
          Rex::Logger::debug("Unknown Data: " . Dumper($rr));
       }
