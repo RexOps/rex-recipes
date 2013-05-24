@@ -151,6 +151,22 @@ sub create_vm {
    return $self->get_vm($res);
 }
 
+sub create_host {
+   my ($self, %option) = @_;
+
+   my $data = $self->_rpc("one.host.allocate",
+                              [ string => $option{name} ],
+                              [ string => $option{im_mad} ],
+                              [ string => $option{vmm_mad} ],
+                              [ string => $option{vnm_mad} ],
+                              [ int => (exists $option{cluster} ? $option{cluster} : -1) ] );
+   if(ref($data) ne "ARRAY") {
+      return;
+   }
+
+   return $self->get_host($data->[1]);
+}
+
 sub _rpc {
    my ($self, $meth, @params) = @_;                                                                                
 
