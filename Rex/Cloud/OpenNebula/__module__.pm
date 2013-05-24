@@ -10,6 +10,7 @@ use strict;
 use warnings;
 
 use Rex -base;
+use Rex::Commands::User;
 use Rex::Cloud::OpenNebula::RPC;
 
 use Rex::Cloud;
@@ -97,6 +98,88 @@ sub terminate_vm {
 sub _rpc {
    return Rex::Cloud::OpenNebula::RPC->new(url => $ONE_CONF{url}, user => $ONE_CONF{user}, password => $ONE_CONF{password});
 }
+
+task "repositories", sub {
+
+   my $op = operating_system;
+
+   # Add local repository and update package database
+   repository "add" => "opennebula", {
+      CentOS => {
+         gpgcheck   => 0,
+         url        => "http://opennebula.linux-files.org/centos/6.4/x86_64",
+      },
+      Ubuntu => {
+         url        => "http://opennebula.linux-files.org/ubuntu/12.10/amd64",
+         repository => "./",
+      },
+   };
+
+   update_package_db;
+
+};
+
+task "setup", sub {
+
+   repositories();
+
+   install [qw/opennebula opennebula-server opennebula-sunstone/];
+
+   sed qr{:host: 127\.0\.0\.1}, ":host: 0.0.0.0", "/etc/one/sunstone-server.conf";
+
+   service opennebula => "ensure", "started";
+   service "opennebula-sunstone" => "ensure", "started";
+
+};
+
+task "setup_node", sub {
+
+   install [qw/opennebula-node-kvm/];
+   service libvirtd => "ensure", "started";
+
+   create_user "oneadmin",
+      home => "/var/lib/one";
+
+   mkdir "/var/lib/one/.ssh",
+      owner => "oneadmin",
+      mode  => 700;
+
+   my ($host) = ($ONE_CONF{url} =~ m/http:\/\/([^:]+):/);
+   my $pubkey = run_task "get_ssh_key", on => $host;
+
+   file "/var/lib/one/.ssh/authorized_keys",
+      owner  => "oneadmin",
+      mode   => 600,
+      content => $pubkey;
+
+   add_node({
+      host => connection->server->{name},
+   });
+
+};
+
+task "get_ssh_key", sub {
+   return cat "/var/lib/one/.ssh/id_dsa.pub";
+};
+
+task "add_node", sub {
+   my $param = shift;
+
+   LOCAL {
+      my $c = Rex::Cloud::OpenNebula::RPC->new(url  => $ONE_CONF{url},
+                                               user => $ONE_CONF{user},
+                                               password => $ONE_CONF{password});
+
+      $c->create_host(
+         name => $param->{host},
+         im_mad => "kvm",
+         vmm_mad => "kvm",
+         vnm_mad => "dummy",
+      );
+   };
+
+};
+
 
 1;
 
