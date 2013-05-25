@@ -179,7 +179,6 @@ sub _rpc {
    my $req = RPC::XML::request->new($meth, @params_o);
    my $cli = RPC::XML::Client->new($self->{url});
    my $resp = $cli->send_request($req);
-   
    my $ret = $resp->value;
 
    Rex::Logger::debug($ret->[1]);

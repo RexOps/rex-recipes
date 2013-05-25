@@ -112,6 +112,7 @@ task "repositories", sub {
       Ubuntu => {
          url        => "http://opennebula.linux-files.org/ubuntu/12.10/amd64",
          repository => "./",
+         distro     => "",
       },
    };
 
@@ -123,18 +124,43 @@ task "setup", sub {
 
    repositories();
 
-   install [qw/opennebula opennebula-server opennebula-sunstone/];
+   my $op       = operating_system;
+   my $packages = case $op, {
+                     Debian => ["opennebula", "opennebula-sunstone"],
+                     Ubuntu => ["opennebula", "opennebula-sunstone"],
+                     CentOS => ["opennebula", "opennebula-server", "opennebula-sunstone"],
+                  };
+   my $oneadmin_group = case $op, {
+                           Debian => "cloud",
+                           Ubuntu => "cloud",
+                           CentOS => "oneadmin",
+                        };
+
+   install $packages;
 
    sed qr{:host: 127\.0\.0\.1}, ":host: 0.0.0.0", "/etc/one/sunstone-server.conf";
 
    service opennebula => "ensure", "started";
    service "opennebula-sunstone" => "ensure", "started";
 
+   file "/var/lib/one/.ssh/config",
+      source => "files/ssh_config",
+      owner  => "oneadmin",
+      group  => "$oneadmin_group",
+      mode   => "600";
+
 };
 
 task "setup_node", sub {
 
-   install [qw/opennebula-node-kvm/];
+   my $op       = operating_system;
+   my $packages = case $op, {
+                     Debian => ["opennebula-node"],
+                     Ubuntu => ["opennebula-node"],
+                     CentOS => ["opennebula-node-kvm"],
+                  };
+
+   install $packages;
    service libvirtd => "ensure", "started";
 
    create_user "oneadmin",
@@ -145,30 +171,55 @@ task "setup_node", sub {
       mode  => 700;
 
    my ($host) = ($ONE_CONF{url} =~ m/http:\/\/([^:]+):/);
-   my $pubkey = run_task "get_ssh_key", on => $host;
+   if(exists $ONE_CONF{ssh}) {
+      $host = $ONE_CONF{ssh}->{host};
+   }
+   my $pubkey = run_task "Cloud:OpenNebula:get_ssh_key", on => $host;
 
    file "/var/lib/one/.ssh/authorized_keys",
       owner  => "oneadmin",
       mode   => 600,
       content => $pubkey;
 
+   my %info = get_system_information;
    add_node({
-      host => connection->server->{name},
+      host => $info{hostname},
    });
 
 };
 
 task "get_ssh_key", sub {
-   return cat "/var/lib/one/.ssh/id_dsa.pub";
+
+   my $file = "/var/lib/one/.ssh/id_dsa.pub";
+   if(is_file("/var/lib/one/.ssh/id_rsa.pub")) {
+      $file = "/var/lib/one/.ssh/id_rsa.pub";
+   } 
+
+   return cat $file;
+
+};
+
+task "get_auth_info", sub {
+   my $auth = cat "/var/lib/one/.one/one_auth";
+   chomp $auth;
+   return $auth;
 };
 
 task "add_node", sub {
    my $param = shift;
 
+   my ($host) = ($ONE_CONF{url} =~ m/http:\/\/([^:]+):/);
+   if(exists $ONE_CONF{ssh}) {
+      $host = $ONE_CONF{ssh}->{host};
+   }
+ 
+   my $auth = run_task "Cloud:OpenNebula:get_auth_info", on => $host;
+   my ($user, $pass) = split(/:/, $auth);
+
    LOCAL {
       my $c = Rex::Cloud::OpenNebula::RPC->new(url  => $ONE_CONF{url},
-                                               user => $ONE_CONF{user},
-                                               password => $ONE_CONF{password});
+                                               user => ($user || $ONE_CONF{user}),
+                                               password => ($pass || $ONE_CONF{password}));
 
       $c->create_host(
          name => $param->{host},
