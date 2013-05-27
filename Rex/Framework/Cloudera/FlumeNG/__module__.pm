@@ -20,8 +20,8 @@ my %package_name_without_agent_daemon = (
 );
 
 my %package_name_with_agent_daemon = (
-   Debian => "flume-ng flume-ng-agent",
-   Ubuntu => "flume-ng flume-ng-agent",
+   Debian => ["flume-ng", "flume-ng-agent"],
+   Ubuntu => ["flume-ng", "flume-ng-agent"],
 );
 
 # define os-distribution specific service names
