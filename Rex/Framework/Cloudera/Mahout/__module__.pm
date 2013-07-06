@@ -16,7 +16,7 @@ use Rex -base;
 my %package_name = (
    Debian => "mahout",
    Ubuntu => "mahout",
-); 
+);
 
 #
 # REX-TASK: setup
@@ -24,9 +24,10 @@ my %package_name = (
 task "setup", sub {
 
    # defining package based on os-distribution
-   my $package = $package_name{get_operating_system()};
+   my $package = $package_name{ get_operating_system() };
 
-   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+   die("Your Linux-Distribution is not supported by this Rex-Module.")
+     unless $package;
 
    # install package
    update_package_db;
@@ -55,15 +56,15 @@ This Rex-Module will install Mahout.
 
 Put it in your I<Rexfile>
 
- require Rex::Framework::Cloudera::Mahout;
+   require Rex::Framework::Cloudera::Mahout;
   
- task yourtask => sub {
-    Rex::Framework::Cloudera::Mahout::setup();
- };
+   task yourtask => sub {
+      Rex::Framework::Cloudera::Mahout::setup();
+   };
 
 And call it:
 
- rex -H $host yourtask
+   rex -H $host yourtask
 
 =head1 TASKS
 
