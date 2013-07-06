@@ -1,5 +1,5 @@
-Name: Rex::Framework::Cloudera::Hadoop::NameNode
-Description: Creates a Hadoop NameNode (primary and secondary)
+Name: Rex::Framework::Cloudera::FlumeNG
+Description: Creates and Configure a FlumeNG-Server
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:
