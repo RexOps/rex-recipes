@@ -209,6 +209,7 @@ Put it in your I<Rexfile>
 And call it:
 
    rex -H $host yourtask
+   
 =head1 TASKS
 
 =over 4
