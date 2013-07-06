@@ -4,7 +4,6 @@
 # LICENSE:  GPLv3
 # DESC:     Installs Java
 #
-# TODO:     Support for oracle java.
 
 package Rex::Lang::Java;
 
@@ -13,10 +12,16 @@ use warnings;
 
 use Rex -base;
 
-# define os-distribution specific package names
-my %package_name = (
-   Debian => "openjdk-%s-%s",
-   Ubuntu => "openjdk-%s-%s",
+# define os-distribution specific package names for openjdk.
+my %package_name_openjdk = (
+   Debian => "%s-%s-%s",
+   Ubuntu => "%s-%s-%s",
+);
+
+# define os-distribution specific package names for sun/oracle.
+my %package_name_sun_oracle = (
+   Debian => "%s-java%s-%s",
+   Ubuntu => "%s-java%s-%s",
 );
 
 #
@@ -26,14 +31,41 @@ task "setup", sub {
 
    my $param = shift;
 
-   # check if java version and environment is set
-   die("You must specify the Java SE Version to install.") unless $param->{"jse_version"};
-   die("You must specify the Java SE Type to install.") unless $param->{"jse_type"};
-   
-   # defining package based on os-distribution
-   my $package = sprintf($package_name{get_operating_system()}, $param->{"jse_version"}, $param->{"jse_type"});
+   # check if java provider, version and environment is set
+   die("You must specify the Provider of the Java SE to install.")
+     unless $param->{"jse_provider"};
+   die("You must specify the Java SE Version to install.")
+     unless $param->{"jse_version"};
+   die("You must specify the Java SE Type to install.")
+     unless $param->{"jse_type"};
 
-   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+   # defining package based on os-distribution
+   my $package;
+
+   if (  $param->{"jse_provider"} eq "sun"
+      || $param->{"jse_provider"} eq "oracle" )
+   {
+      $package = sprintf(
+         $package_name_sun_oracle{ get_operating_system() },
+         $param->{"jse_provider"},
+         $param->{"jse_version"},
+         $param->{"jse_type"}
+      );
+   }
+   elsif ( $param->{"jse_provider"} eq "openjdk" ) {
+      $package = sprintf(
+         $package_name_openjdk{ get_operating_system() },
+         $param->{"jse_provider"},
+         $param->{"jse_version"},
+         $param->{"jse_type"}
+      );
+   }
+   else {
+      die("Valid parameters are openjdk (OpenJDK Java) or sun/oracle (Sun/Oracle Java).");
+   }
+
+   die("Your Linux-Distribution is not supported by this Rex-Module.")
+     unless $package;
 
    # install package
    update_package_db;
@@ -42,7 +74,7 @@ task "setup", sub {
    # set JAVA_HOME environemnt
    my $java_home = run "readlink -f /usr/bin/javac | sed 's:/bin/javac::'";
    append_if_no_such_line "/etc/environment", "JAVA_HOME=$java_home";
-   
+
 };
 
 1;
@@ -64,18 +96,19 @@ implementation of the Java Platform Standard Edition.
 
 Put it in your I<Rexfile>
 
- require Rex::Lang::Java;
+   require Rex::Lang::Java;
 
- task yourtask => sub {
-    Rex::Lang::Java::setup({
-       jse_version => "6",
-       jse_type    => "jdk",
-    });
- };
+   task yourtask => sub {
+      Rex::Lang::Java::setup({
+         jse_provider => "openjdk",
+         jse_version  => "6",
+         jse_type     => "jdk",
+      });
+   };
 
 And call it:
 
- rex -H $host yourtask
+   rex -H $host yourtask
 
 =head1 TASKS
 
@@ -86,6 +119,11 @@ And call it:
 This task will install Java.
 
 =over 4
+
+=item jse_provider
+
+Define Provider of the Java Platform Standard Edition. Valid parameters
+are "openjdk" (Java SE 6/7), "sun" (Java SE 6) or "oracle" (Java SE 7).
 
 =item jse_version
 
@@ -98,13 +136,6 @@ Define Java Platform Standard Edition Type. Valid parameters are
 "jre" (Java SE Runtime Environment) or "jdk" (Java SE Development Kit).
 
 =back
-
- task yourtask => sub {
-    Rex::Lang::Java::setup({
-       jse_version => "6",
-       jse_type    => "jdk",
-    });
- };
 
 =back
 

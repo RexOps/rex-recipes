@@ -2,24 +2,22 @@
 
 =head2 Cloudera Hadoop Framework
 
-This is my first draft of the Rex-Module for Cloudera Hadoop Framework.
+With this Rex-Module it is possible to install, configure
+and manage your whole Hadoop-Cluster and some Hadoop-Tools.
 
-This Rex-Module is at the moment under heavy development.
+The included Rex-Modules are tested and active used on productive
+Hadoop-Clusters.
 
-=head2 What works at the moment?
+In the future even more Hadoop-Tools will be integrated as
+Rex-Modules.
 
-You can install a Hadoop-Cluster on a single host and configure
-this pseudo cluster with default values.
-
-=head2 What next?
-
-The next steps are:
+=head2 Next steps?
 
 =over 2
 
-=item * Configuring a multi-host cluster
+=item * Include more Hadoop-Tools (Hive, Pig, and so on)
 
-=item * Include more Cloudera components (Hive, Pig, and so on)
+=item * Rebuild initializing and formatting of the HDFS-Filesystem
 
 =back
 
@@ -27,6 +25,8 @@ The next steps are:
 
 =over 2
 
-=item * Rex HDFS Module (manipulate directly HDFS through Rex) 
+=item * Rex HDFS Module (manipulate directly HDFS through Rex)
+
+=item * Restart whole cluster sequentially
 
 =item * Other ideas?

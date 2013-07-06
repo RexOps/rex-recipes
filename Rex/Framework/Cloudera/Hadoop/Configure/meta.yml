@@ -3,6 +3,9 @@ Description: Configure a Hadoop Cluster (Pseudo and Real)
 Author: Daniel Baeurer <daniel.baeurer@gmail.com>
 License: License: GPLv3
 Require:
+   - CWD
+   - Date::Format
+   - Rex::Commands::Rsync
    - Rex::Lang::Java
    - Rex::Framework::Cloudera::Hadoop
    - Rex::Framework::Cloudera::PkgRepository
