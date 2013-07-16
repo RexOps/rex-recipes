@@ -1,0 +1,4 @@
+Name: Rex::Ext::Stack
+Description: With this module you can stack multiple Rexfiles to one higher level Rexfile
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
