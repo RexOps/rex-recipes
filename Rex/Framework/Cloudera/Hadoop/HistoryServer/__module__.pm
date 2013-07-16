@@ -1,11 +1,11 @@
 #
-# AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com> 
+# AUTHOR:   Daniel Baeurer <daniel.baeurer@gmail.com>
 # REQUIRES: Rex::Lang::Java
 #           Rex::Framework::Cloudera::PkgRepository
-# LICENSE:  GPLv3 
+# LICENSE:  GPLv3
 # DESC:     Creates a Hadoop HistoryServer (MRv2)
-#  
-   
+#
+
 package Rex::Framework::Cloudera::Hadoop::HistoryServer;
 
 use strict;
@@ -72,13 +72,14 @@ task "restart", sub {
 sub get_package {
 
    # defining package based on os-distribution and return it
-   my $package = $package_name{get_operating_system()};
+   my $package = $package_name{ get_operating_system() };
 
-   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $package;
+   die("Your Linux-Distribution is not supported by this Rex-Module.")
+     unless $package;
 
    return $package;
 
-};
+}
 
 #
 # FUNCTION: get_service
@@ -86,13 +87,14 @@ sub get_package {
 sub get_service {
 
    # defining service based on os-distribution and return it
-   my $service = $service_name{get_operating_system()};
-
-   die("Your Linux-Distribution is not supported by this Rex-Module.") unless $service;   
+   my $service = $service_name{ get_operating_system() };
+   
+   die("Your Linux-Distribution is not supported by this Rex-Module.")
+     unless $service;
 
    return $service;
 
-};
+}
 
 1;
 
@@ -113,15 +115,15 @@ This Rex-Module creates a Hadoop HistoryServer (MRv2).
 
 Put it in your I<Rexfile>
 
- require Rex::Framework::Cloudera::Hadoop::HistoryServer;
+   require Rex::Framework::Cloudera::Hadoop::HistoryServer;
   
- task yourtask => sub {
-    Rex::Framework::Cloudera::Hadoop::HistoryServer::setup();
- };
+   task yourtask => sub {
+      Rex::Framework::Cloudera::Hadoop::HistoryServer::setup();
+   };
 
 And call it:
 
- rex -H $host yourtask
+   rex -H $host yourtask
 
 =head1 TASKS
 
@@ -135,13 +137,25 @@ This task will install the Hadoop the Hadoop HistoryServer.
 
 This task will start the Hadoop HistoryServer service and ensure that the service start at boot.
 
+   task yourtask => sub {
+      Rex::Framework::Cloudera::Hadoop::HistoryServer::start()
+   };
+
 =item stop
 
 This task will stop the Hadoop HistoryServer service.
 
+   task yourtask => sub {
+      Rex::Framework::Cloudera::Hadoop::HistoryServer::stop()
+   };
+
 =item restart
 
 This task will restart the Hadoop HistoryServer service.
+
+   task yourtask => sub {
+      Rex::Framework::Cloudera::Hadoop::HistoryServer::restart()
+   };
 
 =back
 
