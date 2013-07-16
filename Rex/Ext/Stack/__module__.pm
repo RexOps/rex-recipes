@@ -51,7 +51,7 @@ sub import {
             if(-f "$dir/$entry/Rexfile") {
 
                my $rexfile = eval { local(@ARGV, $/) = ("$dir/$entry/Rexfile"); <>; };
-               my $found_use_rex = $rexfile =~ m/use Rex/gms;
+               my $found_use_rex = $rexfile =~ m/use Rex \-/gms;
 
                my $package_name = $mod_prefix . "::" . $entry;
 
