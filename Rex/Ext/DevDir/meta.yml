@@ -1,0 +1,4 @@
+Name: Rex::Ext::DevDir
+Description: Seperate files per environment in different directories.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
