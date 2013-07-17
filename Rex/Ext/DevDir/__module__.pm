@@ -20,8 +20,8 @@ sub files {
 }
 
 sub templates {
-   my ($file) = @_;
-   return _calc_path("templates", $file, caller);
+   my $file = shift;
+   return template(_calc_path("templates", $file, caller), @_);
 }
 
 sub _calc_path {
