@@ -74,7 +74,6 @@ Assume you have a filestructure like this:
     
     file "/etc/apache2/apache2.conf",
        content => templates("apache.conf");
-
  };
 
 
