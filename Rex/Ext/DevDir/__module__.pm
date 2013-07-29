@@ -21,7 +21,13 @@ sub files {
 
 sub templates {
    my $file = shift;
-   return template(_calc_path("templates", $file, caller), @_);
+   my @vars = @_;
+
+   if(ref $_[0] eq "HASH") {
+      @vars = %{ $_[0] };
+   }
+
+   return template(_calc_path("templates", $file, caller), @vars);
 }
 
 sub _calc_path {
