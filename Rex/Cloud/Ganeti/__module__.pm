@@ -6,8 +6,11 @@ package Rex::Cloud::Ganeti;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use Rex::Logger;
 use Rex::Cloud::Base;
+use Rex::Cloud::Ganeti::RAPI;
+
 
 use parent qw/ Rex::Cloud::Base /;
 
@@ -34,17 +37,17 @@ sub set_auth {
    $self->{__password} = $password;
 }
 
-sub list_operating_systems {
-   my ($self) = @_;
-   my @oses = $self->_ganeti->get_oses;
-   my @ret = ();
+# sub list_operating_systems {
+   # my ($self) = @_;
+   # my @oses = $self->_ganeti->get_oses;
+   # my @ret = ();
 
-   for my $os (@oses) {
-      push(@ret, { name => $os->name, variant => $os->variant });
-   }
+   # for my $os (@oses) {
+      # push(@ret, { name => $os->name, variant => $os->variant });
+   # }
 
-   return @ret;
-}
+   # return @ret;
+# }
 
 sub list_instances {
    my ($self) = @_;
@@ -52,14 +55,15 @@ sub list_instances {
    my @vms = $self->_ganeti->get_vms;
 
    for my $vm (@vms) {
+      Rex::Logger::debug("heres my VM" . Dumper($vm));
       #my @nics = $vm->nics;
       #my $ip   = $nics[0]->ip;
-
+      
       push(@ret, {
          id      => $vm->name,
          #ip      => $ip,
          name    => $vm->name,
-         #state   => $vm->state,
+         state   => $vm->status,
          #architecture => $vm->arch,
       });
    }
@@ -73,63 +77,63 @@ sub list_running_instances {
 }
 
 
-sub run_instance {
-   my ($self, %data) = @_;
-   my $image_id   = $data{image_id};
-   my $name = $data{name};
+# sub run_instance {
+   # my ($self, %data) = @_;
+   # my $image_id   = $data{image_id};
+   # my $name = $data{name};
 
-   if(! $name) {
-      die("You have to define a name.");
-   }
+   # if(! $name) {
+      # die("You have to define a name.");
+   # }
 
-   if(! $image_id) {
-      die("You have to define a image_id");
-   }
+   # if(! $image_id) {
+      # die("You have to define a image_id");
+   # }
 
-   my $vm = $self->_ganeti->create_vm(
-      name     => $name,
-      template => $image_id,
-   );
+   # my $vm = $self->_ganeti->create_vm(
+      # name     => $name,
+      # template => $image_id,
+   # );
 
-   # waiting until the instance has been created and started.
-   my $state = $vm->state;
-   while($state ne "running") {
-      sleep 5; # wait 5 seconds for the next request
-      $state = $vm->state;
-   }
+   # # waiting until the instance has been created and started.
+   # my $state = $vm->state;
+   # while($state ne "running") {
+      # sleep 5; # wait 5 seconds for the next request
+      # $state = $vm->state;
+   # }
 
-   my @nics = $vm->nics;
-   my $ip   = $nics[0]->ip; # get the ip of the first device
+   # my @nics = $vm->nics;
+   # my $ip   = $nics[0]->ip; # get the ip of the first device
 
-   sleep 5; # wait a few seconds to give the os time to boot
+   # sleep 5; # wait a few seconds to give the os time to boot
 
-   return {
-      id    => $vm->id,
-      ip    => $ip,
-      name  => $vm->name,
-      state => $vm->state,
-      architecture => $vm->arch,
-   };
-}
+   # return {
+      # id    => $vm->id,
+      # ip    => $ip,
+      # name  => $vm->name,
+      # state => $vm->state,
+      # architecture => $vm->arch,
+   # };
+# }
 
-sub stop_instance {
-   my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->stop;
-}
+# sub stop_instance {
+   # my ($self, %data) = @_;
+   # $self->_ganeti->get_vm($data{instance_id})->stop;
+# }
 
-sub terminate_instance {
-   my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->shutdown;
-}
+# sub terminate_instance {
+   # my ($self, %data) = @_;
+   # $self->_ganeti->get_vm($data{instance_id})->shutdown;
+# }
 
-sub start_instance {
-   my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->resume;
-}
+# sub start_instance {
+   # my ($self, %data) = @_;
+   # $self->_ganeti->get_vm($data{instance_id})->resume;
+# }
 
 sub _ganeti {
    my ($self) = @_;
-   return Rex::Cloud::Ganeti::RAPI->new(url => $self->{__endpoint}, user => $self->{__user}, password => $self->{__password});
+   return Rex::Cloud::Ganeti::RAPI->new(host => $self->{__endpoint}, user => $self->{__user}, password => $self->{__password});
 }
 
 Rex::Cloud->register_cloud_service(ganeti => __PACKAGE__);

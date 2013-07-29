@@ -1,4 +1,4 @@
-package REX::Cloud::Ganeti::RAPI::Host;
+package Rex::Cloud::Ganeti::RAPI::Host;
 
 
 sub new {
@@ -11,3 +11,4 @@ sub new {
    return $self;
 }
 
+1;

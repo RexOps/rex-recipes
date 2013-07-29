@@ -1,5 +1,6 @@
-package REX::Cloud::Ganeti::RAPI::VM;
+package Rex::Cloud::Ganeti::RAPI::VM;
 
+use Data::Dumper;
 
 sub new {
    my $class = shift;
@@ -12,15 +13,23 @@ sub new {
 }
 
 sub name {
-   my ($self, $data) = @_;
+   my $self = shift;
 
-   $data->{name};
+   #Rex::Logger::debug(Dumper($self));
+
+   return $self->{data}->{id};
 }
 
 sub uri {
-   my ($self, $data) = @_;
-
-   $data->{uri};
+   my $self = shift;
+  
+   return $self->{data}->{uri};
 }
-1;
 
+sub status {
+   my $self = shift;
+   
+   return $self->{extended_data}->{status};
+}
+
+1;
