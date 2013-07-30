@@ -37,17 +37,21 @@ sub set_auth {
    $self->{__password} = $password;
 }
 
-# sub list_operating_systems {
-   # my ($self) = @_;
-   # my @oses = $self->_ganeti->get_oses;
-   # my @ret = ();
+sub list_operating_systems {
+   my ($self) = @_;
+   
+   my @oses = $self->_ganeti->get_oses;
+   my @ret = ();
 
-   # for my $os (@oses) {
-      # push(@ret, { name => $os->name, variant => $os->variant });
-   # }
+   for my $os (@oses) {
+      push(@ret, {
+         name => $os->name,
+         variant => $os->variant,
+         });
+   }
 
-   # return @ret;
-# }
+   return @ret;
+}
 
 sub list_instances {
    my ($self) = @_;
@@ -73,21 +77,16 @@ sub list_instances {
 
 sub list_running_instances { 
    my ($self) = @_;
-   return grep { $_->{"state"} eq "running" } $self->list_instances();
+   return grep { $_->{state} eq "running" } $self->list_instances();
 }
-
 
 # sub run_instance {
    # my ($self, %data) = @_;
-   # my $image_id   = $data{image_id};
-   # my $name = $data{name};
-
-   # if(! $name) {
-      # die("You have to define a name.");
-   # }
-
-   # if(! $image_id) {
-      # die("You have to define a image_id");
+   # my $os_name   = $data{os};
+   # my $os_variant = $data{variant} || "default";
+   
+   # if(! $os_name) {
+      # die("You have to define an os.");
    # }
 
    # my $vm = $self->_ganeti->create_vm(
@@ -116,24 +115,27 @@ sub list_running_instances {
    # };
 # }
 
-# sub stop_instance {
-   # my ($self, %data) = @_;
-   # $self->_ganeti->get_vm($data{instance_id})->stop;
-# }
+sub stop_instance {
+   my ($self, %data) = @_;
+   $self->_ganeti->get_vm($data{instance_id})->stop;
+}
 
-# sub terminate_instance {
-   # my ($self, %data) = @_;
-   # $self->_ganeti->get_vm($data{instance_id})->shutdown;
-# }
+sub terminate_instance {
+   my ($self, %data) = @_;
+   $self->_ganeti->get_vm($data{instance_id})->remove;
+}
 
-# sub start_instance {
-   # my ($self, %data) = @_;
-   # $self->_ganeti->get_vm($data{instance_id})->resume;
-# }
+sub start_instance {
+   my ($self, %data) = @_;
+   $self->_ganeti->get_vm($data{name})->resume;
+}
 
 sub _ganeti {
    my ($self) = @_;
-   return Rex::Cloud::Ganeti::RAPI->new(host => $self->{__endpoint}, user => $self->{__user}, password => $self->{__password});
+   return Rex::Cloud::Ganeti::RAPI->new(host     => $self->{__endpoint},
+                                        user     => $self->{__user},
+                                        password => $self->{__password}
+                                       );
 }
 
 Rex::Cloud->register_cloud_service(ganeti => __PACKAGE__);
