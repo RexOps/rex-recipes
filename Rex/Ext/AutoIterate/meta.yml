@@ -1,0 +1,4 @@
+Name: Rex::Ext::AutoIterate
+Description: Automatically iterate over task parameters.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
