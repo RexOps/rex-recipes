@@ -1,4 +1,4 @@
-### only list_instances is being worked on right now
+### only instances / vm stuff is being worked on right now
 
 
 package Rex::Cloud::Ganeti;

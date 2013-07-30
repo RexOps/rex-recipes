@@ -142,9 +142,7 @@ sub _http {
      Rex::Logger::debug("Got reply $ret");
      return $ret; #should be a job id with this form: "123456"
    }
-
-   # FIXME: handle POST / PUT aswell 
-
+   # needs to handle DELETE too
 }
 
 1;
