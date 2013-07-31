@@ -23,9 +23,55 @@ sub validate {
       my $val = $param->{$key};
       my $reg = $opt{$key};
 
-      if( $val !~ $reg ) {
-         Rex::Logger::info("Error validating input. $key must be of type $reg");
-         die("Error validating input. $key must be of type $reg");
+      if(ref $reg eq "HASH") {
+         my $opt = 0;
+         if( exists $reg->{optional} ) {
+            $opt = 1;
+         }
+
+         if( exists $reg->{default} && ! exists $param->{$key} ) {
+            $param->{$key} = $reg->{default};
+
+            next;
+         }
+
+         if( exists $reg->{match} ) {
+            if( ! defined $val && $opt == 1) {
+               # param is optional and empty, just skip
+               next;
+            }
+
+            if( $val !~ $reg->{match} ) {
+               Rex::Logger::info("Error validating input. $key must be of type $reg");
+               die("Error validating input. $key must be of type $reg");
+
+               next;
+            }
+         }
+
+         if( exists $reg->{cb} & ref($reg->{cb}) eq "CODE" ) {
+            if( ! defined $val && $opt == 1) {
+               # param is optional and empty, just skip
+               next;
+            }
+
+            my $callback = $reg->{cb};
+            $param->{$key} = $callback->($val);
+
+            next;
+         }
+
+      }
+      else {
+         if( ! defined $val ) {
+            Rex::Logger::info("Error validating input. $key must be of type $reg");
+            die("Error validating input. $key must be of type $reg");
+         }
+
+         if( $val !~ $reg ) {
+            Rex::Logger::info("Error validating input. $key must be of type $reg");
+            die("Error validating input. $key must be of type $reg");
+         }
       }
    }
 }
@@ -48,9 +94,29 @@ If a condition failed, the function will die().
     my $param = shift;
     
     validate $param,
-      name   => qr{^[a-zA-Z0-9_]+$},
-      url    => qr{^http://.*$},
-      number => qr{^\d+$};
+       name   => qr{^[a-zA-Z0-9_]+$},
+       url    => qr{^http://.*$},
+       number => qr{^\d+$};
+     
+    validate $param,
+       name => qr{^[a-z]+$},
+       age  => {
+          default => 30, 
+       },  
+       city => {
+          cb => sub {
+             my ($val) = @_; 
+             print "got: $val\n";
+             return "checked: $val";
+          },  
+       },  
+       road => {
+          optional => 1,
+       },  
+       birth => {
+          optional => 1,
+          default => 1970,
+       };
  };
 
 =cut
