@@ -52,10 +52,9 @@ sub get_vms {
 }
 
 sub get_vm {
-   my $self = shift;
-   my %data = @_;
+   my ($self, $vm_name) = @_;
    
-   my ($vm) = grep { $_->name eq $data{name} } $self->get_vms;
+   my ($vm) = grep { $_->name eq $vm_name } $self->get_vms;
    
    return $vm; # it's an Rex::Cloud::Ganeti::RAPI::VM object
    
