@@ -39,7 +39,7 @@ sub set_auth {
 
 sub list_operating_systems {
    my ($self) = @_;
-   
+
    my @oses = $self->_ganeti->get_oses;
    my @ret = ();
 
@@ -62,7 +62,7 @@ sub list_instances {
       Rex::Logger::debug("heres my VM" . Dumper($vm));
       #my @nics = $vm->nics;
       #my $ip   = $nics[0]->ip;
-      
+
       push(@ret, {
          id      => $vm->name,
          #ip      => $ip,
@@ -75,7 +75,7 @@ sub list_instances {
    return @ret;
 }
 
-sub list_running_instances { 
+sub list_running_instances {
    my ($self) = @_;
    return grep { $_->{state} eq "running" } $self->list_instances();
 }
@@ -84,7 +84,7 @@ sub list_running_instances {
    # my ($self, %data) = @_;
    # my $os_name   = $data{os};
    # my $os_variant = $data{variant} || "default";
-   
+
    # if(! $os_name) {
       # die("You have to define an os.");
    # }
