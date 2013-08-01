@@ -27,6 +27,10 @@ sub templates {
       @vars = %{ $_[0] };
    }
 
+   if(scalar @vars == 1 && ! defined $vars[0]) {
+      @vars = ();
+   }
+
    return template(_calc_path("templates", $file, caller), @vars);
 }
 

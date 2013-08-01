@@ -35,6 +35,24 @@ sub validate {
             next;
          }
 
+         if( exists $reg->{type} ) {
+            my $type_class = "Rex::Ext::ParamValidate::Type::" . lc($reg->{type});
+            eval "use $type_class;";
+            if($@) {
+               die("Invalid type given.");
+            }
+
+            my $type = $type_class->new;
+            eval {
+               $param->{$key} = $type->validate($param->{$key});
+            } or do {
+               Rex::Logger::info("Error validating input. $key must be of type $reg->{type}");
+               die("Error validating input. $key must be of type $reg->{type}");
+            };
+
+            next;
+         }
+
          if( exists $reg->{match} ) {
             if( ! defined $val && $opt == 1) {
                # param is optional and empty, just skip
