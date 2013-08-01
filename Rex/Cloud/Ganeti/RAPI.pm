@@ -26,8 +26,8 @@ sub get_vms {
    my $self = shift;
 
    # I first get a basic list of instances
-   my $data = decode_json $self->_http("GET",
-                                       "/2/instances",
+   my $data = decode_json $self->_http('GET',
+                                       '/2/instances?bulk=1',
                                        $self->{host},
                                        );
 
@@ -36,16 +36,7 @@ sub get_vms {
    my @ret = ();
 
    for my $vm (@{ $data }) {
-
-      # for each VM, i need to dig further to get extended VM infos data
-      # using the complete VM uri
-
-      my $ext_data = decode_json $self->_http("GET",
-                                               $vm->{uri},
-                                               $self->{host},
-                                               );
-
-      push(@ret, Rex::Cloud::Ganeti::RAPI::VM->new(rapi => $self, data => $vm, extended_data => $ext_data));
+      push(@ret, Rex::Cloud::Ganeti::RAPI::VM->new(rapi => $self, data => $vm));
    }
 
    return @ret;
@@ -84,7 +75,9 @@ sub get_oses {
 }
 
 sub create_vm {
-   my $self = shift;
+   my ($self, %data) = @_;
+
+   
 
    #FIXME:
 }
@@ -93,21 +86,18 @@ sub _http {
    my $self = shift;
    my ($method, $url, $host) = @_;
 
-   my $https = Net::HTTPS->new(Host => $host) || die $@;
+   my $https = Net::HTTPS->new( Host          => $host,
+                                'User-Agent'  => 'Mozilla/5.0',
+                                Authorization => "Basic $encoded",
+                              ) || die $@;
    my $encoded = encode_base64("$self->{user}:$self->{password}");
 
-   if ($method =~ /(GET|PUT|DELETE)/) {
-      $https->write_request( "$method"     => $url,
-                             'User-Agent'  => "Mozilla/5.0",
-                             Authorization => "Basic $encoded",
+   if ($method =~ /^(GET|PUT|DELETE)$/) {
+      $https->write_request( $method => $url );
+   } elsif($method =~ /^POST$/) {
+      $https->write_request( $method        => $url,
+                             'Content-type' => 'application/json',
                            );
-   } elsif($method =~ /POST/) {
-      $https->write_request( "$method"      => $url,
-                             'User-Agent'   => "Mozilla/5.0",
-                             'Content-type' => "application/json",
-                             Authorization  => "Basic $encoded",
-                           );
-
     } else {
       die "$method isn't implemented";
    }
