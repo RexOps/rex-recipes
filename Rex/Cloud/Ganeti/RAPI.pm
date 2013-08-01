@@ -97,18 +97,18 @@ sub _http {
    my $encoded = encode_base64("$self->{user}:$self->{password}");
 
    if ($method =~ /(GET|PUT|DELETE)/) {
-      $https->write_request( $method     => $url,
+      $https->write_request( "$method"     => $url,
                              'User-Agent'  => "Mozilla/5.0",
                              Authorization => "Basic $encoded",
                            );
    } elsif($method =~ /POST/) {
-      $https->write_request( $method     => $url,
-                             'User-Agent'  => "Mozilla/5.0",
+      $https->write_request( "$method"      => $url,
+                             'User-Agent'   => "Mozilla/5.0",
                              'Content-type' => "application/json",
-                             Authorization => "Basic $encoded",
+                             Authorization  => "Basic $encoded",
                            );
 
-   } else {
+    } else {
       die "$method isn't implemented";
    }
 

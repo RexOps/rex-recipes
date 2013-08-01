@@ -7,9 +7,8 @@ use Data::Dumper;
 sub new {
    my $class = shift;
    my $proto = ref($class) || $class;
-
+   my $self = { @_ };
    bless($self, $proto);
-
    return $self;
 }
 

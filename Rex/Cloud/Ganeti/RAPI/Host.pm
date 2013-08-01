@@ -1,6 +1,5 @@
 package Rex::Cloud::Ganeti::RAPI::Host;
 
-
 sub new {
    my $class = shift;
    my $proto = ref($class) || $class;
