@@ -9,11 +9,16 @@ package Rex::Ext::ParamValidate;
 use strict;
 use warnings;
 
+use Filter::Simple;
 require Exporter;
 use base qw(Exporter);
 use vars qw (@EXPORT);
 
 @EXPORT = qw(validate);
+
+FILTER {
+   s/validate (\$[a-zA-Z0-9_]+)/$1 \/\/= {} ; validate $1/gms;
+};
 
 
 sub validate {
