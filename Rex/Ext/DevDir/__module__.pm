@@ -8,7 +8,6 @@ package Rex::Ext::DevDir;
 
 use Rex -base;
 use Rex::Logger;
-use Devel::StackTrace;
 use Data::Dumper;
 require Exporter;
 use base qw(Exporter);
