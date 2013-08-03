@@ -2,8 +2,9 @@ package Rex::Cloud::Ganeti::RAPI;
 
 use Data::Dumper;
 use JSON;
-use Net::HTTPS;
 use MIME::Base64;
+use Net::HTTPS;
+
 
 use Rex::Cloud::Ganeti::RAPI::Host;
 use Rex::Cloud::Ganeti::RAPI::VM;
@@ -25,7 +26,7 @@ sub new {
 sub get_vms {
    my $self = shift;
 
-   # I first get a basic list of instances
+   # I first get the list of instances
    my $data = decode_json $self->_http('GET',
                                        '/2/instances?bulk=1',
                                        $self->{host},
@@ -74,36 +75,82 @@ sub get_oses {
    return @ret;
 }
 
+
+### http://docs.ganeti.org/ganeti/2.5/html/rapi.html
+### some info are found in doc/api.rst from ganeti
+### man gnt-instance(8) also
 sub create_vm {
-   my ($self, %data) = @_;
+   my ($self, %option) = @_;
 
+   my %param;
    
+   # minimum required to create an instance
+   $param{ __version__   } = 1; # supported by newer ganeti installs
+   $param{ mode          } = $option{mode};
+   $param{ instance_name } = $option{name};
+   $param{ disk_template } = $option{disk_template};
+   $param{ disks         } = $option{disks};
+   $param{ nics          } = $option{nics};
+   
+   $param{ hypervisor    } = $option{hypervisor} || "None";
+   # should be like "osname+variant"
+   $param{ os_type       } = $option{os} || $option{os_type} || "None";
+   
+   $param{ beparams      } = $option{beparams} || {};
+   $param{ hvparams      } = $option{hv_params} || {};
+   
+   # FIXME: %option might contain keys that i'm not aware of yet.
+   #   i need to pull those 'unnknown' options to $param
+   
+   my $json = encode_json \%param;
+   #Rex::Logger::debug("json is" . Dumper($json));
 
-   #FIXME:
+   ### will return a jobid
+   ### that could be a problem, because the VM needs some time to be created
+   return $self->_http("POST",
+                        "/2/instances",
+                        $self->{host},
+                        $json,
+                       );
 }
 
 sub _http {
    my $self = shift;
-   my ($method, $url, $host) = @_;
+   my ($method, $url, $host, $body) = @_;
+
+
+   my $encoded = encode_base64("$self->{user}:$self->{password}");
 
    my $https = Net::HTTPS->new( Host          => $host,
                                 'User-Agent'  => 'Mozilla/5.0',
-                                Authorization => "Basic $encoded",
+                                Accept        => 'application/json',                                
                               ) || die $@;
-   my $encoded = encode_base64("$self->{user}:$self->{password}");
 
    if ($method =~ /^(GET|PUT|DELETE)$/) {
-      $https->write_request( $method => $url );
+      $https->write_request( $method       => $url,
+                             Authorization => "Basic $encoded", );
    } elsif($method =~ /^POST$/) {
-      $https->write_request( $method        => $url,
+      Rex::Logger::debug( $https->format_request( $method        => $url,
                              'Content-type' => 'application/json',
+                             Authorization => "Basic $encoded",
+                             $body,
+                           ) );
+                           
+      $https->write_request( $method        => $url,
+                             'Content-type' => 'application/json', # must be Content-type, not Content-Type wtf
+                             Authorization => "Basic $encoded",
+                             $body,
                            );
+
     } else {
-      die "$method isn't implemented";
+      die "$method isn't supported yet";
    }
 
    Rex::Logger::debug("Will ask for $host$url request");
    my ($code, $mess, %h) = $https->read_response_headers;
+   
+   # FIXME: Need to check for 5xx or 4xx return codes
+   
    my $ret;
    while (1) {
       my $buf;

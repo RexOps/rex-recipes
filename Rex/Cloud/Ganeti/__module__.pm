@@ -80,6 +80,14 @@ sub list_running_instances {
    return grep { $_->{state} eq "running" } $self->list_instances();
 }
 
+sub run_instance {
+
+   my $self = shift;
+   my @ret = ();
+   return $self->_ganeti->create_vm(@_);
+
+}
+
 # sub run_instance {
    # my ($self, %data) = @_;
    # my $os_name   = $data{os};
