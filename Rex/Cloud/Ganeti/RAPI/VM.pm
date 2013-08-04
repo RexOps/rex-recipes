@@ -17,7 +17,7 @@ sub name {
 
    #Rex::Logger::debug(Dumper($self));
 
-   return $self->{data}->{id};
+   return $self->{data}->{name};
 }
 
 sub uri {
@@ -29,7 +29,7 @@ sub uri {
 sub status {
    my $self = shift;
 
-   return $self->{extended_data}->{status};
+   return $self->{data}->{status};
 
    ### should I update everytime I need the status ?
    ### yea, i think so.

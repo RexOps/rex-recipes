@@ -59,7 +59,7 @@ sub list_instances {
    my @vms = $self->_ganeti->get_vms;
 
    for my $vm (@vms) {
-      Rex::Logger::debug("heres my VM" . Dumper($vm));
+      #Rex::Logger::debug("heres my VM" . Dumper($vm));
       #my @nics = $vm->nics;
       #my $ip   = $nics[0]->ip;
 
@@ -70,6 +70,7 @@ sub list_instances {
          state   => $vm->status,
          #architecture => $vm->arch,
       });
+      
    }
 
    return @ret;
@@ -77,14 +78,111 @@ sub list_instances {
 
 sub list_running_instances {
    my ($self) = @_;
+   
    return grep { $_->{state} eq "running" } $self->list_instances();
 }
 
+
+### http://docs.ganeti.org/ganeti/2.5/html/rapi.html
+### some info are found in doc/api.rst from ganeti
+### man gnt-instance(8) also
 sub run_instance {
 
-   my $self = shift;
-   my @ret = ();
-   return $self->_ganeti->create_vm(@_);
+   my ($self, %data) = @_;
+   
+   my %p; #params
+   
+   $p{__version__} = 1; # mandatory!
+   
+   $p{os_type}       = $data{os} || $data{os_type};
+   $p{instance_name} = $data{name};
+   
+   ############ disk default ##########
+   my $size = $data{size} || '10G'; # default size of the 1st disk
+   $p{disks} = $data{disks} || [ { size => $size, mode => 'rw' } ];
+   
+   
+   
+   
+   ############ net default  ##########
+   my $mac = $data{mac};
+   $p{nics} = $data{nics} || [ { mac => $mac } ];
+   
+   
+   $p{disk_template} = $data{disk_template};
+   
+   # I don't know if I should force some missing settings values...
+   $p{mode}          = $data{mode} || 'create';
+   $p{hypervisor}    = $data{hypervisor} || 'kvm';
+   
+   my $memory        = $data{ram} || $data{memory} || '1G';
+   my $vcpus         = $data{vcpus} || 1;
+   
+   # if the user supplied its own beparams, use them.
+   $p{beparams}      = $data{beparams} || { memory => $memory, vcpus => $vcpus };
+   
+   # I don't use hvparams, maybe some people do ?
+   $p{hvparams}      = $data{hvparams} || {};
+   
+   
+   
+   ####### Now I can delete keys I don't need anymore,
+   ####### because Ganeti won't like json keys with null values
+   ### FIXME : I need to determine what options are required
+   ### and die if one of them is missing
+   
+   if(! $p{instance_name}) {
+      die("You must define a name for the instance");
+   } else {
+      delete $data{name};
+   }
+   
+   if(! $p{os_type}) {
+      Rex::Logger::debug("No os_type defined");
+      delete $p{os_type};
+   }
+   delete $data{os};
+   delete $data{os_type};
+      
+   
+   if(! $p{disk_template}) {
+      Rex::Logger::debug("No disk_template defined (drbd or file, etc...)");
+      delete $p{disk_template};
+   }
+   delete $data{disk_template};
+   
+   if(! $p{nics}) {
+      Rex::Logger::debug("No 'nics' or 'mac' ( 'mac' => 'XX:YY:...' ) defined");
+   }
+   delete $data{mac};
+   delete $data{nics};
+   
+   if(! $p{beparams}) {
+      Rex::Logger::debug("No 'beparams' or ( 'ram' and 'vcpus') defined");
+   }
+   delete $data{beparams};
+   
+   
+   delete $data{mode};
+   delete $data{hypervisor};
+   delete $data{ram};
+   delete $data{memory};
+   delete $data{vcpus};
+   delete $data{hvparams};
+   delete $data{size};
+   delete $data{disks};
+   
+   ### now I must delete everything that is undef,
+   ### (keys that are given by Rex API that Ganeti doesn't understand/need)
+   foreach my $key ( keys %data ) {
+      delete $data{$key} unless defined $data{$key};
+   }
+   
+   #### end of sanitizing. 
+   
+   Rex::Logger::debug(Dumper(%data) . Dumper(%p));
+   
+   return $self->_ganeti->create_vm(%data, %p);
 
 }
 
@@ -123,6 +221,7 @@ sub run_instance {
    # };
 # }
 
+################ $data{instance_id} is given by the Rex api
 sub stop_instance {
    my ($self, %data) = @_;
    $self->_ganeti->get_vm($data{instance_id})->stop;
@@ -135,7 +234,7 @@ sub terminate_instance {
 
 sub start_instance {
    my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{name})->resume;
+   $self->_ganeti->get_vm($data{instance_id})->resume;
 }
 
 sub _ganeti {

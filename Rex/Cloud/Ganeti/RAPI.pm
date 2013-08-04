@@ -49,7 +49,6 @@ sub get_vm {
    my ($vm) = grep { $_->name eq $vm_name } $self->get_vms;
 
    return $vm; # it's an Rex::Cloud::Ganeti::RAPI::VM object
-
 }
 
 sub get_oses {
@@ -76,33 +75,31 @@ sub get_oses {
 }
 
 
-### http://docs.ganeti.org/ganeti/2.5/html/rapi.html
-### some info are found in doc/api.rst from ganeti
-### man gnt-instance(8) also
+
 sub create_vm {
    my ($self, %option) = @_;
 
-   my %param;
+   # my %param;
    
-   # minimum required to create an instance
-   $param{ __version__   } = 1; # supported by newer ganeti installs
-   $param{ mode          } = $option{mode};
-   $param{ instance_name } = $option{name};
-   $param{ disk_template } = $option{disk_template};
-   $param{ disks         } = $option{disks};
-   $param{ nics          } = $option{nics};
+# #    # minimum required to create an instance
+   # $param{ __version__   } = 1;
+   # $param{ instance_name } = $option{name} || ;
+   # $param{ disk_template } = $option{disk_template};
+   # $param{ disks         } = $option{disks};
+   # $param{ nics          } = $option{nics};
    
-   $param{ hypervisor    } = $option{hypervisor} || "None";
-   # should be like "osname+variant"
-   $param{ os_type       } = $option{os} || $option{os_type} || "None";
+# #    $param{ mode          } = $option{mode} || "create";
+   # $param{ hypervisor    } = $option{hypervisor} || "None";
+   # # should be like "osname+variant"
+   # $param{ os_type       } = $option{os} || $option{os_type} || "None";
    
-   $param{ beparams      } = $option{beparams} || {};
-   $param{ hvparams      } = $option{hv_params} || {};
+# #    $param{ beparams      } = $option{beparams} || {};
+   # $param{ hvparams      } = $option{hvparams} || {};
    
-   # FIXME: %option might contain keys that i'm not aware of yet.
-   #   i need to pull those 'unnknown' options to $param
+# #    # FIXME: %option might contain keys that i'm not aware of yet.
+   # #   i need to pull those 'unnknown' options to $param
    
-   my $json = encode_json \%param;
+   my $json = encode_json \%option;
    #Rex::Logger::debug("json is" . Dumper($json));
 
    ### will return a jobid
@@ -131,14 +128,14 @@ sub _http {
                              Authorization => "Basic $encoded", );
    } elsif($method =~ /^POST$/) {
       Rex::Logger::debug( $https->format_request( $method        => $url,
-                             'Content-type' => 'application/json',
-                             Authorization => "Basic $encoded",
-                             $body,
-                           ) );
+                                                  'Content-Type' => 'application/json',
+                                                  Authorization  => "Basic $encoded",
+                                                  $body )
+                        );
                            
       $https->write_request( $method        => $url,
-                             'Content-type' => 'application/json', # must be Content-type, not Content-Type wtf
-                             Authorization => "Basic $encoded",
+                             'Content-Type' => 'application/json',
+                             Authorization  => "Basic $encoded",
                              $body,
                            );
 
