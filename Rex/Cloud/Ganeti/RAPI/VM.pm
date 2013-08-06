@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Data::Dumper;
 
-#### not ready to use jobs, it's a mess to deal with
 use Rex::Cloud::Ganeti::RAPI::Job;
 
 sub new {
@@ -93,9 +92,6 @@ sub _get_info {
 
    $self->{data} = $refreshed_vm->{data};
    
-   # if(! exists $self->{extended_data} || (exists $option{clearcache} && $option{clearcache} == 1)) {
-      # $self->{extended_data} = $self->{rpc}->_rpc("one.vm.info", [ int => $self->id ]);
-   # }
 }
 
 
