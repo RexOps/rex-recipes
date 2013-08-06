@@ -2,3 +2,5 @@ Name: Rex::Ext::ParamValidate
 Description: This plugin gives you a function to validate task parameters.
 Author: jan gehring <jan.gehring@gmail.com>
 License: Apache 2.0
+PerlRequire:
+   - Filter::Simple

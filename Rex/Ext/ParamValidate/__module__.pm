@@ -51,8 +51,8 @@ sub validate {
             eval {
                $param->{$key} = $type->validate($param->{$key});
             } or do {
-               Rex::Logger::info("Error validating input. $key must be of type $reg->{type}");
-               die("Error validating input. $key must be of type $reg->{type}");
+               Rex::Logger::info("Error validating input. $key must be of type $reg->{type} is $val");
+               die("Error validating input. $key must be of type $reg->{type} is $val");
             };
 
             next;
@@ -65,8 +65,8 @@ sub validate {
             }
 
             if( $val !~ $reg->{match} ) {
-               Rex::Logger::info("Error validating input. $key must be of type $reg");
-               die("Error validating input. $key must be of type $reg");
+               Rex::Logger::info("Error validating input. $key must be of type $reg is $val");
+               die("Error validating input. $key must be of type $reg is $val");
 
                next;
             }
@@ -87,13 +87,13 @@ sub validate {
       }
       else {
          if( ! defined $val ) {
-            Rex::Logger::info("Error validating input. $key must be of type $reg");
-            die("Error validating input. $key must be of type $reg");
+            Rex::Logger::info("Error validating input. $key must be of type $reg is $val");
+            die("Error validating input. $key must be of type $reg is $val");
          }
 
          if( $val !~ $reg ) {
-            Rex::Logger::info("Error validating input. $key must be of type $reg");
-            die("Error validating input. $key must be of type $reg");
+            Rex::Logger::info("Error validating input. $key must be of type $reg is $val");
+            die("Error validating input. $key must be of type $reg is $val");
          }
       }
    }
