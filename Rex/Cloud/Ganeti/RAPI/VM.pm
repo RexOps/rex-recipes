@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use Data::Dumper;
 
+#### not ready to use jobs, it's a mess to deal with
+use Rex::Cloud::Ganeti::RAPI::Job;
+
 sub new {
    my $class = shift;
    my $proto = ref($class) || $class;
@@ -40,20 +43,31 @@ sub resume {
    my $self = shift;
 
    my $jobid = $self->{rapi}->_http("PUT",
-                                    "/2/instances/". $self->name . "startup",
+                                    "/2/instances/". $self->name . "/startup",
                                     $self->{rapi}->{host},
                                    );
-   return $jobid;
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self->{rapi},
+                                                data => { id => $jobid}
+                                               );                                   
+                                               
+   return $job;
 }
 
 sub stop {
    my $self = shift;
 
    my $jobid = $self->{rapi}->_http("PUT",
-                                    "/2/instances/". $self->name . "shutdown",
+                                    "/2/instances/". $self->name . "/shutdown",
                                     $self->{rapi}->{host},
                                    );
-   return $jobid;
+
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self->{rapi},
+                                                data => { id => $jobid},
+                                               );
+                                               
+   Rex::Logger::debug("stop: ". Dumper($job));
+   
+   return $job;
 }
 
 
@@ -64,7 +78,26 @@ sub remove {
                                     "/2/instances/". $self->name,
                                     $self->{rapi}->{host},
                                    );
-   return $jobid;
+   
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self->{rapi},
+                                                data => { id => $jobid},
+                                               );
+                                   
+   return $job;   
 }
+
+sub _get_info {
+   my ($self, %option) = @_;
+
+   my $refreshed_vm = $self->{rapi}->get_vm($self->name);
+
+   $self->{data} = $refreshed_vm->{data};
+   
+   # if(! exists $self->{extended_data} || (exists $option{clearcache} && $option{clearcache} == 1)) {
+      # $self->{extended_data} = $self->{rpc}->_rpc("one.vm.info", [ int => $self->id ]);
+   # }
+}
+
+
 
 1;

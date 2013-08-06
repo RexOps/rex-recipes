@@ -21,8 +21,9 @@ sub new {
 
    bless($self, $proto);
 
-   Rex::Logger::debug("Creating new Rex::Cloud::Ganeti Object");
-
+   Rex::Logger::debug("Creating new Rex::Cloud::Ganeti Object, with endpoint ".
+                       ($self->{endpoint} ? $self->{endpoint} : "not defined yet")
+                     );
    return $self;
 }
 
@@ -54,14 +55,11 @@ sub list_operating_systems {
 }
 
 sub list_instances {
-   my ($self) = @_;
+   my $self = shift;
    my @ret = ();
    my @vms = $self->_ganeti->get_vms;
 
    for my $vm (@vms) {
-      #Rex::Logger::debug("heres my VM" . Dumper($vm));
-      #my @nics = $vm->nics;
-      #my $ip   = $nics[0]->ip;
 
       push(@ret, {
          id      => $vm->name,
@@ -77,9 +75,9 @@ sub list_instances {
 }
 
 sub list_running_instances {
-   my ($self) = @_;
+   my $self = shift;
    
-   return grep { $_->{state} eq "running" } $self->list_instances();
+   return grep { $_->{state} =~ 'running' } $self->list_instances();
 }
 
 
@@ -90,46 +88,70 @@ sub run_instance {
 
    my ($self, %data) = @_;
    
-   my %p; #params
+   my %p; #actual params that I will use for the REST HTTP request
    
    $p{__version__} = 1; # mandatory!
    
-   $p{os_type}       = $data{os} || $data{os_type};
-   $p{instance_name} = $data{name};
+   $p{os_type}       = $data{os} || $data{os_type}; # mandatory!
+   $p{instance_name} = $data{name}; # name is mandatory
    
    ############ disk default ##########
-   my $size = $data{size} || '10G'; # default size of the 1st disk
-   $p{disks} = $data{disks} || [ { size => $size, mode => 'rw' } ];
+   my $size = $data{size}; # 'size' is mandatory, unless 'disks' is specified
+   if($data{disks}) {
+      $p{disks} = $data{disks};
+   } else {
+      
+      if($size) {
+         $p{disks}[0]{size} = $size if $size;
+         $p{disks}[0]{mode} = 'rw'; # I force rw, because i don't think ro is useful for me
+      }
+   }
+
+
    
-   
-   
-   
-   ############ net default  ##########
+   ############ net defaults  ##########
+   # if the user supplied its own nics, use them.
    my $mac = $data{mac};
-   $p{nics} = $data{nics} || [ { mac => $mac } ];
+   if($data{nics}) {
+      $p{nics} = $data{nics};
+   } else {
+      
+      $p{nics}[0]{mac} = $mac if $mac;
+   }
+   
+
    
    
-   $p{disk_template} = $data{disk_template};
+   ############ backend defaults ##########
+   my $memory        = $data{ram} || $data{memory};
+   my $vcpus         = $data{vcpus};
+   
+   # if the user supplied its own beparams, use them.
+   if($data{beparams}) {
+      $p{beparams} = $data{beparams};
+   } else {
+      
+      # we'll construct beparams from given settings, if any
+      $p{beparams}{memory} = $memory if $memory;
+      $p{beparams}{vcpus} = $vcpus if $vcpus;
+      
+   }
+   
+   ############ hvparams defaults ##########   
+   # I don't use hvparams, but maybe some people do ?
+   if($data{hvparams}) {
+      $p{hvparams} = $data{hvparams};
+   }
+
+   ############ misc. ############
+   $p{disk_template} = $data{disk_template} || 'drbd'; # i force drbd, because it is ganeti main point imho
    
    # I don't know if I should force some missing settings values...
    $p{mode}          = $data{mode} || 'create';
-   $p{hypervisor}    = $data{hypervisor} || 'kvm';
-   
-   my $memory        = $data{ram} || $data{memory} || '1G';
-   my $vcpus         = $data{vcpus} || 1;
-   
-   # if the user supplied its own beparams, use them.
-   $p{beparams}      = $data{beparams} || { memory => $memory, vcpus => $vcpus };
-   
-   # I don't use hvparams, maybe some people do ?
-   $p{hvparams}      = $data{hvparams} || {};
-   
-   
-   
+   $p{hypervisor}    = $data{hypervisor}; # the cluster sets a default hypervisor value if it is missing   
+      
    ####### Now I can delete keys I don't need anymore,
-   ####### because Ganeti won't like json keys with null values
-   ### FIXME : I need to determine what options are required
-   ### and die if one of them is missing
+   ####### because Ganeti won't like json keys with null values sometimes
    
    if(! $p{instance_name}) {
       die("You must define a name for the instance");
@@ -138,31 +160,34 @@ sub run_instance {
    }
    
    if(! $p{os_type}) {
-      Rex::Logger::debug("No os_type defined");
-      delete $p{os_type};
+      die("No os defined");
    }
    delete $data{os};
    delete $data{os_type};
       
    
    if(! $p{disk_template}) {
-      Rex::Logger::debug("No disk_template defined (drbd or file, etc...)");
+      Rex::Logger::debug("No 'disk_template' defined (drbd, file, etc...). Using cluster's default");
       delete $p{disk_template};
    }
    delete $data{disk_template};
    
    if(! $p{nics}) {
-      Rex::Logger::debug("No 'nics' or 'mac' ( 'mac' => 'XX:YY:...' ) defined");
+      Rex::Logger::debug("No 'nics' or 'mac' ( 'mac' => 'XX:YY:...' ) defined. Using cluster's default");
+      delete $p{nics};
    }
    delete $data{mac};
    delete $data{nics};
    
    if(! $p{beparams}) {
-      Rex::Logger::debug("No 'beparams' or ( 'ram' and 'vcpus') defined");
+      Rex::Logger::debug("No 'beparams' or ( 'ram' and 'vcpus') defined. Using cluster's default");
+      delete $p{beparams};
    }
    delete $data{beparams};
    
-   
+   if(! $p{hypervisor}) {
+      delete $p{hypervisor};
+   }
    delete $data{mode};
    delete $data{hypervisor};
    delete $data{ram};
@@ -173,7 +198,7 @@ sub run_instance {
    delete $data{disks};
    
    ### now I must delete everything that is undef,
-   ### (keys that are given by Rex API that Ganeti doesn't understand/need)
+   ### (keys that are given by Rex::Commands::Cloudthat Ganeti won't understand/need)
    foreach my $key ( keys %data ) {
       delete $data{$key} unless defined $data{$key};
    }
@@ -182,7 +207,27 @@ sub run_instance {
    
    Rex::Logger::debug(Dumper(%data) . Dumper(%p));
    
-   return $self->_ganeti->create_vm(%data, %p);
+   my $job = $self->_ganeti->create_vm(%data, %p);
+   
+   # i need to poll the job until it get status "success".
+   # or return if job get "error" status.
+   my $state;
+   while($state = $job->status) {
+      Rex::Logger::debug("job ". $job->id ." has state: $state");
+      if($state eq "success") {
+         my $vm = $self->_ganeti->get_vm($p{instance_name});
+         return {
+            name  => $vm->name,
+            state => $vm->status,
+            id    => $vm->name,
+         };
+      } elsif($state eq "error") {
+         warn("Instance ". $p{instance_name} ." creation failed");
+         return;
+      }
+      sleep 5;
+      
+   }
 
 }
 
@@ -224,17 +269,63 @@ sub run_instance {
 ################ $data{instance_id} is given by the Rex api
 sub stop_instance {
    my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->stop;
+   
+   my $job = $self->_ganeti->get_vm($data{instance_id})->stop;
+   
+   my $state;
+   while($state = $job->status) {
+      Rex::Logger::debug("job ". $job->id ." has state: $state");
+      if($state eq "success") {
+         return "success";
+      } elsif($state eq "error") {
+         warn("Instance ". $data{instance_id} ." failed to stop");
+         return;
+      }
+      sleep 5;
+      
+   }
+   return; # there should be some kind of timeout to prevent looping if something
+            # unknown happens to the job...
 }
 
 sub terminate_instance {
    my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->remove;
+   
+   my $job = $self->_ganeti->get_vm($data{instance_id})->remove;
+   my $state;
+   while($state = $job->status) {
+      Rex::Logger::debug("job ". $job->id ." has state: $state");
+      if($state eq "success") {
+         return "success";
+      } elsif($state eq "error") {
+         warn("Instance ". $data{instance_id} ." failed to stop");
+         return;
+      }
+      sleep 5;
+      
+   }
+   return; # there should be some kind of timeout to prevent looping if something
+            # unknown happens to the job...   
 }
 
 sub start_instance {
    my ($self, %data) = @_;
-   $self->_ganeti->get_vm($data{instance_id})->resume;
+   my $job = $self->_ganeti->get_vm($data{instance_id})->resume;
+   
+   my $state;
+   while($state = $job->status) {
+      Rex::Logger::debug("job ". $job->id ." has state: $state");
+      if($state eq "success") {
+         return "success";
+      } elsif($state eq "error") {
+         warn("Instance ". $data{instance_id} ." failed to stop");
+         return;
+      }
+      sleep 5;
+      
+   }
+   return; # there should be some kind of timeout to prevent looping if something
+            # unknown happens to the job...   
 }
 
 sub _ganeti {

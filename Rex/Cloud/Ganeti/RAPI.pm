@@ -5,10 +5,11 @@ use JSON;
 use MIME::Base64;
 use Net::HTTPS;
 
-
 use Rex::Cloud::Ganeti::RAPI::Host;
-use Rex::Cloud::Ganeti::RAPI::VM;
+use Rex::Cloud::Ganeti::RAPI::Job;
 use Rex::Cloud::Ganeti::RAPI::OS;
+use Rex::Cloud::Ganeti::RAPI::VM;
+
 
 use strict;
 use warnings;
@@ -51,6 +52,18 @@ sub get_vm {
    return $vm; # it's an Rex::Cloud::Ganeti::RAPI::VM object
 }
 
+sub get_job {
+   my ($self, $id) = @_;
+   
+   my $data = decode_json $self->_http("GET",
+                                       "/2/jobs/". $id,
+                                       $self->{host},
+                                      );
+   Rex::Logger::debug("get_job ". Dumper($data));                                      
+   return Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self, data => $data);
+   
+}
+
 sub get_oses {
    my $self = shift;
    my $data = decode_json $self->_http("GET",
@@ -59,9 +72,7 @@ sub get_oses {
                                        $self->{host},
                                        );
 
-
-
-   Rex::Logger::debug(Dumper($data));
+   Rex::Logger::debug("get_oses ". Dumper($data));
 
    my @ret = ();
 
@@ -75,40 +86,24 @@ sub get_oses {
 }
 
 
-
+### create_vm should return a Rex::Cloud::Ganeti::RAPI::Job
 sub create_vm {
    my ($self, %option) = @_;
 
-   # my %param;
-   
-# #    # minimum required to create an instance
-   # $param{ __version__   } = 1;
-   # $param{ instance_name } = $option{name} || ;
-   # $param{ disk_template } = $option{disk_template};
-   # $param{ disks         } = $option{disks};
-   # $param{ nics          } = $option{nics};
-   
-# #    $param{ mode          } = $option{mode} || "create";
-   # $param{ hypervisor    } = $option{hypervisor} || "None";
-   # # should be like "osname+variant"
-   # $param{ os_type       } = $option{os} || $option{os_type} || "None";
-   
-# #    $param{ beparams      } = $option{beparams} || {};
-   # $param{ hvparams      } = $option{hvparams} || {};
-   
-# #    # FIXME: %option might contain keys that i'm not aware of yet.
-   # #   i need to pull those 'unnknown' options to $param
-   
    my $json = encode_json \%option;
-   #Rex::Logger::debug("json is" . Dumper($json));
+   Rex::Logger::debug("create_vm " . Dumper($json));
 
-   ### will return a jobid
-   ### that could be a problem, because the VM needs some time to be created
-   return $self->_http("POST",
-                        "/2/instances",
-                        $self->{host},
-                        $json,
-                       );
+   my $jobid =  $self->_http("POST",
+                             "/2/instances",
+                             $self->{host},
+                             $json,
+                            );
+   ### $jobid content will get cleaned in the next statement
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self,
+                                                data => { id => $jobid},
+                                               );
+                                               
+   return $job;
 }
 
 sub _http {
@@ -124,6 +119,8 @@ sub _http {
                               ) || die $@;
 
    if ($method =~ /^(GET|PUT|DELETE)$/) {
+      Rex::Logger::debug($https->format_request( $method       => $url,
+                             Authorization => "Basic $encoded", ));
       $https->write_request( $method       => $url,
                              Authorization => "Basic $encoded", );
    } elsif($method =~ /^POST$/) {
@@ -146,7 +143,9 @@ sub _http {
    Rex::Logger::debug("Will ask for $host$url request");
    my ($code, $mess, %h) = $https->read_response_headers;
    
-   # FIXME: Need to check for 5xx or 4xx return codes
+   if($code =~ /^[45]/) {
+      die "Error $code : $mess";
+   }
    
    my $ret;
    while (1) {
