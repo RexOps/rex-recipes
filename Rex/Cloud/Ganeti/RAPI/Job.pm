@@ -41,6 +41,28 @@ sub id {
    
 }
 
+# wait for a job to finish (either successfully or not)
+sub wait {
+   
+   my $self = shift;
+   
+   # there should be some kind of timeout to prevent looping if something
+   # unknown happens to the job...  
+   
+   while(my $state = $self->status) {
+      Rex::Logger::debug('job '. $self->id .' has state: $state');
+      
+      if($state eq 'running') {
+         sleep 3; # let's wait some more
+         next;
+      }
+      
+      return $state;
+   }
+   return; # shouldn't be here, ever.
+   
+}
+
 sub _get_info {
    my $self = shift;
 

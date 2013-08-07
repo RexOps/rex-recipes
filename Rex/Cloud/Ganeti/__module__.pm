@@ -210,12 +210,9 @@ sub run_instance {
    
    my $job = $self->_ganeti->create_vm(%data, %p);
    
-   # i need to poll the job until it get status "success".
-   # or return if job get "error" status.
-   my $state;
-   while($state = $job->status) {
-      Rex::Logger::debug("job ". $job->id ." has state: $state");
-      if($state eq "success") {
+   
+   my $state = $job->wait;
+   if($state eq 'success') {
          my $vm = $self->_ganeti->get_vm($p{instance_name});
          return {
             name         => $vm->name,
@@ -224,111 +221,47 @@ sub run_instance {
             ip           => $vm->ip, ### WARN, $vm->ip will return the instance's hostname.
             architecture => $vm->arch,
          };
-      } elsif($state eq "error") {
-         warn("Instance ". $p{instance_name} ." creation failed");
+   } else {
+     warn('Instance '. $p{instance_name} .' creation failed');
          return;
-      }
-      sleep 5;
-      
    }
+     
+   return; # i shouldn't be ever here.
 
 }
-
-# sub run_instance {
-   # my ($self, %data) = @_;
-   # my $os_name   = $data{os};
-   # my $os_variant = $data{variant} || "default";
-
-   # if(! $os_name) {
-      # die("You have to define an os.");
-   # }
-
-   # my $vm = $self->_ganeti->create_vm(
-      # name     => $name,
-      # template => $image_id,
-   # );
-
-   # # waiting until the instance has been created and started.
-   # my $state = $vm->state;
-   # while($state ne "running") {
-      # sleep 5; # wait 5 seconds for the next request
-      # $state = $vm->state;
-   # }
-
-   # my @nics = $vm->nics;
-   # my $ip   = $nics[0]->ip; # get the ip of the first device
-
-   # sleep 5; # wait a few seconds to give the os time to boot
-
-   # return {
-      # id    => $vm->id,
-      # ip    => $ip,
-      # name  => $vm->name,
-      # state => $vm->state,
-      # architecture => $vm->arch,
-   # };
-# }
 
 ################ $data{instance_id} is given by the Rex api
 sub stop_instance {
    my ($self, %data) = @_;
    
    my $job = $self->_ganeti->get_vm($data{instance_id})->stop;
+   my $state = $job->wait;
    
-   my $state;
-   while($state = $job->status) {
-      Rex::Logger::debug("job ". $job->id ." has state: $state");
-      if($state eq "success") {
-         return "success";
-      } elsif($state eq "error") {
-         warn("Instance ". $data{instance_id} ." failed to stop");
-         return;
-      }
-      sleep 5;
-      
-   }
-   return; # there should be some kind of timeout to prevent looping if something
-            # unknown happens to the job...
+   warn('Instance '. $data{instance_id} .' failed to stop')  if $state ne 'success';
+   
+   return $state;   
 }
 
 sub terminate_instance {
    my ($self, %data) = @_;
    
    my $job = $self->_ganeti->get_vm($data{instance_id})->remove;
-   my $state;
-   while($state = $job->status) {
-      Rex::Logger::debug("job ". $job->id ." has state: $state");
-      if($state eq "success") {
-         return "success";
-      } elsif($state eq "error") {
-         warn("Instance ". $data{instance_id} ." failed to stop");
-         return;
-      }
-      sleep 5;
-      
-   }
-   return; # there should be some kind of timeout to prevent looping if something
-            # unknown happens to the job...   
+   my $state = $job->wait;
+   
+   warn('Instance '. $data{instance_id} .' failed to suppress')  if $state ne 'success';
+   
+   return $state;
 }
 
 sub start_instance {
    my ($self, %data) = @_;
+
    my $job = $self->_ganeti->get_vm($data{instance_id})->resume;
+   my $state = $job->wait;
    
-   my $state;
-   while($state = $job->status) {
-      Rex::Logger::debug("job ". $job->id ." has state: $state");
-      if($state eq "success") {
-         return "success";
-      } elsif($state eq "error") {
-         warn("Instance ". $data{instance_id} ." failed to stop");
-         return;
-      }
-      sleep 5;
-      
-   }
-   return; # there should be some kind of timeout to prevent looping if something
-            # unknown happens to the job...   
+   warn('Instance '. $data{instance_id} .' failed to start')  if $state ne 'success';
+   
+   return $state;
 }
 
 # FIXME: Not implemented yet.
@@ -337,6 +270,8 @@ sub add_tag {
    
    ### Tags in ganeti are just names, without values.
    ###Rex::Logger::debug("Adding a new tag: " . $data{id} . " -> " . $data{name});
+   
+   
    
 }
 
