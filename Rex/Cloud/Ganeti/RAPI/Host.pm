@@ -1,3 +1,4 @@
+# this package is bogus atm
 package Rex::Cloud::Ganeti::RAPI::Host;
 
 sub new {
