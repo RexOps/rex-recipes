@@ -30,12 +30,20 @@ sub uri {
 
 sub status {
    my $self = shift;
-
+   
+   $self->_get_info;
+   
    return $self->{data}->{status};
 
-   ### should I update everytime I need the status ?
-   ### yea, i think so.
+}
 
+sub ip {
+   my $self = shift;
+   
+   return $self->name; ### It's not common with Ganeti to manage an VM with its IP address.
+                       ### Because an instance name should always resolve.
+                       ### http://docs.ganeti.org/ganeti/2.5/html/admin.html#adding-an-instance
+                       ### Returning a hostname shouldn't be a problem with 'get_cloud_instances_as_group'
 }
 
 sub resume {
@@ -83,6 +91,14 @@ sub remove {
                                                );
                                    
    return $job;   
+}
+
+sub arch {
+
+   my $self = shift;
+   
+   return "UNSUPPORTED"; # at the moment...
+   
 }
 
 sub _get_info {

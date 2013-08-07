@@ -110,11 +110,16 @@ sub _http {
    my $self = shift;
    my ($method, $url, $host, $body) = @_;
 
-
+   if(defined $self->{user}) {
+      die("Password not specified") if ( ! defined $self->{password});
+   } elsif (defined $self->{password} ) {
+      die("Specified password without username");
+   }
+   
    my $encoded = encode_base64("$self->{user}:$self->{password}");
 
    my $https = Net::HTTPS->new( Host          => $host,
-                                'User-Agent'  => 'Mozilla/5.0',
+                                'User-Agent'  => 'Rex RAPI Client',
                                 Accept        => 'application/json',                                
                               ) || die $@;
 

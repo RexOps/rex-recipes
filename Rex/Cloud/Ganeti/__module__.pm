@@ -1,6 +1,3 @@
-### only instances / vm stuff is being worked on right now
-
-
 package Rex::Cloud::Ganeti;
 
 use strict;
@@ -39,7 +36,7 @@ sub set_auth {
 }
 
 sub list_operating_systems {
-   my ($self) = @_;
+   my $self = shift;
 
    my @oses = $self->_ganeti->get_oses;
    my @ret = ();
@@ -62,11 +59,11 @@ sub list_instances {
    for my $vm (@vms) {
 
       push(@ret, {
-         id      => $vm->name,
-         #ip      => $ip,
-         name    => $vm->name,
-         state   => $vm->status,
-         #architecture => $vm->arch,
+         id           => $vm->name,
+         ip           => $vm->ip,  ### WARN, $vm->ip will return the instance's hostname
+         name         => $vm->name,
+         state        => $vm->status,
+         architecture => $vm->arch,
       });
       
    }
@@ -77,7 +74,8 @@ sub list_instances {
 sub list_running_instances {
    my $self = shift;
    
-   return grep { $_->{state} =~ 'running' } $self->list_instances();
+   # "running" means if instance is set to be running and actually is
+   return grep { $_->{state} eq 'running' } $self->list_instances();
 }
 
 
@@ -112,11 +110,13 @@ sub run_instance {
    ############ net defaults  ##########
    # if the user supplied its own nics, use them.
    my $mac = $data{mac};
+   my $ip  = $data{ip};
    if($data{nics}) {
       $p{nics} = $data{nics};
    } else {
       
       $p{nics}[0]{mac} = $mac if $mac;
+      $p{nics}[0]{ip}  = $ip if $ip;
    }
    
 
@@ -177,6 +177,7 @@ sub run_instance {
       delete $p{nics};
    }
    delete $data{mac};
+   delete $data{ip};
    delete $data{nics};
    
    if(! $p{beparams}) {
@@ -198,7 +199,7 @@ sub run_instance {
    delete $data{disks};
    
    ### now I must delete everything that is undef,
-   ### (keys that are given by Rex::Commands::Cloudthat Ganeti won't understand/need)
+   ### (keys that are given by Rex::Commands::Cloud that Ganeti won't understand/need)
    foreach my $key ( keys %data ) {
       delete $data{$key} unless defined $data{$key};
    }
@@ -217,9 +218,11 @@ sub run_instance {
       if($state eq "success") {
          my $vm = $self->_ganeti->get_vm($p{instance_name});
          return {
-            name  => $vm->name,
-            state => $vm->status,
-            id    => $vm->name,
+            name         => $vm->name,
+            state        => $vm->status,
+            id           => $vm->name,
+            ip           => $vm->ip, ### WARN, $vm->ip will return the instance's hostname.
+            architecture => $vm->arch,
          };
       } elsif($state eq "error") {
          warn("Instance ". $p{instance_name} ." creation failed");
@@ -326,6 +329,15 @@ sub start_instance {
    }
    return; # there should be some kind of timeout to prevent looping if something
             # unknown happens to the job...   
+}
+
+# FIXME: Not implemented yet.
+sub add_tag {
+   my ($self, %data) = @_;
+   
+   ### Tags in ganeti are just names, without values.
+   ###Rex::Logger::debug("Adding a new tag: " . $data{id} . " -> " . $data{name});
+   
 }
 
 sub _ganeti {
