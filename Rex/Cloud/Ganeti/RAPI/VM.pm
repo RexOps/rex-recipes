@@ -72,7 +72,7 @@ sub stop {
                                                 data => { id => $jobid},
                                                );
                                                
-   Rex::Logger::debug("stop: ". Dumper($job));
+   #Rex::Logger::debug("stop: ". Dumper($job));
    
    return $job;
 }

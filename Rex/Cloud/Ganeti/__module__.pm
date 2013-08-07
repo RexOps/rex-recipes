@@ -54,6 +54,7 @@ sub list_operating_systems {
 sub list_instances {
    my $self = shift;
    my @ret = ();
+   
    my @vms = $self->_ganeti->get_vms;
 
    for my $vm (@vms) {
@@ -73,9 +74,9 @@ sub list_instances {
 
 sub list_running_instances {
    my $self = shift;
-   
    # "running" means if instance is set to be running and actually is
    return grep { $_->{state} eq 'running' } $self->list_instances();
+
 }
 
 
@@ -206,7 +207,7 @@ sub run_instance {
    
    #### end of sanitizing. 
    
-   Rex::Logger::debug(Dumper(%data) . Dumper(%p));
+   #Rex::Logger::debug(Dumper(%data) . Dumper(%p));
    
    my $job = $self->_ganeti->create_vm(%data, %p);
    

@@ -33,7 +33,7 @@ sub get_vms {
                                        $self->{host},
                                        );
 
-   Rex::Logger::debug("get_vms : " . Dumper($data));
+   #Rex::Logger::debug("get_vms : " . Dumper($data));
 
    my @ret = ();
 
@@ -59,7 +59,7 @@ sub get_job {
                                        "/2/jobs/". $id,
                                        $self->{host},
                                       );
-   Rex::Logger::debug("get_job ". Dumper($data));                                      
+   #Rex::Logger::debug("get_job ". Dumper($data));                                      
    return Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self, data => $data);
    
 }
@@ -72,7 +72,7 @@ sub get_oses {
                                        $self->{host},
                                        );
 
-   Rex::Logger::debug("get_oses ". Dumper($data));
+   #Rex::Logger::debug("get_oses ". Dumper($data));
 
    my @ret = ();
 
@@ -91,7 +91,7 @@ sub create_vm {
    my ($self, %option) = @_;
 
    my $json = encode_json \%option;
-   Rex::Logger::debug("create_vm " . Dumper($json));
+   #Rex::Logger::debug("create_vm " . Dumper($json));
 
    my $jobid =  $self->_http("POST",
                              "/2/instances",
@@ -124,16 +124,16 @@ sub _http {
                               ) || die $@;
 
    if ($method =~ /^(GET|PUT|DELETE)$/) {
-      Rex::Logger::debug($https->format_request( $method       => $url,
-                             Authorization => "Basic $encoded", ));
+      #Rex::Logger::debug($https->format_request( $method       => $url,
+      #                       Authorization => "Basic $encoded", ));
       $https->write_request( $method       => $url,
                              Authorization => "Basic $encoded", );
    } elsif($method =~ /^POST$/) {
-      Rex::Logger::debug( $https->format_request( $method        => $url,
-                                                  'Content-Type' => 'application/json',
-                                                  Authorization  => "Basic $encoded",
-                                                  $body )
-                        );
+      # Rex::Logger::debug( $https->format_request( $method        => $url,
+                                                  # 'Content-Type' => 'application/json',
+                                                  # Authorization  => "Basic $encoded",
+                                                  # $body )
+                        # );
                            
       $https->write_request( $method        => $url,
                              'Content-Type' => 'application/json',
@@ -145,7 +145,7 @@ sub _http {
       die "$method isn't supported yet";
    }
 
-   Rex::Logger::debug("Will ask for $host$url request");
+   Rex::Logger::debug("Will do a HTTPS $method on $host$url");
    my ($code, $mess, %h) = $https->read_response_headers;
    
    if($code =~ /^[45]/) {
@@ -161,7 +161,7 @@ sub _http {
       $ret.= $buf;
    }
 
-   Rex::Logger::debug("Got status $code and reply $ret");
+   #Rex::Logger::debug("Got status $code and reply $ret");
    return $ret; #most of the time, should be a job id with this form: "123456"
 
 }

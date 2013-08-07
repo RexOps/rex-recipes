@@ -16,7 +16,7 @@ sub new {
    
    ### FIXME add some checks to make sure an "id" is given.
    
-   Rex::Logger::debug("my job is : " . Dumper($self));
+   #Rex::Logger::debug("my job is : " . Dumper($self));
       
    bless($self, $proto);
    return $self;
@@ -52,7 +52,7 @@ sub wait {
    while(my $state = $self->status) {
       Rex::Logger::debug('job '. $self->id .' has state: '. $state);
       
-      if($state eq 'running') {
+      if($state =~ /(?:waiting|running)/) {
          sleep 3; # let's wait some more
          next;
       }
@@ -70,7 +70,7 @@ sub _get_info {
 
    $self->{data} = $refreshed_job->{data};
    
-   Rex::Logger::debug("_get_info : ". Dumper($self))
+   #Rex::Logger::debug("_get_info : ". Dumper($self))
    
 }
 1;
