@@ -1,3 +1,76 @@
+#
+# (c) Joris De Pooter <jorisd@gmail.com>
+# (c) Jan Gehring <jan.gehring@gmail.com>
+# 
+# vim: set ts=3 sw=3 tw=0:
+# vim: set expandtab:
+
+# Some of the code is based on Rex::Cloud::OpenNebula
+
+=head1 NAME
+
+Rex::Cloud::Ganeti - Cloud layer for Rex
+
+=head1 DESCRIPTION
+
+This module provides access to Ganeti's 2.x RAPI.
+
+It only supports HTTPS, and you are required to provide a username
+and a password.
+
+=head1 SYNOPSIS
+
+ use Rex::Cloud::Ganeti;
+  
+ use Rex::Commands::Cloud;
+ use Data::Dumper;
+ 
+ cloud_service "Ganeti";
+ cloud_auth "user", "password";
+ cloud_region "172.16.120.131:5080";
+ 
+ task "list-os", sub {
+    print Dumper get_cloud_operating_systems;
+ };
+ 
+ task "create", sub {
+    my $params = shift;
+    my $vm = cloud_instance create => {
+       os_type      => "debootstrap+default",
+       size         => "10G",
+       name         => $params->{name},
+    };
+ 
+    print Dumper($vm);
+ };
+ 
+ task "start", sub {
+    my $params = shift;
+    cloud_instance start => $params->{name};
+ };
+ 
+ task "stop", sub {
+    my $params = shift;
+    cloud_instance stop => $params->{name};
+ };
+ 
+ task "terminate", sub {
+    my $params = shift;
+    cloud_instance terminate => $params->{name};
+ };
+ 
+ task "list", sub {
+    print Dumper cloud_instance_list;
+ };
+
+=head1 METHODS
+
+=over 4
+
+=cut
+
+
+
 package Rex::Cloud::Ganeti;
 
 use strict;
@@ -10,6 +83,20 @@ use Rex::Cloud::Ganeti::RAPI;
 
 
 use parent qw/ Rex::Cloud::Base /;
+
+=item new([endpoint => $url, user => $user, password => $password])
+
+Constructor.
+
+If you want to use the OO Interface:
+
+ my $obj = Rex::Cloud::Ganeti->new(
+              endpoint => "your-ganeti-server:5080",
+              user     => "username",
+              password => "password"
+           );
+
+=cut
 
 sub new {
    my $class = shift;
@@ -29,11 +116,35 @@ sub set_endpoint {
    $self->{__endpoint} = $endpoint;
 }
 
+=item set_auth($user, $password)
+
+Set the authentication.
+
+ cloud_auth "user", "password";
+ 
+Or, if you want to use the OO Interface:
+
+ $obj->set_auth($user, $password);
+
+=cut
+
 sub set_auth {
    my ($self, $user, $password) = @_;
    $self->{__user}     = $user;
    $self->{__password} = $password;
 }
+
+=item list_operating_systems()
+
+List all available OSes.
+
+ my @oses = get_cloud_operating_systems;
+
+Or, if you want to use the OO interface:
+
+ my @oses = $obj->list_operating_systems();
+
+=cut
 
 sub list_operating_systems {
    my $self = shift;
@@ -50,6 +161,18 @@ sub list_operating_systems {
 
    return @ret;
 }
+
+=item list_instances()
+
+List your instances. Returns an array of hashes.
+
+ print Dumper cloud_instance_list;
+
+Or, if you want to use the OO Interface:
+
+ my @instances = $obj->list_instances();
+
+=cut
 
 sub list_instances {
    my $self = shift;
@@ -72,6 +195,18 @@ sub list_instances {
    return @ret;
 }
 
+=item list_running_instances()
+
+List your running instances. 
+
+ group ganeti_vms => get_cloud_instances_as_group();
+
+Or, if you want to use the OO Interface:
+
+ my @instances = $obj->list_running_instances();
+
+=cut
+
 sub list_running_instances {
    my $self = shift;
    # "running" means if instance is set to be running and actually is
@@ -79,6 +214,29 @@ sub list_running_instances {
 
 }
 
+=item run_instance(%data)
+
+Create an instance.
+
+You have to define an OS, size of disk and a name.
+
+ my $vm = cloud_instance create => {
+    os_type  => "debootstrap+default",
+    name     => $params->{name},
+    size     => "10G",
+ };
+
+Or, if you want to call it via its OO Interface:
+
+ $obj->run_instance(
+   os_type => "debootstrap+default",
+   name    => "myinstance01.foobar.com",
+   size    => "10G",
+ );
+ 
+This function support a lot of parameters, see :
+http://docs.ganeti.org/ganeti/2.5/html/rapi.html#id17
+=cut
 
 ### http://docs.ganeti.org/ganeti/2.5/html/rapi.html
 ### some info are found in doc/api.rst from ganeti
@@ -231,6 +389,18 @@ sub run_instance {
 
 }
 
+=item stop_instance(%data)
+
+Stop a running instance.
+
+ cloud_instance stop => "vmname.foobar.com";
+
+Or, if you want to use the OO Interface:
+
+ $obj->stop_instance(instance_id => "vmname.foobar.com");
+
+=cut
+
 ################ $data{instance_id} is given by the Rex api
 sub stop_instance {
    my ($self, %data) = @_;
@@ -243,6 +413,18 @@ sub stop_instance {
    return $state;   
 }
 
+=item terminate_instance(%data)
+
+Terminate and remove an instance.
+
+ cloud_instance terminate => "vmname.foobar.com";
+
+Or, if you want to use the OO Interface:
+
+ $obj->terminate_instance(instance_id => "vmname.foobar.com");
+
+=cut
+
 sub terminate_instance {
    my ($self, %data) = @_;
    
@@ -253,6 +435,18 @@ sub terminate_instance {
    
    return $state;
 }
+
+=item start_instance(%data)
+
+Start a stopped instance.
+
+ cloud_instance start => "vmname.foobar.com";
+
+Or, if you want to use the OO Interface:
+
+ $obj->start_instance(instance_id => "vmname.foobar.com");
+
+=cut
 
 sub start_instance {
    my ($self, %data) = @_;
