@@ -188,6 +188,7 @@ sub list_instances {
          name         => $vm->name,
          state        => $vm->status,
          architecture => $vm->arch,
+         tags         => $vm->tags,
       });
       
    }
@@ -491,6 +492,41 @@ sub add_tag {
    my $state = $job->wait;
 
    warn("Failed to tag $what") if $state ne 'success';
+   
+}
+
+=item del_tag(%data)
+
+Tags something. Currently, only a VM instance can be untagged.
+
+ $obj->del_tag(instance_id => "vmname.foobar.com", tag = "dbprod");
+ 
+You can also untag several identifiers at once : 
+ 
+ $obj->del_tag(instance_id => "vmname.foobar.com", tag => [ "dbprod", "mysql", "slave" ]);
+
+=cut
+
+#    Tags in ganeti are just names, without values.
+#    It is possible to del tags on cluster, nodes, and instances.
+#    But for now, setting a tag is only for instances.
+# 
+
+sub del_tag {
+   my ($self, %data) = @_;
+
+   my $job;
+   my $what;
+   
+   # if we're being asked to del a tag from a VM
+   if(exists($data{instance_id})) {
+      $what = $data{instance_id};
+      $job  = $self->_ganeti->get_vm($data{instance_id})->del_tag($data{tag});
+   }
+
+   my $state = $job->wait;
+
+   warn("Failed to del_tag from $what") if $state ne 'success';
    
 }
 

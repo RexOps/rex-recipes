@@ -55,6 +55,22 @@ sub ip {
                        ### Returning a hostname shouldn't be a problem with 'get_cloud_instances_as_group'
 }
 
+sub arch {
+
+   my $self = shift;
+   
+   return "UNSUPPORTED"; # at the moment...
+   
+}
+
+sub tags {
+   my $self = shift;
+   
+   $self->_get_info;
+   
+   return $self->{data}->{tags};
+}
+
 sub resume {
    my $self = shift;
 
@@ -102,15 +118,9 @@ sub remove {
    return $job;   
 }
 
-sub arch {
 
-   my $self = shift;
-   
-   return "UNSUPPORTED"; # at the moment...
-   
-}
 
-### $tags can be a simple string, or an arrayref 
+### $tag can be a simple string, or an arrayref 
 sub add_tag {
    my ($self, $tag) = @_;
 
@@ -132,6 +142,30 @@ sub add_tag {
                                                );
    return $job;
 }
+
+### $tag can be a simple string, or an arrayref 
+sub del_tag {
+   my ($self, $tag) = @_;
+
+   my $param;
+   
+   if(ref($tag) eq "ARRAY") {
+      $param = join('&tag=', @$tag );
+   } else {
+      $param = $tag;
+   }
+   Rex::Logger::debug("$param");
+   my $jobid = $self->{rapi}->_http("DELETE",
+                                    "/2/instances/". $self->name ."/tags?tag=". $param,
+                                    $self->{rapi}->{host}
+                                    );
+                                    
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self->{rapi},
+                                                data => { id => $jobid},
+                                               );
+   return $job;
+}
+
 
 sub _get_info {
    my ($self, %option) = @_;
