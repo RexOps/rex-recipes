@@ -113,7 +113,7 @@ sub new {
 
 sub set_endpoint {
    my ($self, $endpoint) = @_;
-   $self->{__endpoint} = $endpoint;
+   $self->{endpoint} = $endpoint;
 }
 
 =item set_auth($user, $password)
@@ -130,8 +130,8 @@ Or, if you want to use the OO Interface:
 
 sub set_auth {
    my ($self, $user, $password) = @_;
-   $self->{__user}     = $user;
-   $self->{__password} = $password;
+   $self->{user}     = $user;
+   $self->{password} = $password;
 }
 
 =item list_operating_systems()
@@ -459,22 +459,46 @@ sub start_instance {
    return $state;
 }
 
-# FIXME: Not implemented yet.
+=item add_tag(%data)
+
+Tags something. Currently, only a VM instance can be tagged.
+
+ $obj->add_tag(instance_id => "vmname.foobar.com", tag = "dbprod");
+ 
+You can also tag several identifiers at once : 
+ 
+ $obj->add_tag(instance_id => "vmname.foobar.com", tag => [ "dbprod", "mysql", "slave" ]);
+
+=cut
+
+#    Tags in ganeti are just names, without values.
+#    It is possible to set tags on cluster, nodes, and instances.
+#    But for now, setting a tag is only for instances.
+# 
+
 sub add_tag {
    my ($self, %data) = @_;
+
+   my $job;
+   my $what;
    
-   ### Tags in ganeti are just names, without values.
-   ###Rex::Logger::debug("Adding a new tag: " . $data{id} . " -> " . $data{name});
-   
-   
+   # if we're being asked to tag a VM
+   if(exists($data{instance_id})) {
+      $what = $data{instance_id};
+      $job  = $self->_ganeti->get_vm($data{instance_id})->add_tag($data{tag});
+   }
+
+   my $state = $job->wait;
+
+   warn("Failed to tag $what") if $state ne 'success';
    
 }
 
 sub _ganeti {
    my ($self) = @_;
-   return Rex::Cloud::Ganeti::RAPI->new(host     => $self->{__endpoint},
-                                        user     => $self->{__user},
-                                        password => $self->{__password}
+   return Rex::Cloud::Ganeti::RAPI->new(host     => $self->{endpoint},
+                                        user     => $self->{user},
+                                        password => $self->{password}
                                        );
 }
 

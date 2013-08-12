@@ -110,6 +110,29 @@ sub arch {
    
 }
 
+### $tags can be a simple string, or an arrayref 
+sub add_tag {
+   my ($self, $tag) = @_;
+
+   my $param;
+   
+   if(ref($tag) eq "ARRAY") {
+      $param = join('&tag=', @$tag );
+   } else {
+      $param = $tag;
+   }
+   Rex::Logger::debug("$param");
+   my $jobid = $self->{rapi}->_http("PUT",
+                                    "/2/instances/". $self->name ."/tags?tag=". $param,
+                                    $self->{rapi}->{host}
+                                    );
+                                    
+   my $job = Rex::Cloud::Ganeti::RAPI::Job->new(rapi => $self->{rapi},
+                                                data => { id => $jobid},
+                                               );
+   return $job;
+}
+
 sub _get_info {
    my ($self, %option) = @_;
 
