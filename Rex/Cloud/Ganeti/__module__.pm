@@ -122,7 +122,9 @@ Set the authentication.
 
  cloud_auth "user", "password";
  
+
 Or, if you want to use the OO Interface:
+
 
  $obj->set_auth($user, $password);
 
@@ -140,7 +142,9 @@ List all available OSes.
 
  my @oses = get_cloud_operating_systems;
 
+
 Or, if you want to use the OO interface:
+
 
  my @oses = $obj->list_operating_systems();
 
@@ -168,7 +172,9 @@ List your instances. Returns an array of hashes.
 
  print Dumper cloud_instance_list;
 
+
 Or, if you want to use the OO Interface:
+
 
  my @instances = $obj->list_instances();
 
@@ -202,7 +208,9 @@ List your running instances.
 
  group ganeti_vms => get_cloud_instances_as_group();
 
+
 Or, if you want to use the OO Interface:
+
 
  my @instances = $obj->list_running_instances();
 
@@ -227,7 +235,9 @@ You have to define an OS, size of disk and a name.
     size     => "10G",
  };
 
+
 Or, if you want to call it via its OO Interface:
+
 
  $obj->run_instance(
    os_type => "debootstrap+default",
@@ -237,6 +247,7 @@ Or, if you want to call it via its OO Interface:
  
 This function support a lot of parameters, see :
 http://docs.ganeti.org/ganeti/2.5/html/rapi.html#id17
+
 =cut
 
 ### http://docs.ganeti.org/ganeti/2.5/html/rapi.html
@@ -396,7 +407,9 @@ Stop a running instance.
 
  cloud_instance stop => "vmname.foobar.com";
 
+
 Or, if you want to use the OO Interface:
+
 
  $obj->stop_instance(instance_id => "vmname.foobar.com");
 
@@ -420,7 +433,9 @@ Terminate and remove an instance.
 
  cloud_instance terminate => "vmname.foobar.com";
 
+
 Or, if you want to use the OO Interface:
+
 
  $obj->terminate_instance(instance_id => "vmname.foobar.com");
 
@@ -443,7 +458,9 @@ Start a stopped instance.
 
  cloud_instance start => "vmname.foobar.com";
 
+
 Or, if you want to use the OO Interface:
+
 
  $obj->start_instance(instance_id => "vmname.foobar.com");
 
@@ -466,7 +483,9 @@ Tags something. Currently, only a VM instance can be tagged.
 
  $obj->add_tag(instance_id => "vmname.foobar.com", tag = "dbprod");
  
+
 You can also tag several identifiers at once : 
+
  
  $obj->add_tag(instance_id => "vmname.foobar.com", tag => [ "dbprod", "mysql", "slave" ]);
 

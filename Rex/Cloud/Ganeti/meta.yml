@@ -1,6 +1,6 @@
 Name: Rex::Cloud::Ganeti
 Description: Module to talk to Ganeti
-Author: Joris De Pooter <jorisd@gmail.com>, jan gehring <jan.gehring@gmail.com>
+Author: Joris De Pooter <jorisd@gmail.com>
 License: Apache 2.0
 PerlRequire:
    - JSON
