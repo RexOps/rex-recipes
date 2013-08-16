@@ -245,6 +245,7 @@ Or, if you want to call it via its OO Interface:
    size    => "10G",
  );
  
+
 This function support a lot of parameters, see :
 http://docs.ganeti.org/ganeti/2.5/html/rapi.html#id17
 
@@ -520,7 +521,9 @@ Tags something. Currently, only a VM instance can be untagged.
 
  $obj->del_tag(instance_id => "vmname.foobar.com", tag = "dbprod");
  
+
 You can also untag several identifiers at once : 
+
  
  $obj->del_tag(instance_id => "vmname.foobar.com", tag => [ "dbprod", "mysql", "slave" ]);
 
