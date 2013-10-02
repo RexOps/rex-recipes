@@ -1,0 +1,9 @@
+Name: Rex::Ext::Crypt
+Description: Encrypt strings inside a Rexfile.
+Author: Jan Gehring <jan.gehring@gmail.com>
+License: Apache2 
+PerlRequire:
+   - Crypt::CBC
+   - MIME::Base64
+   - Crypt::Blowfish
+   - Term::ReadPassword
