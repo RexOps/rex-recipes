@@ -58,7 +58,7 @@ Rex::Ext::Crypt - Encrypt strings inside a Rexfile.
 
 With this module it is possible to encrypt strings inside your Rexfile. For example passwords.
 
-Keep in mind that you have to protect your keyfile at a secure place.
+Keep in mind that you have to protect your keyfile at a secure place. This module is mostly for camouflage.
 
 For Windows you have to manually install I<Term::ReadPassword::Win32>.
 
