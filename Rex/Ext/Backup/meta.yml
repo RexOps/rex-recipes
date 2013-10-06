@@ -1,4 +1,4 @@
 Name: Rex::Ext::Backup
-Description: A simple backup module
+Description: A simple backup module to backup remote files before they gets overwritten.
 Author: Jan Gehring <jan.gehring@gmail.com>
 License: Apache 2

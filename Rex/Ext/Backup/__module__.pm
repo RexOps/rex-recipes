@@ -76,7 +76,7 @@ Rex::Ext::Backup - A simple backup module
 
 =head1 DESCRIPTION
 
-This module backup files that gets overwritten by Rex to a local folder.
+This module backup remote files that gets overwritten by Rex to a local folder.
 
 =head1 USAGE
 
