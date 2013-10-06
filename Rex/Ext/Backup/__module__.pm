@@ -44,7 +44,7 @@ sub _get_backup_location {
 
    my $loc = get "backup_location";
    if(! $loc) {
-      $loc = "backup/%h";
+      $loc = "backup/%h/%t";
    }
 
    my $seconds = time;
