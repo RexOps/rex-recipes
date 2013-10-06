@@ -1,0 +1,8 @@
+Name: Rex::CMDB::RackTables
+Description: A CMDB module to query RackTables
+Author: Joris DE POOTER <joris.depooter@diabolocom.com>
+License: GPL2
+
+# Only if you have dependencies to other Rex Modules.
+PerlRequire:
+   - RackMan
