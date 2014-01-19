@@ -12,6 +12,7 @@ use Rex::Hook;
 use Data::Dumper;
 use File::Basename;
 
+my $no_hook = 0;
 
 sub _backup_file {
    my ($file, @options) = @_;
@@ -27,6 +28,8 @@ sub _backup {
    my ($file) = @_;
    my $server = connection->server;
 
+   return if($no_hook);
+
    if(is_file($file)) {
 
       my %stat = stat $file;
@@ -40,7 +43,9 @@ sub _backup {
       download $file, $loc;
       
       LOCAL {
+         $no_hook = 1;
          file "$loc.meta", content => Dumper(\%stat);
+         $no_hook = 0;
       };
 
    }
