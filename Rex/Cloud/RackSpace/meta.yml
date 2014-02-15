@@ -1,0 +1,11 @@
+Name: Rex::Cloud::RackSpace
+Description: Module to talk to RackSpace CloudServer API
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+   - JSON::XS
+   - Moo
+   - Try::Tiny
+   - LWP::UserAgent
+   - HTTP::Request
+   - Carp
