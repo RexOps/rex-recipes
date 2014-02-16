@@ -68,12 +68,15 @@ sub _do_request {
    my $res = $self->ua->request($req);
 
    if($res->is_success) {
-      if($res->code == 204) {
-         return { ok => 1 };
-      }
-      else {
-         return decode_json($res->decoded_content);
-      }
+      my $ret;
+
+      try {
+         $ret = decode_json($res->decoded_content);
+      } catch {
+         $ret = { ok => 1 };
+      };
+
+      return $ret;
    }
    else {
       print Dumper($res);
