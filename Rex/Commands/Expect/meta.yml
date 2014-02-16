@@ -1,0 +1,4 @@
+Name: Rex::Commands::Expect
+Description: A small helper for expect
+Author: Jan Gehring <jan.gehring@gmail.com>
+License: Apache 2.0
