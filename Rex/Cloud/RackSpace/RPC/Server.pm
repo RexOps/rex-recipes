@@ -62,9 +62,21 @@ sub list {
 sub create {
    my ($self, %param) = @_;
 
-   confess "no name given." if(! exists $param{name});
-   confess "no image_id given." if(! exists $param{image_id});
-   confess "no flavor_id given." if(! exists $param{flavor_id});
+   confess "no name given."       if(! exists $param{name});
+   confess "no image_id given."   if(! exists $param{image_id});
+   confess "no flavor_id given."  if(! exists $param{flavor_id});
+   confess "no arrayRef given for networks."
+      if(exists $param{networks} && ref $param{networks} ne "ARRAY");
+
+   my @networks;
+   if(exists $param{networks}) {
+      for my $nw (@{ $param{networks} }) {
+         push @networks, { uuid => $nw };
+      }
+   }
+
+   push @networks, { uuid => '00000000-0000-0000-0000-000000000000' };
+   push @networks, { uuid => '11111111-1111-1111-1111-111111111111' };
 
    my $post = {
       server => {
@@ -72,6 +84,7 @@ sub create {
          imageRef  => $param{image_id},
          flavorRef => $param{flavor_id},
          metadata  => $param{metadata} || {},
+         networks  => [ @networks ],
       },
    };
 
@@ -99,13 +112,66 @@ sub load {
    return __PACKAGE__->new(rs => $self->rs, %{ $ret->{server} }, %add);
 }
 
+sub state {
+   my ($self) = @_;
+
+   my $ro = $self->load($self->id);
+
+   $self->{status}    = $ro->{status};
+   $self->{addresses} = $ro->{addresses};
+   $self->{progress}  = $ro->{progress};
+
+   if($ro->status eq "BUILD") { return "STOPPED"; }
+   if($ro->status eq "ACTIVE") { return "RUNNING"; }
+
+   return "STOPPED";
+}
+
 sub delete {
    my ($self) = @_;
+
+   confess "no server id found." if (! $self->id);
 
    my $req = $self->rs->_generate_request(method => HTTP_DELETE, action => "servers/" . $self->id);
    my $ret = $self->rs->_do_request($req);
 
    confess "error deleting server." if(! ref $ret && ! exists $ret->{ok} && $ret->{ok} != 1);
 }
+
+sub set_admin_password {
+   my ($self, $pass) = @_;
+
+   confess "no server id found." if (! $self->id);
+   confess "no password given."  if (! $pass);
+
+   my $post = {
+      changePassword => {
+         adminPass => $pass,
+      },
+   };
+
+   my $req = $self->rs->_generate_request(method => HTTP_POST, action => "servers/" . $self->id . "/action", post => $post);
+   my $ret = $self->rs->_do_request($req);
+
+   confess "error setting admin password for server." if(! ref $ret && ! exists $ret->{ok} && $ret->{ok} != 1);
+}
+
+sub reboot {
+   my ($self) = @_;
+
+   confess "no server id found." if (! $self->id);
+
+   my $post = {
+      reboot => {
+         type => "HARD",
+      },
+   };
+
+   my $req = $self->rs->_generate_request(method => HTTP_POST, action => "servers/" . $self->id . "/action", post => $post);
+   my $ret = $self->rs->_do_request($req);
+
+   confess "error rebooting server." if(! ref $ret && ! exists $ret->{ok} && $ret->{ok} != 1);
+}
+
 
 1;
