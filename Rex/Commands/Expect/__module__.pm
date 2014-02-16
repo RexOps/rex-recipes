@@ -71,7 +71,7 @@ Put it in your I<Rexfile>
  use Rex::Commands::Expect;
      
  task prepare => sub {
- 
+     
     expect "passwd",
       options => {
          timeout => 360,
@@ -81,7 +81,7 @@ Put it in your I<Rexfile>
          { 'Enter new UNIX password:' => 'foobar' },
          { 'Retype new UNIX password:' => 'foobar' },
       ];
-
+     
  };
 
 The options parameter is optional. The default for timeout is 360.
