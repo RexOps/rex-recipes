@@ -84,7 +84,7 @@ Put it in your I<Rexfile>
      
  };
 
-The options parameter is optional. The default for timeout is 360.
+The options parameter is optional. The default for timeout is 360. The return value of I<expect> is stored in I<$?>.
 
 =cut
 
