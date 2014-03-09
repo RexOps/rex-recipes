@@ -69,34 +69,34 @@ This module currently only works on MacOS!
 
 =head1 USAGE
 
-  use Rex::FS::Watch;
-
-  group dev => '172.16.120.143';
-
-  user "root";
-  password "box";
-
-  task "watch", sub {
-    watch { directory => '.', task => 'upload' };
-  };
-
-  task "upload", group => "dev", sub {
-    my $param = shift;
-    my $project_dir = "/remote/directory";
-
-    for my $event (@{ $param->{changed} }) {
-      if($event->{event} eq 'deleted') {
-        rm "$project_dir/$event->{relative_path}"    if($event->{type} eq 'file');
-        rmdir "$project_dir/$event->{relative_path}" if($event->{type} eq 'dir');
-      }
-      else {
-        file "$project_dir/$event->{relative_path}",
-          source =>  $event->{path}                  if($event->{type} eq "file");
-
+ use Rex::FS::Watch;
+   
+ group dev => '172.16.120.143';
+   
+ user "root";
+ password "box";
+   
+ task "watch", sub {
+   watch { directory => '.', task => 'upload' };
+ };
+    
+ task "upload", group => "dev", sub {
+   my $param = shift;
+   my $project_dir = "/remote/directory";
+   
+   for my $event (@{ $param->{changed} }) {
+     if($event->{event} eq 'deleted') {
+       rm "$project_dir/$event->{relative_path}"    if($event->{type} eq 'file');
+       rmdir "$project_dir/$event->{relative_path}" if($event->{type} eq 'dir');
+     }
+     else {
+       file "$project_dir/$event->{relative_path}",
+         source =>  $event->{path}                  if($event->{type} eq "file");
+        
         mkdir "$project_dir/$event->{relative_path}" if($event->{type} eq "dir");
-      }
-    }
-  };
+     }
+   }
+ };
 
 =head1 EXPORTED FUNCTIONS
 
