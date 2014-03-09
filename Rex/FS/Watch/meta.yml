@@ -1,0 +1,7 @@
+Name: Rex::FS::Watch
+Description: A module to watch filesystem changes.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+   - Moo
+   - Mac::FSEvents
