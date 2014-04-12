@@ -33,7 +33,7 @@ If you don't know which category to use, just use the "Misc" category.
 
 I don't want to dictate style guides. Just have fun.
 
-For reference, i use space indention with 3 spaces.
+For reference, i use space indention with 2 spaces.
 
 
 =back
