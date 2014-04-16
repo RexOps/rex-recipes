@@ -18,6 +18,13 @@ use vars qw(@EXPORT);
 sub concat {
   my ( $file, %param ) = @_;
 
+  $param{ensure} ||= "present";
+
+  if($param{ensure} eq "absent") {
+    file $file, ensure => "absent";
+    return;
+  }
+
   my $tmp_dir        = Rex::Config->get_tmp_dir;
   my $tmp_concat_dir = $file;
   $tmp_concat_dir =~ s/[^a-zA-Z0-9]/_/g;
@@ -99,20 +106,20 @@ You can write as many concat_fragments as you need. And at the end of your code 
 Put it in your I<Rexfile>
 
  use Rex::Commands::Concat;
- 
+
  task prepare => sub {
    concat_fragment "config-header",
      target  => "/the/file.conf",
      content => "# managed by Rex",
      order   => "01";
  };
- 
+
  task setup => sub {
    concat_fragment "first-entry",
      target  => "/the/file.conf",
      content => "the content",
      order   => "20";
- 
+
    # create the file
    concat "/the/file.conf",
      owner => "root",
