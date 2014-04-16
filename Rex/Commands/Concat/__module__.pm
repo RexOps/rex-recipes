@@ -9,6 +9,8 @@ package Rex::Commands::Concat;
 use Carp;
 use Rex -base;
 use Rex::Commands::MD5;
+use Carp;
+
 require Exporter;
 use base qw(Exporter);
 use vars qw(@EXPORT);
@@ -20,11 +22,11 @@ sub concat {
 
   $param{ensure} ||= "present";
 
-  if($param{ensure} eq "absent") {
-    if(is_file($file)) {
+  if ( $param{ensure} eq "absent" ) {
+    if ( is_file($file) ) {
       unlink $file;
-      if(exists $param{on_change} && ref $param{on_change} eq "CODE") {
-        $param{on_change}->($file, %param);
+      if ( exists $param{on_change} && ref $param{on_change} eq "CODE" ) {
+        $param{on_change}->( $file, %param );
       }
     }
     return;
@@ -76,6 +78,10 @@ sub concat {
 
 sub concat_fragment {
   my ( $res_name, %param ) = @_;
+
+  confess "No target parameter given."  if ( !exists $param{target} );
+  confess "No content parameter given." if ( !exists $param{content} );
+  confess "No order parameter given."   if ( !exists $param{order} );
 
   my $tmp_dir        = Rex::Config->get_tmp_dir;
   my $tmp_concat_dir = $param{target};
