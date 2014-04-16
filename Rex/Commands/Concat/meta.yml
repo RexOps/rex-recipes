@@ -1,0 +1,4 @@
+Name: Rex::Commands::Concat
+Description: A small helper to manage large configuration files.
+Author: Jan Gehring <jan.gehring@gmail.com>
+License: Apache 2.0
