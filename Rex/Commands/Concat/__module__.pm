@@ -21,7 +21,12 @@ sub concat {
   $param{ensure} ||= "present";
 
   if($param{ensure} eq "absent") {
-    file $file, ensure => "absent";
+    if(is_file($file)) {
+      unlink $file;
+      if(exists $param{on_change} && ref $param{on_change} eq "CODE") {
+        $param{on_change}->($file, %param);
+      }
+    }
     return;
   }
 
