@@ -137,7 +137,7 @@ This Rex-Module will add the Cloudera Repository.
 Put it in your I<Rexfile>
 
    require Rex::Framework::Cloudera::PkgRepository;
-
+ 
    task yourtask => sub {
       Rex::Framework::Cloudera::PkgRepository::setup({
          cdh_version => "4",

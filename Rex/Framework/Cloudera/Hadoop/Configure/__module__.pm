@@ -184,7 +184,7 @@ This Rex-Module configures a Hadoop Cluster (Pseudo and Real).
 Put it in your I<Rexfile>
 
  require Rex::Framework::Cloudera::Hadoop::Configure;
-
+ 
  task yourtask => sub {
     Rex::Framework::Cloudera::Hadoop::Configure::pseudo_cluster({
        mr_version => "mrv1",

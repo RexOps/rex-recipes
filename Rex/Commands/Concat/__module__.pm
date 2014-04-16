@@ -99,20 +99,20 @@ You can write as many concat_fragments as you need. And at the end of your code 
 Put it in your I<Rexfile>
 
  use Rex::Commands::Concat;
-
+ 
  task prepare => sub {
    concat_fragment "config-header",
      target  => "/the/file.conf",
      content => "# managed by Rex",
      order   => "01";
  };
-
+ 
  task setup => sub {
    concat_fragment "first-entry",
      target  => "/the/file.conf",
      content => "the content",
      order   => "20";
-
+ 
    # create the file
    concat "/the/file.conf",
      owner => "root",

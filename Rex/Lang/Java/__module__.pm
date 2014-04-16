@@ -97,7 +97,7 @@ implementation of the Java Platform Standard Edition.
 Put it in your I<Rexfile>
 
    require Rex::Lang::Java;
-
+ 
    task yourtask => sub {
       Rex::Lang::Java::setup({
          jse_provider => "openjdk",

@@ -499,7 +499,7 @@ Or, to use it as a library
  task "yourtask", sub {
     Rex::Webserver::nginx::task();
  };
-
+ 
  require Rex::Webserver::nginx;
 
 =head1 TASKS

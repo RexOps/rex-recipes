@@ -159,7 +159,7 @@ You have to define an image_id (or template_id) to use and a name. You can also 
     image_id  => 5,
     name      => $params->{name},
  };
-
+ 
  my $vm = cloud_instance create => {
     image  => "template-name",
     name   => $params->{name},
