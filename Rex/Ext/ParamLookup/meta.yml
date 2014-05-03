@@ -1,0 +1,6 @@
+Name: Rex::Ext::ParamLookup
+Description: Module to easy lookup task parameters.
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+  - Devel::Caller
