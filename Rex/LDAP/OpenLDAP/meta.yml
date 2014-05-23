@@ -1,0 +1,9 @@
+Name: Rex::LDAP::OpenLDAP
+Description: Module to manage OpenLDAP
+Author: jan gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+Require:
+  - Rex::Ext::ParamLookup
+PerlRequire:
+  - Carp
+  - List::MoreUtils
