@@ -1,0 +1,4 @@
+Name: Rex::Lang::Ruby
+Description: Ruby language module for Rex
+Author: Ferenc Erki <erkiferenc@gmail.com>
+License: GPLv3
