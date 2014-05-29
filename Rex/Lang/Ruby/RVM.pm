@@ -82,6 +82,7 @@ task 'setup', sub {
 
     pkg 'curl', ensure => 'present';
 
+    Rex::Logger::info("Setting up RVM");
     run $command;
 };
 

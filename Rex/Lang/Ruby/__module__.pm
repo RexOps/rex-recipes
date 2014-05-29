@@ -83,8 +83,12 @@ task 'setup_from_source', sub {
     my $ruby_filename = "$ruby_version.tar.bz2";
     my $tmp_dir       = Rex::Config->get_tmp_dir();
 
+    Rex::Logger::info("Downloading $ruby_filename");
     run "wget $ruby_site/$ruby_filename", cwd => "$tmp_dir";
+
     extract( File::Spec->join( $tmp_dir, $ruby_filename ), to => "$tmp_dir" );
+
+    Rex::Logger::info("Compiling $ruby_version");
     run './configure && make && make install',
         cwd => File::Spec->join( $tmp_dir, $ruby_version );
 };

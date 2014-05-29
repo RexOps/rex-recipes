@@ -69,6 +69,9 @@ task 'setup', sub {
     my $command = "gem install $param->{name}";
     $command .= " --version '$param->{version}'" if defined $param->{version};
 
+    Rex::Logger::info( "Setting up $param->{name}"
+            . ( $param->{version} ? " ($param->{version})" : "" )
+            . " gem" );
     run $command;
 };
 
