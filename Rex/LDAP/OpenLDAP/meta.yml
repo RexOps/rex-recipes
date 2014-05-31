@@ -7,3 +7,4 @@ Require:
 PerlRequire:
   - Carp
   - List::MoreUtils
+  - Params::Validate
