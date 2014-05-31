@@ -2,6 +2,12 @@ package Rex::Lang::Ruby::Gem;
 
 use Rex -base;
 
+require Exporter;
+use base qw(Exporter);
+use vars qw (@EXPORT);
+
+@EXPORT = qw(gem);
+
 =pod
 
 =head1 NAME
@@ -42,6 +48,14 @@ Then call its tasks like this:
 Installs arbitrary gem
 
  task 'yourtask', sub {
+     # short version
+     gem 'gemname';
+     gem 'gemname', ensure => 'gemversion';
+     gem 'gemname', ensure => 'present';
+     gem 'gemname', ensure => 'absent';
+     gem 'gemname', ensure => 'latest';
+
+     # long version
      Rex::Lang::Ruby::Gem::setup(
          name    => 'gemname',
          version => 'gemversion',
@@ -62,18 +76,53 @@ Parameters:
 
 desc 'Install arbitrary gem';
 task 'setup', sub {
-    my $param = shift;
-
-    die 'You must specify a gem to install!' unless $param->{name};
-
-    my $command = "gem install $param->{name}";
-    $command .= " --version '$param->{version}'" if defined $param->{version};
-
-    Rex::Logger::info( "Setting up $param->{name}"
-            . ( $param->{version} ? " ($param->{version})" : "" )
-            . " gem" );
-    run $command;
+  my $param = shift;
+  gem( $param->{name}, ensure => $param->{version} );
 };
+
+sub gem {
+  my ( $name, %option ) = @_;
+
+  die 'You must specify a gem to install!' unless $name;
+
+  my $version = $option{ensure};
+  if ( $version eq 'present' && !exists $option{version} ) {
+    my ($found) = grep { m/^$name\s/ } run "gem list";
+    if ($found) {
+      Rex::Logger::info("Gem already installed ($found).");
+      return;
+    }
+  }
+
+  if ( $version eq 'latest' ) {
+    $version = undef;    # just install the newest version
+  }
+
+  my $command = "gem ";
+
+  if ( $version eq 'absent' ) {
+    $command .= "uninstall ";
+    $version = undef;
+    Rex::Logger::info( "Ensuring gem $name "
+        . ( exists $option{version} ? $option{version} : "" )
+        . " to be absent " );
+  }
+  else {
+    $command .= "install ";
+    Rex::Logger::info( "Ensuring gem $name to be "
+        . ( exists $option{version} ? $option{version} : $version ) );
+  }
+
+  if ( exists $option{version} ) {
+    $version = $option{version};
+  }
+
+  $command .= $name;
+
+  $command .= " --version '$version'" if defined $version;
+
+  run $command;
+}
 
 1;
 
