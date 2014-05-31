@@ -48,13 +48,6 @@ Then call its tasks like this:
 Installs arbitrary gem
 
  task 'yourtask', sub {
-     # short version
-     gem 'gemname';
-     gem 'gemname', ensure => 'gemversion';
-     gem 'gemname', ensure => 'present';
-     gem 'gemname', ensure => 'absent';
-     gem 'gemname', ensure => 'latest';
-
      # long version
      Rex::Lang::Ruby::Gem::setup(
          name    => 'gemname',
@@ -71,6 +64,16 @@ Parameters:
 =item version: gem version to install
 
 =back
+
+=item gem($name, %option)
+
+gem() is an exported resource that can be used as a shortcut to manage your gems.
+
+ gem 'gemname';
+ gem 'gemname', ensure => 'gemversion';
+ gem 'gemname', ensure => 'present';
+ gem 'gemname', ensure => 'absent';
+ gem 'gemname', ensure => 'latest';
 
 =cut
 
