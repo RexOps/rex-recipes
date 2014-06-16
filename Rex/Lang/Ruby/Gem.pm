@@ -22,7 +22,7 @@ This module helps managing Ruby gems.
 
 =head2 Without importing tasks
 
- include Rex::Lang::Ruby::Gem;
+ include qw/Rex::Lang::Ruby::Gem/;
 
  task 'yourtask', sub {
      Rex::Lang::Ruby::Gem::setup(
@@ -65,6 +65,14 @@ Parameters:
 
 =back
 
+=cut
+
+desc 'Install arbitrary gem';
+task 'setup', sub {
+  my $param = shift;
+  gem( $param->{name}, ensure => $param->{version} );
+};
+
 =item gem($name, %option)
 
 gem() is an exported resource that can be used as a shortcut to manage your gems.
@@ -76,12 +84,6 @@ gem() is an exported resource that can be used as a shortcut to manage your gems
  gem 'gemname', ensure => 'latest';
 
 =cut
-
-desc 'Install arbitrary gem';
-task 'setup', sub {
-  my $param = shift;
-  gem( $param->{name}, ensure => $param->{version} );
-};
 
 sub gem {
   my ( $name, %option ) = @_;
