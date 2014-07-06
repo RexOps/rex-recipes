@@ -79,6 +79,7 @@ gem() is an exported resource that can be used as a shortcut to manage your gems
 
  gem 'gemname';
  gem 'gemname', ensure => 'gemversion';
+ gem 'gemname', ensure => 'installed';
  gem 'gemname', ensure => 'present';
  gem 'gemname', ensure => 'absent';
  gem 'gemname', ensure => 'latest';
@@ -90,36 +91,33 @@ sub gem {
 
   die 'You must specify a gem to install!' unless $name;
 
-  my $version = $option{ensure};
-  if ( $version eq 'present' && !exists $option{version} ) {
-    my ($found) = grep { m/^$name\s/ } run "gem list";
-    if ($found) {
-      Rex::Logger::info("Gem already installed ($found).");
-      return;
-    }
-  }
+  my $ensure  = $option{ensure};
+  my $version = $option{version} || undef;
+  my $command = "gem ";
 
-  if ( $version eq 'latest' ) {
+  if ( $ensure eq 'latest' ) {
     $version = undef;    # just install the newest version
   }
 
-  my $command = "gem ";
-
-  if ( $version eq 'absent' ) {
+  if ( $ensure eq 'absent' ) {
     $command .= "uninstall ";
     $version = undef;
     Rex::Logger::info( "Ensuring gem $name "
         . ( exists $option{version} ? $option{version} : "" )
         . " to be absent " );
   }
-  else {
+  elsif ( $ensure eq 'present' || $ensure eq 'installed' ) {
+    if ( defined $version ) {
+      my ($found) = grep { m/^$name\s/ } run "gem list";
+      if ($found) {
+        Rex::Logger::info("Gem already installed ($found).");
+        return;
+      }
+    }
+
     $command .= "install ";
     Rex::Logger::info( "Ensuring gem $name to be "
-        . ( exists $option{version} ? $option{version} : $version ) );
-  }
-
-  if ( exists $option{version} ) {
-    $version = $option{version};
+        . ( exists $option{version} ? $option{version} : $ensure ) );
   }
 
   $command .= $name;
