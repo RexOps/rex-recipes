@@ -77,4 +77,12 @@ see http://www.template-toolkit.org/
         mode      => 644
  };
 
+ # to use as a default template engine
+ # this will make the template() function use TemplateTookit to render
+ # all the templates. This will also register all the known template variables
+ # like hostname, eth0_ip and so on.
+ use Rex::Ext::TemplateTookkit ':register';
+
 =cut
+
+
