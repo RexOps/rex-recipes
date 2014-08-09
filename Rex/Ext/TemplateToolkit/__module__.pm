@@ -38,7 +38,7 @@ sub import {
 
   my ( $class, $tag ) = @_;
 
-  if ( $tag && $tag eq ":export" ) {
+  if ( $tag && $tag eq ":register" ) {
 
     # register Template::Toolkit for default template processing
     set template_function => sub {
