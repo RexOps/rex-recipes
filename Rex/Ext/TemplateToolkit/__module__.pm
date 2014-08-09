@@ -46,7 +46,8 @@ sub import {
       my $template = Template->new;
 
       my $output;
-      $template->process( \$content, $vars, \$output );
+      $template->process( \$content, $vars, \$output )
+        || Rex::Logger::debug( $template->error() );
 
       return $output;
     };
@@ -84,5 +85,4 @@ see http://www.template-toolkit.org/
  use Rex::Ext::TemplateTookkit ':register';
 
 =cut
-
 
