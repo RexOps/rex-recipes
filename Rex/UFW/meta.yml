@@ -1,0 +1,6 @@
+Name: Rex::UFW
+Description: Simple interface to UFW
+Author: Nicolas Leclercq <nicolas.private@gmail.com>
+License: Apache 2.0
+PerlRequire:
+  - Rex::Ext::TemplateToolkit
