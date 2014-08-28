@@ -16,53 +16,41 @@ task setup => sub {
   pkg "ufw", ensure => "latest";
 };
 
-task enable => sub {
-
-  Rex::Logger::info("Enabling UFW rules");
-  run "ufw --force enable";
-};
-
 task disable => sub {
 
-  Rex::Logger::info("Disabling UFW rules");
+  Rex::Logger::info("Disabling UFW");
   run "ufw disable";
 };
 
-sub allow {
-  my ($data) = @_;
+task delete => sub {
+  my ($name) = @_;
 
-  if ( $data->{application} ) {
-    Rex::Logger::info("Adding UFW $data->{application} rules");
-    run "ufw allow $data->{application}";
-  }
+  Rex::Logger::info("Removing UFW $name rules");
+  run "ufw delete allow $name";
 };
 
-task allow => allow;
+task add => sub {
+  my ($name, $data) = @_;
 
-task forbid => sub {
-  my ($data) = @_;
 
-  if ( $data->{application} ) {
-    Rex::Logger::info("Removind UFW $data->{application} rules");
-    run "ufw delete allow $data->{application}";
-  }
-};
+  if (ref $data eq 'HASH') {
+    $data->{name} = $name;
 
-task application => sub {
-  my ($data) = @_;
+    $data->{title}       = $name unless defined $data->{title};
+    $data->{description} = $name unless defined $data->{description};
 
-  return unless defined $data->{application} and defined $data->{ports};
+    file "/etc/ufw/applications.d/$name",
+      content => template_toolkit( "templates/etc/ufw/applications.d/application.tpl", $data ),
+      owner   => "root",
+      group   => "root",
+      mode    => 644;
+  };
 
-  $data->{title}       = $data->{application} unless defined $data->{title};
-  $data->{description} = $data->{application} unless defined $data->{description};
+  Rex::Logger::info("Adding UFW $name rules");
+  run "ufw allow $name";
 
-  file "/etc/ufw/applications.d/$data->{application}",
-    content => template_toolkit( "templates/etc/ufw/applications.d/application.tpl", $data ),
-    owner   => "root",
-    group   => "root",
-    mode    => 644;
-
-  allow $data;
+  Rex::Logger::info("Enabling UFW");
+  run "ufw --force enable";
 };
 
 =pod
@@ -85,12 +73,7 @@ Simple interface to create, allow and fordib ufw application rules.
   Rex::UFW::setup();
 
   # Allow SSH, on ubuntu /etc/ufw/application.d/openssh-server is bundle with deb package
-   Rex::UFW::allow({
-     application => 'OpenSSH'
-   });
-
-   # Enable UFW
-   Rex::UFW::enable();
+  Rex::UFW::add('OpenSSH');
  };
 
  task "irc_server", sub {
@@ -98,12 +81,13 @@ Simple interface to create, allow and fordib ufw application rules.
   # ... do stuff
 
   # add new ufw application
-  Rex::UFW::application({
-    name => 'ngIRCd',
-    title => 'ngircd daemon'
-    description => 'ngircd daemon',
-    ports => [ qw(6667/tcp) ]
-  });
+  Rex::UFW::application(
+    'ngIRCd' => {
+      title => 'ngircd daemon'
+      description => 'ngircd daemon',
+      ports => [ qw(6667/tcp) ]
+      }
+  );
  };
 
 =head1 METHODS
@@ -120,12 +104,33 @@ You can use the following methods to control UFW behavior.
    Rex::UFW::setup();
  };
 
-=item enable
+=item add
 
- Enable UFW, beware to allow ssh rule before running this !
+ Allow defined application rules (see /etc/ufw/application.d/)
+ Auto enable UFW
+
+ # if application description file already exists
+ task t => sub {
+   Rex::UFW::add('OpenSSH');
+ };
+
+ # create new file and allow new rule(s)
+ task t => sub {
+   Rex::UFW::add(
+     'ngIRCd' => {
+       title => 'ngircd daemon'
+       description => 'ngircd daemon',
+       ports => [ qw(6667/tcp) ]
+      }
+   );
+ };
+
+=item delete
+
+ Delete application rules
 
  task t => sub {
-   Rex::UFW::enable();
+   Rex::UFW::delete('ngIRCd');
  };
 
 =item disable
@@ -135,37 +140,6 @@ You can use the following methods to control UFW behavior.
   task t => sub {
     Rex::UFW::disable();
   };
-
-=item allow
-
- Allow defined application rules (see /etc/ufw/application.d/)
-
- task t => sub {
-   Rex::UFW::allow({
-     application => 'OpenSSH'
-   });
- };
-
-=item forbid
-
- Forbid defined application rules
-
- task t => sub {
-   Rex::UFW::forbid({
-     application => 'OpenSSH'
-   });
- };
-
-=item application
-
- Add new application's rules set and allow it
-
- Rex::UFW::application({
-   application => 'ngircd',
-   title => 'ngircd daemon'
-   description => 'ngircd daemon',
-   ports => [ qw(6667/tcp) ]
- });
 
 =back
 
