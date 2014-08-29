@@ -36,9 +36,6 @@ task add => sub {
   if (ref $data eq 'HASH') {
     $data->{name} = $name;
 
-    $data->{title}       = $name unless defined $data->{title};
-    $data->{description} = $name unless defined $data->{description};
-
     file "/etc/ufw/applications.d/$name",
       content => template_toolkit( "templates/etc/ufw/applications.d/application.tpl", $data ),
       owner   => "root",
@@ -118,8 +115,8 @@ You can use the following methods to control UFW behavior.
  task t => sub {
    Rex::UFW::add(
      'ngIRCd' => {
-       title => 'ngircd daemon'
-       description => 'ngircd daemon',
+       title => 'ngircd daemon' # optional
+       description => 'ngircd daemon', # optional
        ports => [ qw(6667/tcp) ]
       }
    );
