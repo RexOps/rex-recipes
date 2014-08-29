@@ -81,7 +81,7 @@ Simple interface to create, allow and fordib ufw application rules.
   # ... do stuff
 
   # add new ufw application
-  Rex::UFW::application(
+  Rex::UFW::add(
     'ngIRCd' => {
       title => 'ngircd daemon'
       description => 'ngircd daemon',
