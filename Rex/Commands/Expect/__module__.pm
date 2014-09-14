@@ -21,6 +21,7 @@ my %expect_pkg = (
    redhat => 'expect',
    fedora => 'expect',
    mageia => 'expect',
+   sunos  => '/usr/local/bin/expect',
 );
 
 
