@@ -1,9 +1,9 @@
 #
 # (c) Jan Gehring <jan.gehring@gmail.com>
-# 
+#
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
-   
+
 package Rex::Commands::Expect;
 
 use Carp;
@@ -15,45 +15,63 @@ use vars qw(@EXPORT);
 @EXPORT = qw(expect);
 
 my %expect_pkg = (
-   ubuntu => 'expect',
-   centos => 'expect',
-   debian => 'expect',
-   redhat => 'expect',
-   fedora => 'expect',
-   mageia => 'expect',
-   sunos  => '/usr/local/bin/expect',
+  ubuntu => 'expect',
+  centos => 'expect',
+  debian => 'expect',
+  redhat => 'expect',
+  fedora => 'expect',
+  mageia => 'expect',
+  sunos  => 'expect',
 );
 
-
+my %expect_path = (
+  ubuntu => '/usr/bin/expect',
+  centos => '/usr/bin/expect',
+  debian => '/usr/bin/expect',
+  redhat => '/usr/bin/expect',
+  fedora => '/usr/bin/expect',
+  mageia => '/usr/bin/expect',
+  sunos  => '/usr/local/bin/expect',
+);
 
 sub expect {
-   my ($cmd, %param) = @_;
+  my ( $cmd, %param ) = @_;
 
-   my $pkg = $expect_pkg{lc(operating_system)};
+  my $os  = lc( operating_system() );
+  my $pkg = $expect_pkg{$os};
 
-   $param{options}->{timeout} ||= 360;
+  $param{options}->{timeout} ||= 360;
 
-   confess "no expect package found for " . lc(operating_system) . "."
-      if(! $pkg);
-   confess "no command given." if(! $cmd);
-   confess "no answers given." if(! exists $param{answers} || scalar(@{ $param{answers} }) == 0);
+  confess "no expect package found for " . lc(operating_system) . "."
+    if ( !$pkg );
+  confess "no command given." if ( !$cmd );
+  confess "no answers given."
+    if ( !exists $param{answers} || scalar( @{ $param{answers} } ) == 0 );
 
-   install $pkg;
-   
-   my $exp_name = $cmd;
-   $exp_name =~ s/[^A-Za-z0-9_]+/_/g;
-   file "/tmp/expect.$exp_name.tmp",
-      content => template('@expect.tpl', __no_sys_info__ => TRUE, %{ $param{options} }, answers => $param{answers}, command => $cmd),
-      mode    => 700;
+  if ( !is_file( $expect_path{$os} ) ) {
+    install $pkg;
+  }
 
-   my $output = run "/tmp/expect.$exp_name.tmp";
-   my $ret_val = $?;
-   unlink "/tmp/exp_name.$exp_name.tmp";
-   $? = $ret_val;
+  my $exp_name = $cmd;
+  $exp_name =~ s/[^A-Za-z0-9_]+/_/g;
+  file "/tmp/expect.$exp_name.tmp",
+    content => template(
+    '@expect.tpl',
+    __no_sys_info__ => TRUE,
+    %{ $param{options} },
+    answers => $param{answers},
+    command => $cmd,
+    expect  => $expect_path{$os}
+    ),
+    mode => 700;
 
-   return $output;
+  my $output  = run "/tmp/expect.$exp_name.tmp";
+  my $ret_val = $?;
+  unlink "/tmp/exp_name.$exp_name.tmp";
+  $? = $ret_val;
+
+  return $output;
 }
-
 
 =pod
 
@@ -94,7 +112,7 @@ The options parameter is optional. The default for timeout is 360. The return va
 __DATA__
 
 @expect.tpl
-#!/usr/bin/expect --
+#!<%= $expect %> --
 set timeout <%= $timeout %>
 <% for my $e (keys %{ $env }) { %>
 set env(<%= $e %>) "<%= $env->{$e} %>"
