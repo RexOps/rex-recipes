@@ -47,7 +47,11 @@ sub shell_block {
 
    my $ret = run $rnd_file;
 
+   my $ret_code = $?;
+
    unlink $rnd_file;
+
+   $? = $ret_code;
 
    return $ret;
 
