@@ -29,7 +29,7 @@ sub template_toolkit {
   my $output = '';
   my $template = Template->new( { ABSOLUTE => 1 } );
   $template->process( $template_path, $vars, \$output )
-    || Rex::Logger::debug( $template->error() );
+    || Rex::Logger::info( $template->error(), 'error' );
 
   return $output;
 }
@@ -47,7 +47,7 @@ sub import {
 
       my $output;
       $template->process( \$content, $vars, \$output )
-        || Rex::Logger::debug( $template->error() );
+        || Rex::Logger::info( $template->error(), 'error' );
 
       return $output;
     };
@@ -85,4 +85,3 @@ see http://www.template-toolkit.org/
  use Rex::Ext::TemplateTookkit ':register';
 
 =cut
-
