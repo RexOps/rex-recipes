@@ -45,7 +45,7 @@ sub shell_block {
       content => join("\n", @lines),
       mode => 755;
 
-   my $ret = run $rnd_file;
+   my $ret = run "$rnd_file 2>&1";
 
    my $ret_code = $?;
 
