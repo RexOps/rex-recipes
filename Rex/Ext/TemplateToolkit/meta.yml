@@ -3,5 +3,4 @@ Description: A module to process templates with template toolkit
 Author: Nicolas Leclercq <nicolas.private@gmail.com>
 License: Apache 2.0
 PerlRequire:
-  - Devel::Caller
   - Template
