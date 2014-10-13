@@ -9,7 +9,6 @@ package Rex::Ext::TemplateToolkit;
 use Rex -base;
 use Rex::Helper::Path;
 use Template;
-use Devel::Caller;
 
 require Exporter;
 use base qw(Exporter);
