@@ -37,10 +37,15 @@ task drop => sub {
    die("You have to specify the user name.") unless $param->{name};
    die("You have to specify the users host.") unless $param->{host};
 
-   my $name     = $param->{name};
-   my $host     = $param->{host};
+   my $name      = $param->{name};
+   my $host      = $param->{host};
+   my $deleteall = $param->{deleteall};
 
-   Rex::Database::MySQL::Admin::execute({sql => "DROP USER '$name'\@'$host';\nFLUSH PRIVILEGES;\n"});
+   if (exists $deleteall) {
+      Rex::Database::MySQL::Admin::execute({sql => "DELETE FROM mysql.user WHERE USER LIKE '$name';\nFLUSH PRIVILEGES;\n"});
+   } else {
+      Rex::Database::MySQL::Admin::execute({sql => "DROP USER '$name'\@'$host';\nFLUSH PRIVILEGES;\n"});
+   }
 
 };
 
@@ -66,8 +71,9 @@ Rex::Database::MySQL::Admin::User - Managa MySQL User
     });
      
     Rex::Database::MySQL::Admin::User::drop({
-       name => "foo",
-       host => "host",
+       name      => "foo",
+       host      => "host",
+       deleteall => "if empty not executed",
     });
  };
 
