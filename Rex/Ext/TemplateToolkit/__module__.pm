@@ -16,8 +16,25 @@ use vars qw (@EXPORT);
 
 @EXPORT = qw(template_toolkit);
 
+
+sub validate_vars {
+  my ( $vars ) = @_;
+
+  foreach my $key (keys %$vars) {
+      if ($key ~= /^[\._]/) {
+	  warn "variable name '$key' considered private by Template Toolkit";
+      } elsif ($key ~= /([^a-zA-Z0-9_])/) {
+	  warn "variable name '$key' contains '$1' unsupported by Template Toolkit";
+      } elsif ($key ~= /^(GET|CALL|SET|DEFAULT|INSERT|INCLUDE|PROCESS|WRAPPER|IF|UNLESS|ELSE|ELSIF|FOR|FOREACH|WHILE|SWITCH|CASE|USE|PLUGIN|FILTER|MACRO|PERL|RAWPERL|BLOCK|META|TRY|THROW|CATCH|FINAL|NEXT|LAST|BREAK|RETURN|STOP|CLEAR|TO|STEP|AND|OR|NOT|MOD|DIV|END)$/) {
+	  warn "variable name '$key' clashes with reserved Template Toolkit word";
+      }
+  }
+}
+
 sub template_toolkit {
   my ( $template_path, $vars ) = @_;
+
+  validate_vars( $vars );
 
   # resolv template path
   $template_path = Rex::Helper::Path::resolv_path($template_path);
@@ -42,6 +59,9 @@ sub import {
     # register Template::Toolkit for default template processing
     set template_function => sub {
       my ( $content, $vars ) = @_;
+      
+      validate_vars( $vars );
+
       my $template = Template->new;
 
       my $output;
