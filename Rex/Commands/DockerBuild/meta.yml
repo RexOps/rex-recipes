@@ -1,0 +1,7 @@
+Name: Rex::Commands::DockerBuild
+Description: Build Docker container
+Author: Jan Gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+PerlRequire:
+  - File::Spec
+  - Carp
