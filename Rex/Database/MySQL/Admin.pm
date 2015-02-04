@@ -63,11 +63,11 @@ task execute => sub {
 
    say $result unless $param->{quiet};
 
-   unlink($tmp_file) if $delete;
-
    if($? != 0) {
       die("Error executing $sql");
    }
+   
+   unlink($tmp_file) if $delete;
 
    return $result;
 };
