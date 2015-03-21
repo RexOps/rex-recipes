@@ -1,0 +1,6 @@
+Name: Rex::Commands::Firewall
+Description: A firewall module for Rex
+Author: Jan Gehring <jan.gehring@gmail.com>
+License: Apache 2.0
+Require:
+  - Rex::Ext::ParamLookup

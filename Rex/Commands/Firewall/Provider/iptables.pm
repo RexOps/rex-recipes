@@ -11,11 +11,12 @@ use warnings;
 
 use Rex::Commands::Iptables;
 use Data::Dumper;
+use base qw(Rex::Commands::Firewall::Provider::base);
 
 sub new {
   my $that  = shift;
   my $proto = ref($that) || $that;
-  my $self  = {@_};
+  my $self  = $proto->SUPER::new(@_);
 
   bless( $self, $proto );
 
