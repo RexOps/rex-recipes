@@ -4,3 +4,4 @@ Author: jan gehring <jan.gehring@gmail.com>
 License: Apache 2.0
 PerlRequire:
   - Parallel::ForkManager
+  - IPC::Lite

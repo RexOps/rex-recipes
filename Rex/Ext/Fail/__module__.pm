@@ -11,6 +11,8 @@ use warnings;
 use Data::Dumper;
 
 use Rex -base;
+use IPC::Lite qw($i_am_failed);
+use Rex::CLI;
 
 $Rex::TaskList::task_list = undef;
 Rex::Config->set_distributor('Parallel_ForkManager');
@@ -26,9 +28,17 @@ my $inside_fail = 0;
 
 my @fail_code = ();
 
+
+Rex::CLI->add_exit(sub {
+  if($i_am_failed) {
+    CORE::exit $i_am_failed;
+  }
+});
+
 sub fail(&) {
   my $code = shift;
   $inside_fail = 1;
+  $i_am_failed = 0;
 
   my $task_code = sub {
     my @exit_codes = Rex::TaskList->create()->get_exit_codes();
@@ -40,9 +50,11 @@ sub fail(&) {
         $fail_c->(scalar(@failed_tasks));
       }
 
-      die "Failcounter reached. Too many tasks failed.\nFailcounter: " 
+      $i_am_failed = 1;
+
+      die( "Failcounter reached. Too many tasks failed.\nFailcounter: " 
         . scalar(@failed_tasks) 
-        . "\nMax fails: $max_fail_counter\n";
+        . "\nMax fails: $max_fail_counter\n", "error");
     }
   };
 
