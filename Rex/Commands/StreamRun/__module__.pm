@@ -56,3 +56,27 @@ sub stream_run {
 
 
 1;
+
+
+=pod
+
+=head1 NAME
+
+Rex::Commands::StreamRun - Run a command and capture the output line by line
+
+If you need to capture the output from a command line by line, this module is for you. This module only works with I<OpenSSH> connection mode, which is default since 1.0.
+
+=head1 SYNOPSIS
+
+ use Rex::Commands::StreamRun;
+  
+ group servers => "frontend-[01..05]";
+    
+ task "do_something", sub {
+   stream_run "ls -l", sub {
+     my ($line) = @_;
+     print connection->server . ": [$line]\n";
+   };
+ };
+
+
