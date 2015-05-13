@@ -1,9 +1,9 @@
 #
 # (c) Jan Gehring <jan.gehring@gmail.com>
-# 
+#
 # vim: set ts=2 sw=2 tw=0:
 # vim: set expandtab:
-   
+
 package Rex::Ext::Fail;
 
 use strict;
@@ -24,16 +24,17 @@ use vars qw(@EXPORT);
 @EXPORT = qw(fail max_fail_counter on_fail);
 
 my $max_fail_counter = 0;
-my $inside_fail = 0;
+my $inside_fail      = 0;
 
 my @fail_code = ();
 
-
-Rex::CLI->add_exit(sub {
-  if($i_am_failed) {
-    CORE::exit $i_am_failed;
+Rex::CLI->add_exit(
+  sub {
+    if ($i_am_failed) {
+      CORE::exit $i_am_failed;
+    }
   }
-});
+);
 
 sub fail(&) {
   my $code = shift;
@@ -44,22 +45,28 @@ sub fail(&) {
     my @exit_codes = Rex::TaskList->create()->get_exit_codes();
     my @failed_tasks = grep { $_ > 0 } @exit_codes;
 
-
-    if(scalar @failed_tasks > $max_fail_counter) {
+    if ( scalar @failed_tasks > $max_fail_counter ) {
       for my $fail_c (@fail_code) {
-        $fail_c->(scalar(@failed_tasks));
+        $fail_c->( scalar(@failed_tasks) );
       }
 
       $i_am_failed = 1;
 
-      die( "Failcounter reached. Too many tasks failed.\nFailcounter: " 
-        . scalar(@failed_tasks) 
-        . "\nMax fails: $max_fail_counter\n", "error");
+      die(
+        "Failcounter reached. Too many tasks failed.\nFailcounter: "
+          . scalar(@failed_tasks)
+          . "\nMax fails: $max_fail_counter\n",
+        "error"
+      );
     }
   };
 
-  Rex::TaskList->create()
-      ->modify( 'after_task_finished', qr{.*}, $task_code, "Rex::CLI",  );
+  my @all_tasks = Rex::TaskList->create()->get_tasks;
+
+  for my $task (@all_tasks) {
+    my $task_o = Rex::TaskList->create()->get_task($task);
+    $task_o->modify( 'after_task_finished', $task_code, );
+  }
 
   $code->();
 
@@ -67,8 +74,9 @@ sub fail(&) {
 }
 
 sub max_fail_counter {
-  if(! $inside_fail) {
-    die "max_fail_counter can only be called inside fail{} block. Nested fail blocks are currently not supported.";
+  if ( !$inside_fail ) {
+    die
+      "max_fail_counter can only be called inside fail{} block. Nested fail blocks are currently not supported.";
   }
 
   $max_fail_counter = shift;
