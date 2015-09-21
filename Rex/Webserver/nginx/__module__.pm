@@ -21,7 +21,7 @@ desc "installs the nginx webserver";
 task "install" => make {
 	update_package_db;
 	eval {
-		install package => "nginx";
+		pkg "nginx", ensure => "present";
 		say "nginx installed!";
 	} or do {
 		say "nginx could not be installed!";
@@ -33,7 +33,7 @@ task "install" => make {
 desc "uninstalls the nginx webserver";
 task "uninstall" => make {
 	eval {
-		remove package => "nginx";
+		pkg "nginx", ensure => "absent";
 		say "nginx uninstalled!";
 	} or do {
 		say "nginx could not be uninstalled!";
