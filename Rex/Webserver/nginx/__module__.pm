@@ -23,6 +23,7 @@ task "install" => make {
 	eval {
 		pkg "nginx", ensure => "present";
 		say "nginx installed!";
+		1;
 	} or do {
 		say "nginx could not be installed!";
 	};
@@ -35,6 +36,7 @@ task "uninstall" => make {
 	eval {
 		pkg "nginx", ensure => "absent";
 		say "nginx uninstalled!";
+		1;
 	} or do {
 		say "nginx could not be uninstalled!";
 	};
