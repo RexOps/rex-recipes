@@ -1,0 +1,9 @@
+Name: Rex::System::Supervisord
+Description: Installs and configures Supervisord (http://supervisord.org/)
+Author: Paco Esteban <paco@onna.be>
+License: MIT
+
+# Only if you have dependencies to other Rex Modules.
+# Require:
+#    - Other::Rex::Module
+#    - 2nd::Rex::Module
