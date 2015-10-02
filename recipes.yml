@@ -70,3 +70,10 @@ Rex/System/Debian/Packages/Helper:
    Description: |
       Helper Task to install or remove packages listed in a file
       created with dpkg --get-selections.
+
+Rex/System/Supervisord:
+   Author: Paco Esteban <paco@onna.be>
+   Requires:
+   License: MIT
+   Description: |
+      Installs and configures Supervisord (http://supervisord.org/)
