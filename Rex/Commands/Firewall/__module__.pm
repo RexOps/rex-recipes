@@ -14,6 +14,7 @@ With this module it is easy to manage different firewall systems.
 
 =head1 SYNOPSIS
 
+ # Configure a particular rule
  task "configure_firewall", "server01", sub {
    firewall "some-name",
      ensure      => "present",
@@ -39,7 +40,11 @@ With this module it is easy to manage different firewall systems.
      log_prefix  => "FW:",      # if provider supports it
      state       => "NEW";
  };
- 
+
+ # Add overall logging (if provider supports)
+ firewall "some-name",
+   provider => 'ufw',
+   logging  => "medium";
 
 =head1 EXPORTED RESOURCES
 
@@ -90,8 +95,9 @@ resource "firewall", { export => TRUE }, sub {
     iniface     => param_lookup( "iniface", undef ),
     outiface    => param_lookup( "outiface", undef ),
     reject_with => param_lookup( "reject_with", undef ),
-    log         => param_lookup( "log", undef ),
-    log_level   => param_lookup( "log_level", undef ),
+    logging     => param_lookup( "logging", undef ), # overall logging
+    log         => param_lookup( "log", undef ), # logging for rule
+    log_level   => param_lookup( "log_level", undef ), # logging for rule
     log_prefix  => param_lookup( "log_prefix", undef ),
     state       => param_lookup( "state", undef ),
   };
@@ -107,7 +113,12 @@ resource "firewall", { export => TRUE }, sub {
   my $provider_o = $provider->new();
 
   my $changed = 0;
-  if ( $rule_config->{ensure} eq "present" ) {
+  if ( my $logging = $rule_config->{logging} ) {
+    if ( $provider_o->logging($logging) ) {
+      emit changed, "Firewall logging updated.";
+    }
+  }
+  elsif ( $rule_config->{ensure} eq "present" ) {
     if ( $provider_o->present($rule_config) ) {
       emit created, "Firewall rule created.";
     }

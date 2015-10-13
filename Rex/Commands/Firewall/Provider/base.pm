@@ -41,4 +41,9 @@ sub disable {
   Rex::Logger::debug("disable: Not implemented by provider.");
 }
 
+sub logging {
+  my ( $self, $rule_config ) = @_;
+  Rex::Logger::debug("logging: Not implemented by provider.");
+}
+
 1;

@@ -62,6 +62,11 @@ sub disable {
   return $self->_ufw_disable_enable("disable");
 }
 
+sub logging {
+  my ( $self, $logging ) = @_;
+  return $self->_ufw_logging($logging);
+}
+
 sub _ufw_rule {
 
   my ( $self, $action, @params ) = @_;
@@ -185,6 +190,41 @@ sub _ufw_disable_enable {
   }
 
   return 0;
+}
+
+sub _ufw_logging {
+  my $self  = shift;
+  my $param = shift;
+
+  $param =~ /(on|off|low|medium|high|full)/
+    or die "Invalid logging parameter: $param";
+
+  my $current = $self->_ufw_exec('status verbose');
+
+  my $need_update;
+  if ( $param eq 'on' ) {
+    $need_update = 1 unless $current =~ /^Logging: on/m;
+  }
+  elsif ( $param eq 'off' ) {
+    $need_update = 1 unless $current =~ /^Logging: off$/m;
+  }
+  else {
+    $need_update = 1 unless $current =~ /^Logging: on \($param\)$/m;
+  }
+
+  if ($need_update) {
+    my $ret = $self->_ufw_exec("logging $param");
+    my $success =
+      $param eq 'off'
+      ? 'Logging disabled'
+      : 'Logging enabled';
+    if ( $ret eq $success ) {
+      return 1;
+    }
+    else {
+      Rex::Logger::info( "Unexpected ufw response: $ret", "warn" );
+    }
+  }
 }
 
 sub _ufw_exec {
