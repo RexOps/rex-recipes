@@ -61,10 +61,13 @@ use warnings;
 
 require Rex::Exporter;
 use Data::Dumper;
-use Rex::Ext::ParamLookup;
+use base qw(Rex::Exporter);
 
 use Rex -base;
 use Rex::Resource::Common;
+
+use vars qw(@EXPORT);
+@EXPORT = qw(firewall);
 
 use Carp;
 
