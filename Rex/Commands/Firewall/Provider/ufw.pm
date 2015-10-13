@@ -19,6 +19,10 @@ use base qw(Rex::Commands::Firewall::Provider::base);
 my %__action_map = (
   accept => "allow",
   allow  => "allow",
+  deny   => "deny",   # -j DROP
+  drop   => "deny",   # -j DROP
+  reject => "reject", # -j REJECT
+  limit  => "limit",
 );
 
 sub new {
