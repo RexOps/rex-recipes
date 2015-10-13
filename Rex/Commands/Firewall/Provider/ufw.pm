@@ -272,7 +272,7 @@ sub _generate_rule_array {
   push( @ufw_params, "port", $rule_config->{sport} )
     if ( defined $rule_config->{sport} );
 
-  push( @ufw_params, "app", $rule_config->{sapp} )
+  push( @ufw_params, "app", qq("$rule_config->{sapp}") )
     if ( defined $rule_config->{sapp} );
 
   push( @ufw_params, "to", $rule_config->{destination} )
@@ -281,7 +281,7 @@ sub _generate_rule_array {
   push( @ufw_params, "port", $rule_config->{dport} )
     if ( defined $rule_config->{dport} );
 
-  push( @ufw_params, "app", $rule_config->{dapp} )
+  push( @ufw_params, "app", qq("$rule_config->{dapp}") )
     if ( defined $rule_config->{dapp} );
 
   push( @ufw_params, "direction", "in" )
