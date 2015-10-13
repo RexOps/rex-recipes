@@ -209,7 +209,8 @@ sub _ufw_exec {
 sub _generate_rule_array {
   my ( $self, $rule_config ) = @_;
 
-  my $action = $__action_map{ $rule_config->{action} };
+  my $action = $__action_map{ $rule_config->{action} }
+    or die qq(Unknown action "$rule_config->{action}" for UFW provider);
   $rule_config->{dport}       ||= $rule_config->{port};
   $rule_config->{dapp}        ||= $rule_config->{app};
   $rule_config->{source}      ||= "any";
