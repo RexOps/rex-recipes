@@ -66,6 +66,8 @@ use base qw(Rex::Exporter);
 use Rex -base;
 use Rex::Resource::Common;
 
+use Rex::Ext::ParamLookup;
+
 use vars qw(@EXPORT);
 @EXPORT = qw(firewall);
 
