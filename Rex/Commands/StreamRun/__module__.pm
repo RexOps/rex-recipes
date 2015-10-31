@@ -47,6 +47,13 @@ sub stream_run {
       $line =~ s/([\r\n])$//g;
       $cb->($line);
     }
+
+    if (waitpid($pid, 0) > 0) {
+      $? = $? >> 8;
+    }
+    else {
+      $? = -1;
+    }
   }
   else {
     confess "Only works with OpenSSH connection mode.";
