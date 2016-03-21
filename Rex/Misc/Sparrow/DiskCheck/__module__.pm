@@ -79,7 +79,7 @@ task run => sub {
 
 =head1 NAME
 
-Rex::Misc::Sparrow::DiskCheck - elementary file system checks using df utility report. 
+Rex::Misc::Sparrow::DiskCheck - elementary file system checks using df utility report
 
 =head1 DESCRIPTION
 
@@ -122,4 +122,3 @@ Configure test suite. Use threshold to set minimum available disk space to allow
 =head1 See Also
 
 https://sparrowhub.org/info/df-check
-
