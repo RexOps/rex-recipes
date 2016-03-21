@@ -66,12 +66,6 @@ Installs sparrow plugin
 
 =cut
 
-=head1 Advanced settings
-
-All the tasks are accepted --proxy parameter for the hosts with http trafic under http proxy:
-
-   rex Misc:Sparrow:DiskCheck:prepare --proxy=http://foo.bar.baz
-
 =head1 See Also
 
 https://sparrowhub.org/info/df-check
