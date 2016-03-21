@@ -34,7 +34,7 @@ task configure => sub {
    my ( $params ) = @_;
 
    file "/tmp/sparrow-df-check.ini",
-      content   => template("files/etc/ntp.conf", threshold => $params->{threshold} || 80 ),
+      content   => template("files/suite.ini", threshold => $params->{threshold} || 80 ),
    ;
 
    my $output = run "sparrow project create system";  
@@ -56,8 +56,13 @@ task configure => sub {
 };
 
 task run => sub {
-   my $output = run "sparrow plg run df-check";
+
+   my $output = run "sparrow check run system disk";
+   my $status = $?;
    say $output;
+
+   die "sparrow check run system disk returned bad exit code" unless  $status == 0;
+
 };
 
 1;
@@ -89,6 +94,14 @@ To execute check:
 =item setup
 
 Installs sparrow plugin
+
+=over 4
+
+=item configure
+
+Configure test suite. Use threshold to set minimum availbale disk space to allow in percentage
+
+   rex -H 127.0.0.1:2222 -u root -p 123 Misc:Sparrow:DiskCheck:configure --threshold=80
 
 =back
 
