@@ -81,11 +81,15 @@ Checks available disk spaces parsing `df -h` output
 
 To execute check:
 
- include qw/Rex::Misc::Sparrow::DiskCheck/;
+   $ cat Rexfile 
 
- task run => sub {
-    Rex::Misc::Sparrow::DiskCheck::run();
- };
+   use Rex -feature => ['1.3'];
+
+   require Rex::Misc::Sparrow::DiskCheck;
+
+   1;
+
+   $ rex -H 127.0.0.1:2222 -u root -p 123 Misc:Sparrow:DiskCheck:run
 
 =head1 TASKS
 
