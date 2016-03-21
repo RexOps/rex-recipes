@@ -7,15 +7,12 @@ task prepare => sub {
 
    my ( $params ) = @_;
 
-   my $proxy_export = $params->{proxy} ? 
-   "export http_proxy=$params->{proxy}; export https_proxy=$params->{proxy};" : "";
-   
    install package => 'curl';
    
-   my $output = run "$proxy_export curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
+   my $output = run "curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
    say $output;
 
-   my $output = run "$proxy_export cpanm Sparrow";
+   my $output = run "cpanm Sparrow";
    say $output;
   
 
@@ -25,10 +22,7 @@ task setup => sub {
 
    my ( $params ) = @_;
 
-   my $proxy_export = $params->{proxy} ? 
-   "export http_proxy=$params->{proxy}; export https_proxy=$params->{proxy};" : "";
-
-   my $output = run "$proxy_export export PATH=/usr/local/bin/PATH:\$PATH; sparrow index update && sparrow install df-check";  
+   my $output = run "export PATH=/usr/local/bin/PATH:\$PATH; sparrow index update && sparrow install df-check";  
    say $output;
 
 };
