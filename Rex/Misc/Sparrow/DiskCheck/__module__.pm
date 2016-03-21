@@ -18,7 +18,6 @@ task prepare => sub {
       install package => $pkg;
    }
 
-   
    my $output = run "curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
    say $output;
 
@@ -66,6 +65,7 @@ task configure => sub {
 task run => sub {
 
    my $output = run "sparrow check run system disk";
+
    my $status = $?;
    say $output;
 
@@ -79,7 +79,7 @@ task run => sub {
 
 =head1 NAME
 
-Rex::Misc::Sparrow::DiskCheck - elementary file system checks using df utility report 
+Rex::Misc::Sparrow::DiskCheck - elementary file system checks using df utility report. 
 
 =head1 DESCRIPTION
 
@@ -111,7 +111,7 @@ Installs sparrow plugin
 
 =item configure
 
-Configure test suite. Use threshold to set minimum availbale disk space to allow in percentage
+Configure test suite. Use threshold to set minimum available disk space to allow in percentage
 
    rex -H 127.0.0.1:2222 -u root -p 123 Misc:Sparrow:DiskCheck:configure --threshold=80
 
