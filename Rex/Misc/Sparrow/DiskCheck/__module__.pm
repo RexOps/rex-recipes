@@ -7,8 +7,17 @@ task prepare => sub {
 
    my ( $params ) = @_;
 
+   my $pkg_list = case operating_system, {
+      Centos  => [ "perl-Data-Dumper", "perl-devel" ],
+      default => [ ],
+   };
+
    install package => 'curl';
-   install package => 'perl-devel';
+
+   for my $pkg (@{$pkg_list}) {
+      install package => $pkg;
+   }
+
    
    my $output = run "curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
    say $output;
@@ -16,7 +25,6 @@ task prepare => sub {
    my $output = run "cpanm Test::More Sparrow";
    say $output;
   
-
 };
 
 task setup => sub {
