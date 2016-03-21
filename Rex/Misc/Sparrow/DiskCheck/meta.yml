@@ -1,0 +1,4 @@
+Name: Rex::Misc::Sparrow::DiskCheck
+Description: elementary file system checks using df utility report
+Author: Alexey Melezhik <melezhik@gmail.com> 
+License: Apache 2.0
