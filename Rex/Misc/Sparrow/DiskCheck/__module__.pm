@@ -9,9 +9,9 @@ task prepare => sub {
 
    my $proxy_export = $params->{proxy} ? 
    "export http_proxy=$params->{proxy}; export https_proxy=$params->{proxy};" : "";
-
+   
    install package => 'curl';
-
+   
    my $output = run "$proxy_export curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
    say $output;
 
@@ -22,8 +22,15 @@ task prepare => sub {
 };
 
 task setup => sub {
-   my $output = run "hostname -f";
+
+   my ( $params ) = @_;
+
+   my $proxy_export = $params->{proxy} ? 
+   "export http_proxy=$params->{proxy}; export https_proxy=$params->{proxy};" : "";
+
+   my $output = run "$proxy_export export PATH=/usr/local/bin/PATH:\$PATH; sparrow index update && sparrow install df-check";  
    say $output;
+
 };
 
 #task setup => sub {
@@ -37,30 +44,41 @@ task setup => sub {
 
 =head1 NAME
 
-$::module_name - {{ SHORT DESCRIPTION }}
+Rex::Misc::Sparrow::DiskCheck - elementary file system checks using df utility report 
 
 =head1 DESCRIPTION
 
-{{ LONG DESCRIPTION }}
+Checks available disk spaces parsing `df -h` output
 
 =head1 USAGE
 
-{{ USAGE DESCRIPTION }}
+To execute check:
 
  include qw/Rex::Misc::Sparrow::DiskCheck/;
 
- task yourtask => sub {
-    Rex::Misc::Sparrow::DiskCheck::example();
+ task run => sub {
+    Rex::Misc::Sparrow::DiskCheck::run();
  };
 
 =head1 TASKS
 
 =over 4
 
-=item example
+=item setup
 
-This is an example Task. This task just output's the uptime of the system.
+Installs sparrow plugin
 
 =back
 
 =cut
+
+=head1 Advanced settings
+
+All the tasks are accepted --proxy parameter for the hosts with http trafic under http proxy:
+
+   rex Misc:Sparrow:DiskCheck:prepare --proxy=http://foo.bar.baz
+
+=head1 See Also
+
+https://sparrowhub.org/info/df-check
+
