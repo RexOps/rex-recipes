@@ -21,7 +21,7 @@ sub prepare {
   my $output = run "curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
   say $output;
 
-  my $output = run "cpanm Test::More Sparrow";
+  my $output = run "cpanm Digest::MD5 Test::More Sparrow";
   say $output;
 
 };
