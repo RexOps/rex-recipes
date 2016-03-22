@@ -3,12 +3,12 @@ package Rex::Misc::Sparrow::DiskCheck;
 use Rex -base;
 use Rex::Misc::ShellBlock;
 
-task prepare => sub {
+sub prepare {
 
   my ( $params ) = @_;
 
   my $pkg_list = case operating_system, {
-     Centos  => [ "perl-Data-Dumper", "perl-devel" ],
+     CentOS  => [ "perl-devel", "perl-Data-Dumper" ],
      default => [ ],
   };
 
@@ -29,6 +29,8 @@ task prepare => sub {
 task setup => sub {
 
   my ( $params ) = @_;
+
+  prepare();
 
   my $output = run "sparrow index update && sparrow plg install df-check";  
 
