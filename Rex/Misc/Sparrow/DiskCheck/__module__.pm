@@ -15,7 +15,7 @@ sub prepare {
   install package => 'curl';
 
   for my $pkg (@{$pkg_list}) {
-     install package => $pkg;
+     pkg $pkg, ensure => 'installed';
   }
 
   my $output = run "curl -fkL http://cpanmin.us/ -o /bin/cpanm && chmod +x /bin/cpanm";  
@@ -66,7 +66,7 @@ task configure => sub {
 
 task run => sub {
 
-  my $output = run "sparrow check run system disk";
+  my $output = run "sparrow check run system disk 2>&1";
 
   my $status = $?;
   say $output;
