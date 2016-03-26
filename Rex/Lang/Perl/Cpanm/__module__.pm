@@ -49,7 +49,8 @@ sub cpanm {
          } else {
             die("Can't find any of curl, wget or fetch to download cpanm.");
          }
-         Rex::Logger::info("cpanminus installed.");
+
+         can_run('cpanm') ? Rex::Logger::info("cpanm installed") : die("Failed to install cpanm.");
       }
    }
 
