@@ -14,7 +14,7 @@ package Rex::Lang::Perl::Cpanm;
 use strict;
 use warnings;
 
-use Rex -base;
+use Rex -feature => ['exec_autodie'];
 use Rex::Logger;
 
 require Exporter;
