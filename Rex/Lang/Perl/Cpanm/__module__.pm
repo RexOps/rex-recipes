@@ -39,9 +39,15 @@ sub cpanm {
             Rex::Logger::debug("cpanm is already installed");
             return;
          }
-         run "curl -L http://cpanmin.us | perl - --self-upgrade";
-         if($? != 0) {
-            die("Installing cpanminus failed. Is curl installed?");
+
+         if ( my $curl = can_run('curl') ) {
+            run "$curl -L http://cpanmin.us | perl - --self-upgrade";
+         } elsif ( my $wget = can_run('wget') ) {
+            run "$wget -O - http://cpanmin.us | perl - --self-upgrade";
+         } elsif ( my $fetch = can_run('fetch') ) {
+            run "$fetch -o- http://cpanmin.us | perl - --self-upgrade";
+         } else {
+            die("Can't find any of curl, wget or fetch to download cpanm.");
          }
          Rex::Logger::info("cpanminus installed.");
       }
