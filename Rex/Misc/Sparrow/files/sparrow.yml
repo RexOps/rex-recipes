@@ -1,0 +1,6 @@
+sparrow:
+    system:
+        - checkname: disk
+          plugin: df-check
+          settings:
+              threshold: 80

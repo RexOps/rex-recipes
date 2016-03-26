@@ -1,0 +1,8 @@
+Name: Rex::Misc::Sparrow
+Description: Manage and run sparrow checks
+Author: Ferenc Erki <erkiferenc@gmail.com> 
+License: Apache 2.0
+PerlRequire:
+    - YAML
+Require:
+    - Rex::Lang::Perl::Cpanm
