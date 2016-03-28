@@ -16,6 +16,8 @@ unless ( defined $sparrow ) {
   $sparrow = $yaml->{sparrow};
 }
 
+our $sparrow_temp = File::Spec->tmpdir();
+
 =pod
 
 =head1 NAME
@@ -57,10 +59,6 @@ Installs and configures sparrow checks as described in either CMDB or in C<files
 
 desc 'Configure sparrow checks';
 task 'configure', sub {
-
-  # maybe using $HOME is better? I'm not sure how sensitive the config can be
-  my $tmpdir = File::Spec->tmpdir();
-
   run 'sparrow index update';
 
   foreach my $project ( keys %{$sparrow} ) {
@@ -68,21 +66,10 @@ task 'configure', sub {
 
     foreach my $check ( @{ $sparrow->{$project} } ) {
       run "sparrow plg install $check->{plugin}";
-
       run "sparrow check add $project $check->{checkname}";
-
       run "sparrow check set $project $check->{checkname} $check->{plugin}";
-
-      my $config_file =
-        File::Spec->join( $tmpdir, 'sparrow-' . $check->{checkname} . '.ini' );
-
-      file $config_file,
-        content => template( '@suite.ini.tpl', check => $check );
-
-      run "sparrow check load_ini $project $check->{checkname} $config_file";
+      configure_check( $project, $check );
       run "sparrow check show $project $check->{checkname}";
-
-      rm $config_file;
     }
   }
 };
@@ -104,7 +91,45 @@ task 'check', sub {
   }
 };
 
-1;
+=back
+
+=head1 SUBROUTINES
+
+=over 4
+
+=item configure_check( $project, $check )
+
+Configure a sparrow check. C<$check> is the full data structure from CMDB or  C<sparrow.yml>.
+
+=cut
+
+sub configure_check {
+  my ( $project, $check ) = @_;
+
+  my $config_file = my $default_config =
+    File::Spec->join( '~', 'sparrow', 'plugins', 'public', $check->{plugin},
+    'suite.ini' );
+  my $temp_config;
+
+  if ( exists $check->{settings} ) {
+    $temp_config =
+      File::Spec->join( $sparrow_temp,
+      'sparrow-' . $check->{checkname} . '.ini' );
+
+    cp $default_config, $temp_config;
+    chmod 700, $temp_config;
+
+    while ( my ( $key, $value ) = each %{ $check->{settings} } ) {
+      sed qr{$key = .*}, join( ' = ', $key, $value ), $config_file;
+    }
+
+    $config_file = $temp_config;
+  }
+
+  run "sparrow check load_ini $project $check->{checkname} $config_file";
+
+  file $temp_config, ensure => 'absent';
+}
 
 =back
 
@@ -114,10 +139,4 @@ https://sparrowhub.org
 
 =cut 
 
-__DATA__
-
-@suite.ini.tpl
-[<%= $check->{checkname} %>]
-<% while ( my ($key, $value) = each %{$check->{settings}} ) { -%>
-<%= $key %> = <%= $value %>
-<% } %>
+1;
