@@ -99,7 +99,7 @@ desc 'Runs sparrow checks';
 task 'check', sub {
   foreach my $project ( keys %{$sparrow} ) {
     foreach my $check ( @{ $sparrow->{$project} } ) {
-      say scalar run 'sparrow check run system disk';
+      say scalar run "sparrow check run $project $check->{checkname}";
     }
   }
 };
