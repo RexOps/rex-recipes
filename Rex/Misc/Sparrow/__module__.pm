@@ -44,7 +44,7 @@ Installs sparrow plugin via cpanm, and configures checks.
 desc 'Setup sparrow';
 task 'setup', sub {
   cpanm -install;
-  cpanm -install => [qw(Digest::MD5 Test::More Sparrow)];
+  cpanm -install => [qw(Digest::MD5 Test::More Sparrow~0.0.21)];
 
   needs 'configure';
 };
@@ -69,9 +69,7 @@ task 'configure', sub {
     foreach my $check ( @{ $sparrow->{$project} } ) {
       run "sparrow plg install $check->{plugin}";
 
-      # replace `autodie` with `unless` once there is a reliable test
-      # to see if a check already exists in a project
-      run "sparrow check add $project $check->{checkname}", auto_die => 0;
+      run "sparrow check add $project $check->{checkname}";
 
       run "sparrow check set $project $check->{checkname} $check->{plugin}";
 
