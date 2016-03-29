@@ -120,7 +120,7 @@ sub configure_check {
     chmod 700, $temp_config;
 
     while ( my ( $key, $value ) = each %{ $check->{settings} } ) {
-      sed qr{$key = .*}, join( ' = ', $key, $value ), $config_file;
+      sed qr{$key = .*}, join( ' = ', $key, $value ), $temp_config;
     }
 
     $config_file = $temp_config;
