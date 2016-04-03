@@ -1,5 +1,8 @@
 package Rex::Misc::Sparrow;
 
+use strict;
+use warnings;
+
 use Rex -base => [qw(1.4 exec_autodie)];
 use Rex::CMDB;
 
