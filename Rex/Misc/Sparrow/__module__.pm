@@ -79,7 +79,6 @@ task 'configure', sub {
       run "sparrow check add $project $check->{checkname}";
       run "sparrow check set $project $check->{checkname} $check->{plugin}";
       configure_check( $project, $check );
-      run "sparrow check show $project $check->{checkname}";
     }
   }
 };
@@ -97,6 +96,21 @@ task 'check', sub {
   foreach my $project ( keys %{$sparrow} ) {
     foreach my $check ( @{ $sparrow->{$project} } ) {
       say scalar run "sparrow check run $project $check->{checkname}";
+    }
+  }
+};
+
+=item dump_config
+
+Dumps sparrow configuration
+
+=cut
+
+desc 'Dumps sparrow configuration';
+task 'dump_config', sub {
+  foreach my $project ( keys %{$sparrow} ) {
+    foreach my $check ( @{ $sparrow->{$project} } ) {
+      say scalar run "sparrow check show $project $check->{checkname}";
     }
   }
 };
