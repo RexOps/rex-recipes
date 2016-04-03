@@ -9,13 +9,18 @@ use Rex::CMDB;
 use Rex::Lang::Perl::Cpanm;
 
 use File::Spec;
+use Try::Tiny;
 use YAML;
 
 our $sparrow = get cmdb 'sparrow';
 
 unless ( defined $sparrow ) {
-  my $yaml =
-    YAML::LoadFile( Rex::Helper::Path::get_file_path('files/sparrow.yml') );
+  my $yaml;
+  try {
+    $yaml =
+      YAML::LoadFile( Rex::Helper::Path::get_file_path('files/sparrow.yml') );
+  }
+  catch { die 'No sparrow configuration found. Aborting.' };
   $sparrow = $yaml->{sparrow};
 }
 

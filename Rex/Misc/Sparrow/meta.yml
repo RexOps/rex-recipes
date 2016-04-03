@@ -3,6 +3,7 @@ Description: Manage and run sparrow checks
 Author: Ferenc Erki <erkiferenc@gmail.com> 
 License: Apache 2.0
 PerlRequire:
+    - Try::Tiny
     - YAML
 Require:
     - Rex::Lang::Perl::Cpanm
