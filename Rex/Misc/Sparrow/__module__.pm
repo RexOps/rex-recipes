@@ -38,6 +38,8 @@ Setup sparrow and its checks described in the configuration file, and run them.
 
 =head1 USAGE
 
+Create configuration either as C<files/sparrow.yml> or in CMDB. See C<files/sparrow.yml.example> for examples.
+
  $ rexify --use=Rex::Misc::Sparrow
  $ rex Misc:Sparrow:setup
 
