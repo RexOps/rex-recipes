@@ -1,0 +1,9 @@
+Name: Rex::Misc::Sparrow
+Description: Manage and run sparrow checks
+Author: Ferenc Erki <erkiferenc@gmail.com>
+License: Perl 5
+PerlRequire:
+    - Try::Tiny
+    - YAML
+Require:
+    - Rex::Lang::Perl::Cpanm

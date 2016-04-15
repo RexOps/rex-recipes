@@ -14,7 +14,7 @@ package Rex::Lang::Perl::Cpanm;
 use strict;
 use warnings;
 
-use Rex -base;
+use Rex -feature => ['exec_autodie'];
 use Rex::Logger;
 
 require Exporter;
@@ -35,11 +35,22 @@ sub cpanm {
          _install(@values);
       }
       else {
-         run "curl -L http://cpanmin.us | perl - --self-upgrade";
-         if($? != 0) {
-            die("Installing cpanminus failed. Is curl installed?");
+         if ( can_run('cpanm') ) {
+            Rex::Logger::debug("cpanm is already installed");
+            return;
          }
-         Rex::Logger::info("cpanminus installed.");
+
+         if ( my $curl = can_run('curl') ) {
+            run "$curl -L http://cpanmin.us | perl - --self-upgrade";
+         } elsif ( my $wget = can_run('wget') ) {
+            run "$wget -O - http://cpanmin.us | perl - --self-upgrade";
+         } elsif ( my $fetch = can_run('fetch') ) {
+            run "$fetch -o- http://cpanmin.us | perl - --self-upgrade";
+         } else {
+            die("Can't find any of curl, wget or fetch to download cpanm.");
+         }
+
+         can_run('cpanm') ? Rex::Logger::info("cpanm installed") : die("Failed to install cpanm.");
       }
    }
 

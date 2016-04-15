@@ -1,0 +1,11 @@
+sparrow:
+    system:
+        - checkname: disk
+          plugin: df-check
+          settings:
+              threshold: 80
+        - checkname: nginx
+          plugin: nginx-check
+          settings:
+              check_master_age: 0
+              master_age: 60
