@@ -30,11 +30,11 @@ our $sparrow_temp = File::Spec->tmpdir();
 
 =head1 NAME
 
-Rex::Misc::Sparrow - manage and run sparrow checks
+Rex::Misc::Sparrow - manage and run sparrow plugins
 
 =head1 DESCRIPTION
 
-Setup sparrow and its checks described in the configuration file, and run them.
+Setup sparrow and its plugins described in the configuration file, and run them.
 
 =head1 USAGE
 
@@ -49,111 +49,53 @@ Create configuration either as C<files/sparrow.yml> or in CMDB. See C<files/spar
 
 =item setup
 
-Installs sparrow plugin via cpanm, and configures checks.
+Installs sparrow plugin via cpanm.
 
 =cut
 
 desc 'Setup sparrow';
 task 'setup', sub {
   cpanm -install;
-  cpanm -install => [qw(Digest::MD5 Test::More Sparrow~0.0.21)];
-
-  needs 'configure';
+  cpanm -install => [qw(Digest::MD5 Test::More Sparrow~0.1.2)];
 };
 
 =item configure
 
-Installs and configures sparrow checks as described in either CMDB or in C<files/sparrow.yml>.
+Installs sparrow plguins as described in either CMDB or in C<files/sparrow.yml>.
 
 =cut
 
-desc 'Configure sparrow checks';
+desc 'Configure sparrow plugins';
 task 'configure', sub {
   run 'sparrow index update';
-
-  foreach my $project ( keys %{$sparrow} ) {
-    run "sparrow project create $project";
-
-    foreach my $check ( @{ $sparrow->{$project} } ) {
-      run "sparrow plg install $check->{plugin}";
-      run "sparrow check add $project $check->{checkname}";
-      run "sparrow check set $project $check->{checkname} $check->{plugin}";
-      configure_check( $project, $check );
-    }
+  foreach my $plg ( @{ $sparrow->{plugins} } ) {
+    run "sparrow plg install $plg";
   }
 };
 
-=item check
+=item plugin_run
 
-Runs configured sparrow checks.
+Runs sparrow plguin(s) (with parameters).
 
- $ rex -qw Misc:Sparrow:check
+ $ rex -qw Misc:Sparrow:plugin_run # run all plugins
+ $ rex -qw Misc:Sparrow:plugin_run # run all plugins
+ $ rex -qw Misc:Sparrow:plugin_run --plugin=df-check --threshold=70 # run df-check plugin with parameter
 
 =cut
 
-desc 'Runs sparrow checks';
+desc 'Runs sparrow plugins';
 task 'check', sub {
-  foreach my $project ( keys %{$sparrow} ) {
-    foreach my $check ( @{ $sparrow->{$project} } ) {
-      say scalar run "sparrow check run $project $check->{checkname}";
+  my $params = shift;
+  foreach my $plg ( grep { my $name = $_; $params->{plugin}? ( $name eq $params->{plugin}  ) : 1 } @{ $sparrow->{plugins} } ) {
+    my $plg_params =  $params || {};
+    delete @{$plg_params}{qw{name}};
+    my $plg_params_string;
+    for my $n (%{$plg_params}){
+      $plg_params_string.=" --param $n=".($plg_params->{name});
     }
+    say scalar run "sparrow plg run $plg $plg_params_string";
   }
 };
-
-=item dump_config
-
-Dumps sparrow configuration
-
-=cut
-
-desc 'Dumps sparrow configuration';
-task 'dump_config', sub {
-  foreach my $project ( keys %{$sparrow} ) {
-    foreach my $check ( @{ $sparrow->{$project} } ) {
-      say scalar run "sparrow check show $project $check->{checkname}";
-    }
-  }
-};
-
-=back
-
-=head1 SUBROUTINES
-
-=over 4
-
-=item configure_check( $project, $check )
-
-Configure a sparrow check. C<$check> is the full data structure from CMDB or  C<sparrow.yml>.
-
-=cut
-
-sub configure_check {
-  my ( $project, $check ) = @_;
-
-  my $config_file = my $default_config =
-    File::Spec->join( '~', 'sparrow', 'plugins', 'public', $check->{plugin},
-    'suite.ini' );
-  my $temp_config;
-
-  if ( exists $check->{settings} ) {
-    $temp_config =
-      File::Spec->join( $sparrow_temp,
-      'sparrow-' . $check->{checkname} . '.ini' );
-
-    cp $default_config, $temp_config;
-    chmod 700, $temp_config;
-
-    while ( my ( $key, $value ) = each %{ $check->{settings} } ) {
-      sed qr{\b$key\b = .*}, join( ' = ', $key, $value ), $temp_config;
-    }
-
-    $config_file = $temp_config;
-  }
-
-  run "sparrow check load_ini $project $check->{checkname} $config_file";
-
-  file $temp_config, ensure => 'absent';
-}
 
 =back
 
