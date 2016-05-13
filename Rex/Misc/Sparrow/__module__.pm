@@ -43,6 +43,16 @@ Create configuration either as C<files/sparrow.yml> or in CMDB. See C<files/spar
  $ rexify --use=Rex::Misc::Sparrow
  $ rex Misc:Sparrow:setup
 
+Example configuration.
+
+ $ cat sparrow.yml
+
+  sparrow:
+    plugins:
+      - df-check
+      - nginx-check
+      - perlbrew
+  
 =head1 TASKS
 
 =over 4
