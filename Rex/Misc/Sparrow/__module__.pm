@@ -66,7 +66,7 @@ Installs sparrow plugin via cpanm.
 desc 'Setup sparrow';
 task 'setup', sub {
   cpanm -install;
-  cpanm -install => [qw(Digest::MD5 Test::More Sparrow~0.1.2)];
+  cpanm -install => [qw(Digest::MD5 Test::More Sparrow~0.1.3)];
 };
 
 =item configure
