@@ -98,8 +98,8 @@ task 'plugin_run', sub {
   my $params = shift;
   foreach my $plg ( grep { my $name = $_; $params->{plugin}? ( $name eq $params->{plugin}  ) : 1 } @{ $sparrow->{plugins} } ) {
     my $plg_params =  $params || {};
-    delete @{$plg_params}{qw{plugin}};
-    my $plg_params_string;
+    delete @{$plg_params}{qw{plugin Misc:Sparrow:plugin_run}};
+    my $plg_params_string = '';
     for my $n (keys %{$plg_params}){
       $plg_params_string.=" --param $n=".($plg_params->{$n});
     }
