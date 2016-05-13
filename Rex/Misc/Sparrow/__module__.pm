@@ -88,20 +88,20 @@ task 'configure', sub {
 Runs sparrow plguin(s) (with parameters).
 
  $ rex -qw Misc:Sparrow:plugin_run # run all plugins
- $ rex -qw Misc:Sparrow:plugin_run # run all plugins
- $ rex -qw Misc:Sparrow:plugin_run --plugin=df-check --threshold=70 # run df-check plugin with parameter
+ $ rex -qw Misc:Sparrow:plugin_run --plugin=df-check  # run df-check plugin only
+ $ rex -qw Misc:Sparrow:plugin_run --plugin=df-check --threshold=88 # run df-check plugin with parameter
 
 =cut
 
 desc 'Runs sparrow plugins';
-task 'check', sub {
+task 'plugin_run', sub {
   my $params = shift;
   foreach my $plg ( grep { my $name = $_; $params->{plugin}? ( $name eq $params->{plugin}  ) : 1 } @{ $sparrow->{plugins} } ) {
     my $plg_params =  $params || {};
-    delete @{$plg_params}{qw{name}};
+    delete @{$plg_params}{qw{plugin}};
     my $plg_params_string;
-    for my $n (%{$plg_params}){
-      $plg_params_string.=" --param $n=".($plg_params->{name});
+    for my $n (keys %{$plg_params}){
+      $plg_params_string.=" --param $n=".($plg_params->{$n});
     }
     say scalar run "sparrow plg run $plg $plg_params_string";
   }
