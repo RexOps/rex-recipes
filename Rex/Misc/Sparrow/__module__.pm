@@ -101,7 +101,11 @@ task 'plugin_run', sub {
     delete @{$plg_params}{qw{plugin Misc:Sparrow:plugin_run}};
     my $plg_params_string = '';
     for my $n (keys %{$plg_params}){
-      $plg_params_string.=" --param $n=".($plg_params->{$n});
+      if ($plg_params->{$n}=~/\s/){
+        $plg_params_string.=" --param $n=\"'".($plg_params->{$n})."'\""
+      }else{
+        $plg_params_string.=" --param $n=".($plg_params->{$n})
+      }
     }
     say scalar run "sparrow plg run $plg $plg_params_string";
   }
