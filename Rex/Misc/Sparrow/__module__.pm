@@ -71,7 +71,7 @@ task 'setup', sub {
 
 =item configure
 
-Installs sparrow plguins as described in either CMDB or in C<files/sparrow.yml>.
+Installs sparrow plugins as described in either CMDB or in C<files/sparrow.yml>.
 
 =cut
 
@@ -85,7 +85,7 @@ task 'configure', sub {
 
 =item plugin_run
 
-Runs sparrow plguin(s) (with parameters).
+Runs sparrow plugin(s) (with parameters).
 
  $ rex -qw Misc:Sparrow:plugin_run # run all plugins
  $ rex -qw Misc:Sparrow:plugin_run --plugin=df-check  # run df-check plugin only
