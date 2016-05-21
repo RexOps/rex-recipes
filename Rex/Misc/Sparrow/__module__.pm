@@ -96,15 +96,24 @@ Runs sparrow plguin(s) (with parameters).
 desc 'Runs sparrow plugins';
 task 'plugin_run', sub {
   my $params = shift;
-  foreach my $plg ( grep { my $name = $_; $params->{plugin}? ( $name eq $params->{plugin}  ) : 1 } @{ $sparrow->{plugins} } ) {
-    my $plg_params =  $params || {};
+  foreach my $plg (
+    grep {
+      my $name = $_;
+      $params->{plugin}
+        ? ( $name eq $params->{plugin} )
+        : 1
+    } @{ $sparrow->{plugins} }
+    )
+  {
+    my $plg_params = $params || {};
     delete @{$plg_params}{qw{plugin Misc:Sparrow:plugin_run}};
     my $plg_params_string = '';
-    for my $n (keys %{$plg_params}){
-      if ($plg_params->{$n}=~/\s/){
-        $plg_params_string.=" --param $n=\"'".($plg_params->{$n})."'\""
-      }else{
-        $plg_params_string.=" --param $n=".($plg_params->{$n})
+    for my $n ( keys %{$plg_params} ) {
+      if ( $plg_params->{$n} =~ /\s/ ) {
+        $plg_params_string .= " --param $n=\"'" . ( $plg_params->{$n} ) . "'\"";
+      }
+      else {
+        $plg_params_string .= " --param $n=" . ( $plg_params->{$n} );
       }
     }
     say scalar run "sparrow plg run $plg $plg_params_string";
