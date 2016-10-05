@@ -4,7 +4,7 @@
 #
 # Simple Module to install and manage duplicity (http://duplicity.nongnu.org/)
 
-package Rex::System::Duplicity;
+package Rex::Backup::Duplicity;
 
 use strict;
 use warnings;
@@ -86,7 +86,7 @@ sub _get_package {
 
 =head1 NAME
 
-Rex::System::Duplicity - installs duplicity and configures cron if needed
+Rex::Backup::Duplicity - installs duplicity and configures cron if needed
 
 =head1 DESCRIPTION
 
@@ -97,11 +97,11 @@ The config for the cronjobs must be inserted on a config file.
 
 =head1 USAGE
 
- include qw/Rex::System::Duplicity/;
+ include qw/Rex::Backup::Duplicity/;
 
  task yourtask => sub {
-    Rex::System::Duplicity::install();
-    Rex::System::Duplicity::configure();
+    Rex::Backup::Duplicity::install();
+    Rex::Backup::Duplicity::configure();
  };
 
 =head1 TASKS
@@ -113,7 +113,6 @@ The config for the cronjobs must be inserted on a config file.
 Just installs duplicity and its dependencies.
 Should run on debian and derivatives. Not tested on other systems, but can be easily adapted.
 
-=back
 
 =item configure
 

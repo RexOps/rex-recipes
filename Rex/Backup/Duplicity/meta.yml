@@ -1,4 +1,4 @@
-Name: Rex::System::Duplicity
+Name: Rex::Backup::Duplicity
 Description: Simple Module to install and manage duplicity (http://duplicity.nongnu.org/)
 Author: Paco Esteban <paco@onna.be>
 License: MIT
