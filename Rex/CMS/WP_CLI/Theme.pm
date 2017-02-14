@@ -46,7 +46,7 @@ sub _execute {
 
 =pod
 =head1 NAME
-Rex::CMS::WP_CLI::Theme - Wordpress CLI Theme module for Rex, it permits to manage Wordpress Theme through the Command-Line Interface
+Rex::CMS::WP_CLI::Theme - Wordpress CLI Theme module for Rex, it permits to manage Wordpress Themes through the Command-Line Interface
 =head1 USAGE
 Use it in a task
  use Rex::CMS::WP_CLI::Theme;
