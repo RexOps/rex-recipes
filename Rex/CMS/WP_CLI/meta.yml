@@ -1,0 +1,6 @@
+Name: Rex::CMS::WP_CLI
+Description: Wordpress CLI module for Rex, it permits to manage Wordpress install through the Command-Line Interface
+Author: Paulo Graça <paulo1978@gmail.com>
+License: Apache 2.0
+Require:
+  - Rex::Lang::PHP
