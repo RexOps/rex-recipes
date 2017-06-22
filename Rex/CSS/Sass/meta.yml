@@ -1,0 +1,7 @@
+Name: Rex::CSS::Sass
+Description: This module installs and runs a Sass Parser, based on libSass, an implementation based.
+Author: Paulo Graça <paulo.graca@fccn.pt>
+License: Apache 2.0
+Require:
+   - CSS::Sass
+   - Rex::Lang::Perl::Cpanm
