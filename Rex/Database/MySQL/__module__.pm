@@ -15,21 +15,29 @@ use Rex -base;
 our %package = (
    Debian => "mysql-server",
    Ubuntu => "mysql-server",
-   CentOS => "mysql-server",
+   CentOS => ["mysql-server", "mariadb-server"],
    Mageia => "mysql",
 );
 
 our %service_name = (
    Debian => "mysql",
    Ubuntu => "mysql",
-   CentOS => "mysqld",
+   CentOS => ["mysql", "mariadb"],
    Mageia => "mysqld",
 );
 
 task "setup", sub {
 
-   my $pkg     = $package{get_operating_system()};
-   my $service = $service_name{get_operating_system()};
+   my $osname  = get_operating_system();
+   my $pkg     = $package{$osname};
+   my $service = $service_name{$osname};
+
+   if ($osname eq 'CentOS') { 
+	   my ($centos_release) = operating_system_release() =~ /^(\d)/;
+	
+	   $pkg     = $centos_release < 7 ? $pkg->[0] : $pkg->[1];
+	   $service = $centos_release < 7 ? $service->[0] : $service->[1];
+   }
 
    # install mysql package
    update_package_db;
