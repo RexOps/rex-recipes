@@ -28,6 +28,12 @@ Rex::Config->register_set_handler("joomla" => sub {
    $JOOMLA_CONF{$name} = $value;
 });
 
+our %service_name = (
+   Debian => "apache2",
+   Ubuntu => "apache2",
+   CentOS => "httpd",
+   Mageia => "httpd",
+);
 
 task prepare => sub {
 
@@ -64,7 +70,9 @@ task prepare => sub {
    extract $file,
       chdir => $document_root;
 
-   service apache2 => "restart";
+   my $service = $service_name{get_operating_system()};
+   service $service => "restart";
+
 };
 
 task config => sub {
