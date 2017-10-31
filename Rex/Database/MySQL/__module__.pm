@@ -22,7 +22,7 @@ our %package = (
 our %service_name = (
    Debian => "mysql",
    Ubuntu => "mysql",
-   CentOS => ["mysql", "mariadb"],
+   CentOS => ["mysqld", "mariadb"],
    Mageia => "mysqld",
 );
 
