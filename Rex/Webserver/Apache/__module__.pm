@@ -97,6 +97,11 @@ task "reload", sub {
 
 };
 
+sub isInstalled {
+   my $service = $service_name{get_operating_system()};
+   return is_installed($service);
+};
+
 1;
 
 =pod
@@ -122,7 +127,9 @@ And call it:
 Or, to use it as a library
 
  task "yourtask", sub {
-    Webserver::Apache::setup();
+    if (!Webserver::Apache::isInstalled()) {
+       Webserver::Apache::setup();
+    }
  };
    
  require Rex::Webserver::Apache;
