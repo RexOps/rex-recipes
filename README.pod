@@ -1,5 +1,27 @@
 =pod
 
+=head2 DEPRECATED
+
+This repository is considered as a deprecated approach to collect and distribute Rex modules, and will be archived.
+
+The main problems are:
+
+=over 4
+
+=item Doesn't scale
+
+A few people must maintain all the modules, including testing and reviews, even if they are not the authors. That proved to be an unrealistic expectation.
+
+=item Disconnects authors from their code
+
+Once a module is merged, the author loses direct maintainership of it, since they can only interact with it via pull requests. They could be granted access to directly manage this repo, therefore all modules, but that is probably not what anyone wants.
+
+=back
+
+=head2 What now?
+
+Since Rex code is just Perl code, Rex modules are best maintained and distributed in the standard Perl ways. You are encouraged to have your own repos for your own modules, ask L<PrePAN|http://prepan.org> for feedback, and perhaps also use L<PAUSE|https://pause.perl.org/pause/query?ACTION=pause_04about> to publish to L<CPAN|https://www.cpan.org>.
+
 =head2 WHAT'S THIS?
 
 This is a community repository for Rex Recipes.
