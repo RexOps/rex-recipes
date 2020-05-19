@@ -117,6 +117,13 @@ sub _install {
             die("Error installing cpanm");
          }
       }
+      elsif($version eq 'build-deps') {
+         Rex::Logger::info("Installing perl build dependencies...");
+
+	 update_package_db();
+	 install package => [qw(patch perl gcc make)];
+
+      }
       else {
          Rex::Logger::info("Installing perl $version...");
          run "PERLBREW_ROOT=$perlbrew_root perlbrew install $version";
