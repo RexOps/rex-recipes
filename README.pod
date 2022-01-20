@@ -62,4 +62,4 @@ For reference, i use space indention with 2 spaces.
 
 =head2 EXAMPLE RECIPE
 
-Read the Contribute Guide on http://modules.rexify.org/contribute.
+Read the Contribute Guide on L<http://modules.rexify.org/contribute|https://web.archive.org/web/20160520023734/http://modules.rexify.org:80/contribute>.
