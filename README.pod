@@ -22,6 +22,10 @@ Once a module is merged, the author loses direct maintainership of it, since the
 
 Since Rex code is just Perl code, Rex modules are best maintained and distributed in the standard Perl ways. You are encouraged to have your own repos for your own modules, ask L<PrePAN|http://prepan.org> for feedback, and perhaps also use L<PAUSE|https://pause.perl.org/pause/query?ACTION=pause_04about> to publish to L<CPAN|https://www.cpan.org>.
 
+=head1 ARCHIVE 
+
+Everything below is considered outdated, but kept available for your reference.
+
 =head2 WHAT'S THIS?
 
 This is a community repository for Rex Recipes.
