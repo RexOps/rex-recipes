@@ -22,6 +22,8 @@ Once a module is merged, the author loses direct maintainership of it, since the
 
 Since Rex code is just Perl code, Rex modules are best maintained and distributed in the standard Perl ways. You are encouraged to have your own repos for your own modules, ask L<PrePAN|http://prepan.org> for feedback, and perhaps also use L<PAUSE|https://pause.perl.org/pause/query?ACTION=pause_04about> to publish to L<CPAN|https://www.cpan.org>.
 
+If you need help or have questions, please contact us on our various L<support channels|https://www.rexify.org/support/index.html>.
+
 =head1 ARCHIVE 
 
 Everything below is considered outdated, but kept available for your reference.
